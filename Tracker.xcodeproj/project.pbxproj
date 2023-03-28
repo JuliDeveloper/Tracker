@@ -13,6 +13,8 @@
 		255B094629D1E00F00A599E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 255B094529D1E00F00A599E3 /* Assets.xcassets */; };
 		255B094929D1E00F00A599E3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 255B094729D1E00F00A599E3 /* LaunchScreen.storyboard */; };
 		255B095729D3307500A599E3 /* Extension + UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B095629D3307500A599E3 /* Extension + UIColor.swift */; };
+		255B095B29D3360900A599E3 /* YS Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 255B095929D3360900A599E3 /* YS Display-Medium.ttf */; };
+		255B095C29D3360900A599E3 /* YS Display-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 255B095A29D3360900A599E3 /* YS Display-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		255B094829D1E00F00A599E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		255B094A29D1E00F00A599E3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		255B095629D3307500A599E3 /* Extension + UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIColor.swift"; sourceTree = "<group>"; };
+		255B095929D3360900A599E3 /* YS Display-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Medium.ttf"; sourceTree = "<group>"; };
+		255B095A29D3360900A599E3 /* YS Display-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Bold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +90,7 @@
 		255B095229D1E4EC00A599E3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				255B095829D3357900A599E3 /* Fonts */,
 				255B094529D1E00F00A599E3 /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -97,6 +102,15 @@
 				255B095629D3307500A599E3 /* Extension + UIColor.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		255B095829D3357900A599E3 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				255B095A29D3360900A599E3 /* YS Display-Bold.ttf */,
+				255B095929D3360900A599E3 /* YS Display-Medium.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -158,7 +172,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				255B094929D1E00F00A599E3 /* LaunchScreen.storyboard in Resources */,
+				255B095B29D3360900A599E3 /* YS Display-Medium.ttf in Resources */,
 				255B094629D1E00F00A599E3 /* Assets.xcassets in Resources */,
+				255B095C29D3360900A599E3 /* YS Display-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
