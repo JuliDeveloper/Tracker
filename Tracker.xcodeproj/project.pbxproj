@@ -9,25 +9,31 @@
 /* Begin PBXBuildFile section */
 		255B093D29D1E00E00A599E3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B093C29D1E00E00A599E3 /* AppDelegate.swift */; };
 		255B093F29D1E00E00A599E3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B093E29D1E00E00A599E3 /* SceneDelegate.swift */; };
-		255B094129D1E00E00A599E3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B094029D1E00E00A599E3 /* ViewController.swift */; };
 		255B094629D1E00F00A599E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 255B094529D1E00F00A599E3 /* Assets.xcassets */; };
 		255B094929D1E00F00A599E3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 255B094729D1E00F00A599E3 /* LaunchScreen.storyboard */; };
 		255B095729D3307500A599E3 /* Extension + UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B095629D3307500A599E3 /* Extension + UIColor.swift */; };
-		255B095B29D3360900A599E3 /* YS Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 255B095929D3360900A599E3 /* YS Display-Medium.ttf */; };
-		255B095C29D3360900A599E3 /* YS Display-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 255B095A29D3360900A599E3 /* YS Display-Bold.ttf */; };
+		255B095E29D3391A00A599E3 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B095D29D3391A00A599E3 /* TabBarController.swift */; };
+		255B096029D339F500A599E3 /* ListTrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B095F29D339F500A599E3 /* ListTrackersViewController.swift */; };
+		255B096229D33B4900A599E3 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B096129D33B4900A599E3 /* StatisticsViewController.swift */; };
+		255B096529D3485800A599E3 /* YS Display-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 255B095A29D3360900A599E3 /* YS Display-Bold.ttf */; };
+		255B096629D3485B00A599E3 /* YS Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 255B095929D3360900A599E3 /* YS Display-Medium.ttf */; };
+		255B096829D34C5D00A599E3 /* Extension + UIFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B096729D34C5D00A599E3 /* Extension + UIFonts.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		255B093929D1E00E00A599E3 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		255B093C29D1E00E00A599E3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		255B093E29D1E00E00A599E3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		255B094029D1E00E00A599E3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		255B094529D1E00F00A599E3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		255B094829D1E00F00A599E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		255B094A29D1E00F00A599E3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		255B095629D3307500A599E3 /* Extension + UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIColor.swift"; sourceTree = "<group>"; };
 		255B095929D3360900A599E3 /* YS Display-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Medium.ttf"; sourceTree = "<group>"; };
 		255B095A29D3360900A599E3 /* YS Display-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Bold.ttf"; sourceTree = "<group>"; };
+		255B095D29D3391A00A599E3 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		255B095F29D339F500A599E3 /* ListTrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTrackersViewController.swift; sourceTree = "<group>"; };
+		255B096129D33B4900A599E3 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		255B096729D34C5D00A599E3 /* Extension + UIFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIFonts.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,8 +87,10 @@
 		255B095129D1E4DE00A599E3 /* Presentations */ = {
 			isa = PBXGroup;
 			children = (
-				255B094029D1E00E00A599E3 /* ViewController.swift */,
 				255B094729D1E00F00A599E3 /* LaunchScreen.storyboard */,
+				255B095D29D3391A00A599E3 /* TabBarController.swift */,
+				255B095F29D339F500A599E3 /* ListTrackersViewController.swift */,
+				255B096129D33B4900A599E3 /* StatisticsViewController.swift */,
 			);
 			path = Presentations;
 			sourceTree = "<group>";
@@ -100,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				255B095629D3307500A599E3 /* Extension + UIColor.swift */,
+				255B096729D34C5D00A599E3 /* Extension + UIFonts.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -172,9 +181,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				255B094929D1E00F00A599E3 /* LaunchScreen.storyboard in Resources */,
-				255B095B29D3360900A599E3 /* YS Display-Medium.ttf in Resources */,
+				255B096629D3485B00A599E3 /* YS Display-Medium.ttf in Resources */,
 				255B094629D1E00F00A599E3 /* Assets.xcassets in Resources */,
-				255B095C29D3360900A599E3 /* YS Display-Bold.ttf in Resources */,
+				255B096529D3485800A599E3 /* YS Display-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,9 +194,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				255B094129D1E00E00A599E3 /* ViewController.swift in Sources */,
+				255B096829D34C5D00A599E3 /* Extension + UIFonts.swift in Sources */,
 				255B095729D3307500A599E3 /* Extension + UIColor.swift in Sources */,
 				255B093D29D1E00E00A599E3 /* AppDelegate.swift in Sources */,
+				255B095E29D3391A00A599E3 /* TabBarController.swift in Sources */,
+				255B096229D33B4900A599E3 /* StatisticsViewController.swift in Sources */,
+				255B096029D339F500A599E3 /* ListTrackersViewController.swift in Sources */,
 				255B093F29D1E00E00A599E3 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
