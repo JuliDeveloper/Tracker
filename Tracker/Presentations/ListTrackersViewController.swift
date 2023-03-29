@@ -90,6 +90,33 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
+    private let defaultStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .fill
+        stack.alignment = .center
+        stack.spacing = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private let defaultImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "star")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        return imageView
+    }()
+    
+    private let defaultLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Что будем отслеживать?"
+        label.font = UIFont.ypFontMedium12
+        label.textColor = .ypBlack
+        return label
+    }()
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         configureView()
@@ -106,6 +133,7 @@ final class ListTrackersViewController: UIViewController {
     
     private func addElements() {
         view.addSubview(headerView)
+        view.addSubview(defaultStackView)
                 
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
@@ -113,6 +141,9 @@ final class ListTrackersViewController: UIViewController {
         headerView.addSubview(searchStackView)
         searchStackView.addArrangedSubview(searchTextField)
         searchStackView.addArrangedSubview(cancelButton)
+        
+        defaultStackView.addArrangedSubview(defaultImage)
+        defaultStackView.addArrangedSubview(defaultLabel)
     }
     
     private func setupConstraints() {
@@ -166,6 +197,13 @@ final class ListTrackersViewController: UIViewController {
             ),
             searchStackView.trailingAnchor.constraint(
                 equalTo: headerView.trailingAnchor
+            ),
+            
+            defaultStackView.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+            defaultStackView.topAnchor.constraint(
+                equalTo: headerView.bottomAnchor, constant: 220
             )
         ])
     }
