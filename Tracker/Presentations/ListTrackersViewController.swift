@@ -47,31 +47,23 @@ final class ListTrackersViewController: UIViewController {
         return stack
     }()
     
-    private lazy var searchTextField: UITextField = {
-        let textField = UITextField()
+    private let searchTextField: UISearchTextField = {
+        let textField = UISearchTextField()
         textField.backgroundColor = .ypBackground
-        textField.placeholder = "Поиск"
         textField.textColor = .ypBlack
         textField.font = UIFont.ypFontMedium17
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.layer.cornerRadius = Constants.mediumRadius
         textField.heightAnchor.constraint(equalToConstant: 36).isActive = true
         
-        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
+        let attributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.ypGray
+        ]
         let attributedPlaceholder = NSAttributedString(
             string: "Поиск",
             attributes: attributes
         )
         textField.attributedPlaceholder = attributedPlaceholder
-        
-        let leftView = UIView()
-        let imageView = UIImageView(image: UIImage(named: "search"))
-        imageView.frame = CGRect(x: 8, y: 10, width: 16, height: 16)
-        leftView.frame = CGRect(x: 0, y: 0, width: 31, height: 36)
-        leftView.addSubview(imageView)
-        
-        textField.leftView = leftView
-        textField.leftViewMode = .always
         
         return textField
     }()
