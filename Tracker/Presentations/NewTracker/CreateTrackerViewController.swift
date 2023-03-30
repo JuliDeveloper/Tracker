@@ -3,8 +3,24 @@ import UIKit
 final class CreateTrackerViewController: UIViewController {
     
     //MARK: - Properties
-    private let habitButton = CustomButton(title: "Привычка")
-    private let irregularEventButton = CustomButton(title: "Нерегулярные событие")
+    private lazy var habitButton: CustomButton = {
+        let button = CustomButton(title: "Привычка")
+        button.addTarget(
+            self,
+            action: #selector(addHabits),
+            for: .touchUpInside
+        )
+        return button
+    }()
+    private lazy var irregularEventButton: CustomButton = {
+        let button = CustomButton(title: "Нерегулярные событие")
+        button.addTarget(
+            self,
+            action: #selector(addIrregularEvent),
+            for: .touchUpInside
+        )
+        return button
+    }()
     
     private let buttonsStackView: UIStackView = {
         let stack = UIStackView()
@@ -46,5 +62,13 @@ final class CreateTrackerViewController: UIViewController {
                 equalTo: view.centerYAnchor
             )
         ])
+    }
+    
+    @objc private func addHabits() {
+        
+    }
+    
+    @objc private func addIrregularEvent() {
+        
     }
 }
