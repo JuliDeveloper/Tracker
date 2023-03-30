@@ -114,6 +114,23 @@ final class ListTrackersViewController: UIViewController {
         frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
     )
     
+    private lazy var filterButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Фильтры", for: .normal)
+        button.backgroundColor = .ypBlue
+        button.titleLabel?.font = UIFont.ypFontMedium17
+        button.tintColor = .ypDefaultWhite
+        button.addTarget(
+            self,
+            action: #selector(selectFilter),
+            for: .touchUpInside
+        )
+        button.layer.cornerRadius = Constants.bigRadius
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        return button
+    }()
+    
     private var tasksList: [String] = ["lkdmcdkm"]
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
    
@@ -130,13 +147,15 @@ final class ListTrackersViewController: UIViewController {
     private func configureView() {
         view.backgroundColor = .ypWhite
         searchTextField.delegate = self
+        filterButton.layer.zPosition = 2
     }
     
     private func addElements() {
         view.addSubview(headerView)
         view.addSubview(defaultStackView)
         view.addSubview(collectionView)
-                
+        view.addSubview(filterButton)
+        
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
         headerView.addSubview(datePicker)
@@ -232,6 +251,20 @@ final class ListTrackersViewController: UIViewController {
             ),
             collectionView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
+            
+            filterButton.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -17
+            ),
+            filterButton.heightAnchor.constraint(
+                equalToConstant: 50
+            ),
+            filterButton.widthAnchor.constraint(
+                equalToConstant: 114
+            ),
+            filterButton.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
             )
         ])
     }
@@ -248,6 +281,7 @@ final class ListTrackersViewController: UIViewController {
             defaultStackView.isHidden = false
         } else {
             collectionView.isHidden = false
+            filterButton.isHidden = false
             defaultStackView.isHidden = true
         }
     }
@@ -313,7 +347,6 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
 extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let size = CGSize(width: collectionView.frame.width, height: 49)
-        print(size)
         return size
     }
     
