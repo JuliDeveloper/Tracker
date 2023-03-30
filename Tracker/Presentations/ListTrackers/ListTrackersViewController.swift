@@ -287,7 +287,9 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc private func addTask() {
-        print("Tapped plus")
+        let createTrackerVC = CreateTrackerViewController()
+        let navVC = UINavigationController(rootViewController: createTrackerVC)
+        present(navVC, animated: true)
     }
 
     @objc private func cancelSearch() {
