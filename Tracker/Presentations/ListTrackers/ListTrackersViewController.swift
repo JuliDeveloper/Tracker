@@ -89,6 +89,7 @@ final class ListTrackersViewController: UIViewController {
         stack.alignment = .center
         stack.spacing = 8
         stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.isHidden = true
         return stack
     }()
     
@@ -109,23 +110,32 @@ final class ListTrackersViewController: UIViewController {
         return label
     }()
     
+    private let collectionView = UICollectionView(
+        frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
+    )
+    
+    private var tasksList: [String] = ["lkdmcdkm"]
+    private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
+   
     //MARK: - Lifecycle
     override func viewDidLoad() {
         configureView()
         addElements()
         setupConstraints()
-        
-        searchTextField.delegate = self
+        configureCollectionView()
+        changeScenario()
     }
     
     //MARK: - Helpers
     private func configureView() {
         view.backgroundColor = .ypWhite
+        searchTextField.delegate = self
     }
     
     private func addElements() {
         view.addSubview(headerView)
         view.addSubview(defaultStackView)
+        view.addSubview(collectionView)
                 
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
@@ -136,6 +146,18 @@ final class ListTrackersViewController: UIViewController {
         
         defaultStackView.addArrangedSubview(defaultImage)
         defaultStackView.addArrangedSubview(defaultLabel)
+    }
+    
+    private func configureCollectionView() {
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        collectionView.register(TaskCell.self, forCellWithReuseIdentifier: Constants.taskCellIdentifier)
+        collectionView.register(HeaderSectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.headerCellIdentifier)
+        
+        collectionView.backgroundColor = .clear
     }
     
     private func setupConstraints() {
@@ -195,7 +217,21 @@ final class ListTrackersViewController: UIViewController {
                 equalTo: view.centerXAnchor
             ),
             defaultStackView.topAnchor.constraint(
-                equalTo: headerView.bottomAnchor, constant: 220
+                equalTo: headerView.bottomAnchor,
+                constant: 220
+            ),
+            
+            collectionView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor
+            ),
+            collectionView.topAnchor.constraint(
+                equalTo: headerView.bottomAnchor
+            ),
+            collectionView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor
+            ),
+            collectionView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
             )
         ])
     }
@@ -203,6 +239,16 @@ final class ListTrackersViewController: UIViewController {
     private func closeButton(state: Bool) {
         UIView.animate(withDuration: 0.3) {
             self.cancelButton.isHidden = state
+        }
+    }
+    
+    private func changeScenario() {
+        if tasksList.isEmpty {
+            collectionView.isHidden = true
+            defaultStackView.isHidden = false
+        } else {
+            collectionView.isHidden = false
+            defaultStackView.isHidden = true
         }
     }
     
@@ -214,8 +260,13 @@ final class ListTrackersViewController: UIViewController {
         closeButton(state: true)
         searchTextField.resignFirstResponder()
     }
+    
+    @objc private func selectFilter() {
+        print("Tapped filter")
+    }
 }
 
+//MARK: - UITextFieldDelegate
 extension ListTrackersViewController: UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -228,5 +279,60 @@ extension ListTrackersViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         closeButton(state: true)
+    }
+}
+
+//MARK: - UICollectionViewDelegate, UICollectionViewDataSource
+extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+       4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
+        
+        view.configureHeader(title: "Домашний уют")
+        
+        return view
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        3
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TaskCell else { return UICollectionViewCell() }
+        
+        cell.configure(for: cell, title: "Кошка заслонила камеру на созвоне", emoji: "😻", counter: "5 дней", color: .ypColorSection2)
+        
+        return cell
+    }
+}
+
+//MARK: - UICollectionViewDelegateFlowLayout
+extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let size = CGSize(width: collectionView.frame.width, height: 49)
+        print(size)
+        return size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let availableWidth = collectionView.frame.width - params.paddingWidth
+        let cellWidth =  availableWidth / CGFloat(params.cellCount)
+        
+        return CGSize(width: cellWidth, height: 132)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 12, left: params.leftInset, bottom: 0, right: params.rightInset)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        params.leftInset
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        params.cellSpacing
     }
 }
