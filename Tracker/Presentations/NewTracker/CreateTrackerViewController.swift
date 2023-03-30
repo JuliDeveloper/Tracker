@@ -2,6 +2,7 @@ import UIKit
 
 final class CreateTrackerViewController: UIViewController {
     
+    //MARK: - Properties
     private let habitButton = CustomButton(title: "Привычка")
     private let irregularEventButton = CustomButton(title: "Нерегулярные событие")
     
@@ -14,6 +15,7 @@ final class CreateTrackerViewController: UIViewController {
         return stack
     }()
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Создание трекера"
@@ -28,6 +30,7 @@ final class CreateTrackerViewController: UIViewController {
         configureStackView()
     }
     
+    //MARK: - Helpers
     private func configureStackView() {
         buttonsStackView.addArrangedSubview(habitButton)
         buttonsStackView.addArrangedSubview(irregularEventButton)
