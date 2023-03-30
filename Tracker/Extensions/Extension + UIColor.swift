@@ -1,6 +1,7 @@
 import UIKit
 
 extension UIColor {
+    static var ypDefaultWhite: UIColor { UIColor(named: "ypDefaultWhite") ?? UIColor() }
     static var ypWhite: UIColor { UIColor(named: "ypWhite") ?? UIColor() }
     static var ypBlack: UIColor { UIColor(named: "ypBlack") ?? UIColor() }
     static var ypBackground: UIColor { UIColor(named: "ypBackground") ?? UIColor() }
