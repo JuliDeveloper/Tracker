@@ -24,6 +24,7 @@
 		255B097029D59F1500A599E3 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B096F29D59F1500A599E3 /* GeometricParams.swift */; };
 		255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */; };
 		255B097A29D5BD1800A599E3 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097929D5BD1800A599E3 /* CustomButton.swift */; };
+		255B097D29D5C6B300A599E3 /* AddNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		255B096F29D59F1500A599E3 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrackerViewController.swift; sourceTree = "<group>"; };
 		255B097929D5BD1800A599E3 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */,
+				255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 				255B096A29D4472C00A599E3 /* Constants.swift in Sources */,
 				255B096E29D597B600A599E3 /* HeaderSectionView.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
+				255B097D29D5C6B300A599E3 /* AddNewTrackerViewController.swift in Sources */,
 				255B097029D59F1500A599E3 /* GeometricParams.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
