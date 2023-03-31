@@ -5,11 +5,17 @@ final class FilterTableViewCell: UITableViewCell {
     private let tableView = UITableView()
     private let titlesCells = ["Категория", "Расписание"]
     
+    weak var delegate: AddNewTrackerViewControllerDelegate?
+    
     func configureCell() {
         tableView.delegate = self
         tableView.dataSource = self
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
+        
+        tableView.separatorStyle = .none
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
+        tableView.addGestureRecognizer(tapGesture)
         
         tableView.backgroundColor = .ypBackground
         tableView.layer.cornerRadius = Constants.bigRadius
@@ -33,6 +39,10 @@ final class FilterTableViewCell: UITableViewCell {
             ),
             tableView.heightAnchor.constraint(equalToConstant: 150)
         ])
+    }
+    
+    @objc private func tableViewTapped() {
+        delegate?.showViewController()
     }
 }
 extension FilterTableViewCell: UITableViewDelegate, UITableViewDataSource {
@@ -80,6 +90,10 @@ extension FilterTableViewCell: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("tap")
     }
     
 }

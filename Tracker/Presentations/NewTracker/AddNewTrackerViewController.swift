@@ -1,5 +1,9 @@
 import UIKit
 
+protocol AddNewTrackerViewControllerDelegate: AnyObject {
+    func showViewController()
+}
+
 final class AddNewTrackerViewController: UIViewController {
     
     private let mainTableView = UITableView()
@@ -127,6 +131,22 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         return Int()
     }
     
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 24))
+//        headerView.backgroundColor = .ypWhite
+//        return headerView
+//    }
+//    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 99
+        } else if indexPath.section == 1 {
+            return 150
+        }
+        
+        return CGFloat()
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         switch indexPath.section {
@@ -146,6 +166,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
                     for: indexPath) as? FilterTableViewCell
             else { return UITableViewCell() }
             filterCell.configureCell()
+            filterCell.delegate = self
             return filterCell
         default:
             break
@@ -175,5 +196,13 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
         }
         
         return newText.count <= 38
+    }
+}
+
+extension AddNewTrackerViewController: AddNewTrackerViewControllerDelegate {
+    func showViewController() {
+        let viewController = AddCategoryViewController()
+        let navVC = UINavigationController(rootViewController: viewController)
+        present(navVC, animated: true)
     }
 }
