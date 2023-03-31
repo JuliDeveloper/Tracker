@@ -166,10 +166,6 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         
         return UITableViewCell()
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-    }
 }
 
 extension AddNewTrackerViewController: UITextFieldDelegate {
