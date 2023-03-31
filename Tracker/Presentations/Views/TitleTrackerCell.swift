@@ -78,10 +78,18 @@ final class TitleTrackerCell: UITableViewCell {
     
     private func setupConstraint() {
         NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            contentView.heightAnchor.constraint(equalToConstant: 75),
+            contentView.leadingAnchor.constraint(
+                equalTo: leadingAnchor, constant: 16
+            ),
+            contentView.trailingAnchor.constraint(
+                equalTo: trailingAnchor, constant: -16
+            ),
+            contentView.topAnchor.constraint(
+                equalTo: topAnchor, constant: 24
+            ),
+            contentView.heightAnchor.constraint(
+                equalToConstant: 75
+            ),
             
             cellStackView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor

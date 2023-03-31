@@ -130,18 +130,12 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         
         return Int()
     }
-    
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 24))
-//        headerView.backgroundColor = .ypWhite
-//        return headerView
-//    }
-//    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return 99
         } else if indexPath.section == 1 {
-            return 150
+            return 174
         }
         
         return CGFloat()

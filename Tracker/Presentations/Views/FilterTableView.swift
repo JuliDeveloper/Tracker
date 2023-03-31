@@ -35,9 +35,9 @@ final class FilterTableViewCell: UITableViewCell {
                 equalTo: contentView.trailingAnchor, constant: -16
             ),
             tableView.topAnchor.constraint(
-                equalTo: contentView.topAnchor
+                equalTo: contentView.topAnchor, constant: 24
             ),
-            tableView.heightAnchor.constraint(equalToConstant: 150)
+            tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
@@ -90,11 +90,6 @@ extension FilterTableViewCell: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
         }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("tap")
-    }
-    
+    }    
 }
 
