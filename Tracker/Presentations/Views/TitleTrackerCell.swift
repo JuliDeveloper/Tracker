@@ -54,13 +54,14 @@ final class TitleTrackerCell: UITableViewCell {
     func configureCell(delegate: AddNewTrackerViewController) {
         backgroundColor = .clear
         selectionStyle = .none
+                
+        contentView.backgroundColor = .ypBackground
+        contentView.layer.cornerRadius = Constants.bigRadius
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         
         trackerTitleTextField.delegate = delegate
         
-        contentView.addSubview(cellStackView)
-        cellStackView.addArrangedSubview(trackerTitleTextField)
-        cellStackView.addArrangedSubview(warningLabel)
-        
+        addElements()
         setupConstraint()
     }
     
@@ -68,22 +69,31 @@ final class TitleTrackerCell: UITableViewCell {
         warningLabel.isHidden = state
     }
     
+    private func addElements() {
+        contentView.addSubview(cellStackView)
+        cellStackView.addArrangedSubview(trackerTitleTextField)
+        cellStackView.addArrangedSubview(warningLabel)
+        
+    }
+    
     private func setupConstraint() {
         NSLayoutConstraint.activate([
+            contentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            contentView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            contentView.heightAnchor.constraint(equalToConstant: 75),
+            
             cellStackView.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor, constant: 16
+                equalTo: contentView.leadingAnchor
             ),
             cellStackView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor, constant: -16
-            ),
-            cellStackView.topAnchor.constraint(
-                equalTo: contentView.topAnchor, constant: 24
-            ),
-            cellStackView.bottomAnchor.constraint(
-                equalTo: contentView.bottomAnchor, constant: -24
+                equalTo: contentView.trailingAnchor
             ),
             cellStackView.heightAnchor.constraint(
                 equalToConstant: 75
+            ),
+            cellStackView.centerXAnchor.constraint(
+                equalTo: contentView.centerXAnchor
             )
         ])
     }
