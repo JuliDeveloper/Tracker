@@ -82,34 +82,9 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private let defaultStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fill
-        stack.alignment = .center
-        stack.spacing = 8
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.isHidden = true
-        return stack
-    }()
-    
-    private let defaultImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "star")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        return imageView
-    }()
-    
-    private let defaultLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Что будем отслеживать?"
-        label.font = UIFont.ypFontMedium12
-        label.textColor = .ypBlack
-        return label
-    }()
-    
+    private let defaultStackView = DefaultStackView(
+        title: "Что будем отслеживать?"
+    )
     private let collectionView = UICollectionView(
         frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
     )
@@ -131,7 +106,7 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private var tasksList: [String] = ["lkdmcdkm"]
+    private var tasksList: [String] = []
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
    
     //MARK: - Lifecycle
@@ -162,9 +137,6 @@ final class ListTrackersViewController: UIViewController {
         headerView.addSubview(searchStackView)
         searchStackView.addArrangedSubview(searchTextField)
         searchStackView.addArrangedSubview(cancelButton)
-        
-        defaultStackView.addArrangedSubview(defaultImage)
-        defaultStackView.addArrangedSubview(defaultLabel)
     }
     
     private func configureCollectionView() {
