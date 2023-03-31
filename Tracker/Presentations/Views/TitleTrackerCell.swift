@@ -11,30 +11,9 @@ final class TitleTrackerCell: UITableViewCell {
         return stack
     }()
     
-    private let trackerTitleTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = UIFont.ypFontMedium17
-        textField.textColor = .ypBlack
-        textField.backgroundColor = .ypBackground
-        
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.layer.cornerRadius = Constants.bigRadius
-        
-        let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 75))
-        textField.leftView = leftView
-        textField.leftViewMode = .always
-        
-        let attributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.ypGray
-        ]
-        let attributedPlaceholder = NSAttributedString(
-            string: "Введите название трекера",
-            attributes: attributes
-        )
-        textField.attributedPlaceholder = attributedPlaceholder
-        
-        return textField
-    }()
+    private let trackerTitleTextField = CustomTextField(
+        text: "Введите название трекера"
+    )
     
     private let warningLabel: UILabel = {
         let label = UILabel()
