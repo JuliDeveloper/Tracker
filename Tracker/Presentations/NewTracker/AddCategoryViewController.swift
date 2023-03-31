@@ -1,7 +1,7 @@
 import UIKit
 
 final class AddCategoryViewController: UIViewController {
-    
+    //MARK: - Properties
     private let defaultStack = DefaultStackView(
         title: "Привычки и события можно объединить по смыслу"
     )
@@ -9,6 +9,7 @@ final class AddCategoryViewController: UIViewController {
     
     var categories: [String] = []
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -20,17 +21,18 @@ final class AddCategoryViewController: UIViewController {
             .foregroundColor: UIColor.ypBlack
         ]
         
+        addElements()
+        setupConstraints()
+        showScenario()
+    }
+    
+    //MARK: - Helpers
+    private func addElements() {
         view.addSubview(defaultStack)
         view.addSubview(button)
-        
-        if categories.isEmpty {
-            button.setTitle("Добавить категорию", for: .normal)
-        } else {
-            button.setTitle("Готово", for: .normal)
-
-        }
-        
-        
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             defaultStack.centerXAnchor.constraint(
                 equalTo: view.centerXAnchor
@@ -49,9 +51,15 @@ final class AddCategoryViewController: UIViewController {
                 equalTo: view.bottomAnchor, constant: -50
             )
         ])
-        
+    }
+    
+    private func showScenario() {
         if categories.isEmpty {
+            button.setTitle("Добавить категорию", for: .normal)
             defaultStack.isHidden = false
+        } else {
+            button.setTitle("Готово", for: .normal)
+            defaultStack.isHidden = true
         }
     }
 }

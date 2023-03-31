@@ -1,11 +1,7 @@
 import UIKit
 
-protocol AddNewTrackerViewControllerDelegate: AnyObject {
-    func showViewController()
-}
-
 final class AddNewTrackerViewController: UIViewController {
-    
+    //MARK: - Properties
     private let mainTableView = UITableView()
         
     private let buttonsStackView: UIStackView = {
@@ -38,6 +34,7 @@ final class AddNewTrackerViewController: UIViewController {
     
     weak var delegate: TitleTrackerCellDelegate?
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -47,6 +44,7 @@ final class AddNewTrackerViewController: UIViewController {
         setupConstraints()
     }
     
+    //MARK: - Helpers
     private func configureNavBar() {
         title = "Новая привычка"
         

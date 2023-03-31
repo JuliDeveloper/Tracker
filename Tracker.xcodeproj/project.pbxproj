@@ -29,6 +29,8 @@
 		256E015A29D73E3400E2A413 /* FilterTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015929D73E3400E2A413 /* FilterTableView.swift */; };
 		256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015B29D7557600E2A413 /* AddCategoryViewController.swift */; };
 		256E015E29D7581D00E2A413 /* DefaultStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015D29D7581D00E2A413 /* DefaultStackView.swift */; };
+		256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */; };
+		256E016329D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016229D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +58,8 @@
 		256E015929D73E3400E2A413 /* FilterTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableView.swift; sourceTree = "<group>"; };
 		256E015B29D7557600E2A413 /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		256E015D29D7581D00E2A413 /* DefaultStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultStackView.swift; sourceTree = "<group>"; };
+		256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTrackerCellDelegate.swift; sourceTree = "<group>"; };
+		256E016229D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewControllerDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				255B095129D1E4DE00A599E3 /* Presentations */,
+				256E015F29D77E9700E2A413 /* Protocols */,
 				255B095529D3305A00A599E3 /* Extensions */,
 				255B095229D1E4EC00A599E3 /* Resources */,
 				255B095029D1E4C200A599E3 /* App */,
@@ -195,6 +200,15 @@
 			path = NewTracker;
 			sourceTree = "<group>";
 		};
+		256E015F29D77E9700E2A413 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */,
+				256E016229D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -280,7 +294,9 @@
 				256E015A29D73E3400E2A413 /* FilterTableView.swift in Sources */,
 				255B098129D7186F00A599E3 /* TitleTrackerCell.swift in Sources */,
 				255B096A29D4472C00A599E3 /* Constants.swift in Sources */,
+				256E016329D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift in Sources */,
 				255B096E29D597B600A599E3 /* HeaderSectionView.swift in Sources */,
+				256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */,
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
 				255B097D29D5C6B300A599E3 /* AddNewTrackerViewController.swift in Sources */,

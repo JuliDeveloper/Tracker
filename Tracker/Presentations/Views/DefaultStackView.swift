@@ -1,6 +1,7 @@
 import UIKit
 
 final class DefaultStackView: UIStackView {
+    //MARK: - Properties
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "star")
@@ -22,6 +23,7 @@ final class DefaultStackView: UIStackView {
         return label
     }()
     
+    //MARK: - Lifecycle
     init(title: String) {
         super.init(frame: .zero)
         

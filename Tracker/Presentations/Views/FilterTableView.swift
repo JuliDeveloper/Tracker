@@ -1,19 +1,20 @@
 import UIKit
 
 final class FilterTableViewCell: UITableViewCell {
-    
+    //MARK: - Properties
     private let tableView = UITableView()
     private let titlesCells = ["Категория", "Расписание"]
     
     weak var delegate: AddNewTrackerViewControllerDelegate?
     
+    //MARK: - Helpers
     func configureCell() {
         tableView.delegate = self
         tableView.dataSource = self
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
         
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
         tableView.addGestureRecognizer(tapGesture)
         
@@ -45,6 +46,8 @@ final class FilterTableViewCell: UITableViewCell {
         delegate?.showViewController()
     }
 }
+
+//MARK: - UITableViewDelegate, UITableViewDataSource
 extension FilterTableViewCell: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         2

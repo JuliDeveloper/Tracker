@@ -1,11 +1,7 @@
 import UIKit
 
-protocol TitleTrackerCellDelegate: AnyObject {
-    func updateCell(state: Bool)
-}
-
 final class TitleTrackerCell: UITableViewCell {
-    
+    //MARK: - Properties
     private let cellStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -51,12 +47,11 @@ final class TitleTrackerCell: UITableViewCell {
         return label
     }()
     
+    //MARK: - Helpers
     func configureCell(delegate: AddNewTrackerViewController) {
         backgroundColor = .clear
         selectionStyle = .none
                 
-        contentView.backgroundColor = .ypBackground
-        contentView.layer.cornerRadius = Constants.bigRadius
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         trackerTitleTextField.delegate = delegate
@@ -107,6 +102,7 @@ final class TitleTrackerCell: UITableViewCell {
     }
 }
 
+//MARK: - TitleTrackerCellDelegate
 extension TitleTrackerCell: TitleTrackerCellDelegate {
     func updateCell(state: Bool) {
         showWarningStatus(state: state)
