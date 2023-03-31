@@ -7,4 +7,6 @@ struct Constants {
     
     static let taskCellIdentifier = "taskCell"
     static let headerCellIdentifier = "header"
+    static let settingTrackerCellIdentifier = "settingTrackerCell"
+    static let titleTrackerCellIdentifier = "titleTrackerCell"
 }

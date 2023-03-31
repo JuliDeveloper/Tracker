@@ -1,9 +1,7 @@
 import UIKit
 
-final class AddNewTrackerViewController: UIViewController {
-    
-    private let scrollView = UIScrollView()
-    
+final class AddNewTrackerViewController: UITableViewController {
+        
     private let buttonsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -12,6 +10,8 @@ final class AddNewTrackerViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
+    
+    private let titlesCells = ["Категория", "Расписание"]
     
     private lazy var cancelButton: CustomButton = {
         let button = CustomButton(title: "Отменить")
@@ -32,14 +32,12 @@ final class AddNewTrackerViewController: UIViewController {
         return button
     }()
     
+    weak var delegate: TitleTrackerCellDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypWhite
-        
         configureNavBar()
-        configureScrollView()
-        addElements()
-        setupConstraints()
+        configureMainTableView()
     }
     
     private func configureNavBar() {
@@ -51,40 +49,29 @@ final class AddNewTrackerViewController: UIViewController {
         ]
     }
     
-    private func configureScrollView() {
-        scrollView.frame = CGRect(
-            x: 0, y: 0,
-            width: view.bounds.width, height: view.bounds.height
-        )
-        scrollView.contentSize.width = view.bounds.size.width
-        scrollView.contentSize.height = view.bounds.size.height
-        scrollView.isScrollEnabled = true
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.showsVerticalScrollIndicator = true
+    private func configureMainTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
         
-        scrollView.backgroundColor = .red
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(
+            TitleTrackerCell.self,
+            forCellReuseIdentifier: Constants.titleTrackerCellIdentifier
+        )
+        tableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: Constants.settingTrackerCellIdentifier
+        )
+        
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .ypWhite
     }
     
     private func addElements() {
-        view.addSubview(buttonsStackView)
-        view.addSubview(scrollView)
-        
         buttonsStackView.addArrangedSubview(cancelButton)
         buttonsStackView.addArrangedSubview(createButton)
-    }
-    
-    private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            buttonsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            buttonsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: buttonsStackView.safeAreaLayoutGuide.topAnchor, constant: -10)
-        ])
     }
     
     @objc private func cancel() {
@@ -93,5 +80,95 @@ final class AddNewTrackerViewController: UIViewController {
     
     @objc private func create() {
         dismiss(animated: true)
+    }
+}
+
+extension AddNewTrackerViewController {
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        switch section {
+        case 0:
+            return 1
+        case 1:
+            return titlesCells.count
+        default:
+            break
+        }
+        
+        return Int()
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let title = titlesCells[indexPath.row]
+        
+        switch indexPath.section {
+        case 0:
+            guard
+                let titleCell = tableView.dequeueReusableCell(
+                    withIdentifier: Constants.titleTrackerCellIdentifier,
+                    for: indexPath) as? TitleTrackerCell
+            else { return UITableViewCell() }
+            titleCell.configureCell(delegate: self)
+            delegate = titleCell
+            return titleCell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.settingTrackerCellIdentifier, for: indexPath)
+            cell.backgroundColor = .ypBackground
+            cell.selectionStyle = .none
+            cell.accessoryType = .disclosureIndicator
+            
+            if #available(iOS 14.0, *) {
+                var content = cell.defaultContentConfiguration()
+                
+                content.text = title
+                content.secondaryText = ""
+                
+                content.textProperties.font = UIFont.ypFontMedium17
+                content.textProperties.color = .ypBlack
+                content.secondaryTextProperties.font = UIFont.ypFontMedium17
+                content.secondaryTextProperties.color = .ypGray
+                
+                cell.contentConfiguration = content
+            } else {
+                cell.textLabel?.text = title
+                cell.detailTextLabel?.text = ""
+            }
+            return cell
+        default:
+            break
+        }
+        
+        return UITableViewCell()
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+        }
+    }
+}
+
+extension AddNewTrackerViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
+        
+        if newText.count > 10 {
+            tableView.performBatchUpdates {
+                self.delegate?.updateCell(state: false)
+            }
+        } else {
+            tableView.performBatchUpdates {
+                self.delegate?.updateCell(state: true)
+            }
+        }
+    
+        return newText.count <= 10
     }
 }
