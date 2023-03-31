@@ -1,6 +1,8 @@
 import UIKit
 
-final class AddNewTrackerViewController: UITableViewController {
+final class AddNewTrackerViewController: UIViewController {
+    
+    private let mainTableView = UITableView()
         
     private let buttonsStackView: UIStackView = {
         let stack = UIStackView()
@@ -10,9 +12,7 @@ final class AddNewTrackerViewController: UITableViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
-    
-    private let titlesCells = ["Категория", "Расписание"]
-    
+        
     private lazy var cancelButton: CustomButton = {
         let button = CustomButton(title: "Отменить")
         button.backgroundColor = .ypWhite
@@ -36,8 +36,11 @@ final class AddNewTrackerViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .ypWhite
+        addElements()
         configureNavBar()
         configureMainTableView()
+        setupConstraints()
     }
     
     private func configureNavBar() {
@@ -50,28 +53,50 @@ final class AddNewTrackerViewController: UITableViewController {
     }
     
     private func configureMainTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
+        mainTableView.delegate = self
+        mainTableView.dataSource = self
         
-        tableView.register(
+        mainTableView.register(
             TitleTrackerCell.self,
             forCellReuseIdentifier: Constants.titleTrackerCellIdentifier
         )
-        tableView.register(
-            UITableViewCell.self,
-            forCellReuseIdentifier: Constants.settingTrackerCellIdentifier
+        mainTableView.register(
+            FilterTableViewCell.self,
+            forCellReuseIdentifier: Constants.filterCellIdentifier
         )
         
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
+        mainTableView.backgroundColor = .red
+        mainTableView.separatorStyle = .none
         
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .ypWhite
+        mainTableView.translatesAutoresizingMaskIntoConstraints = false
+        mainTableView.backgroundColor = .ypWhite
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
+        mainTableView.addGestureRecognizer(tapGesture)
     }
     
     private func addElements() {
+        view.addSubview(mainTableView)
+        view.addSubview(buttonsStackView)
         buttonsStackView.addArrangedSubview(cancelButton)
         buttonsStackView.addArrangedSubview(createButton)
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            mainTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mainTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mainTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            mainTableView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
+            
+            buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            buttonsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            buttonsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
+    }
+    
+    @objc private func tableViewTapped() {
+        view.endEditing(true)
     }
     
     @objc private func cancel() {
@@ -83,18 +108,18 @@ final class AddNewTrackerViewController: UITableViewController {
     }
 }
 
-extension AddNewTrackerViewController {
-    override func numberOfSections(in tableView: UITableView) -> Int {
+extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
         2
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         switch section {
         case 0:
             return 1
         case 1:
-            return titlesCells.count
+            return 1
         default:
             break
         }
@@ -102,8 +127,7 @@ extension AddNewTrackerViewController {
         return Int()
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let title = titlesCells[indexPath.row]
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         switch indexPath.section {
         case 0:
@@ -116,28 +140,13 @@ extension AddNewTrackerViewController {
             delegate = titleCell
             return titleCell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.settingTrackerCellIdentifier, for: indexPath)
-            cell.backgroundColor = .ypBackground
-            cell.selectionStyle = .none
-            cell.accessoryType = .disclosureIndicator
-            
-            if #available(iOS 14.0, *) {
-                var content = cell.defaultContentConfiguration()
-                
-                content.text = title
-                content.secondaryText = ""
-                
-                content.textProperties.font = UIFont.ypFontMedium17
-                content.textProperties.color = .ypBlack
-                content.secondaryTextProperties.font = UIFont.ypFontMedium17
-                content.secondaryTextProperties.color = .ypGray
-                
-                cell.contentConfiguration = content
-            } else {
-                cell.textLabel?.text = title
-                cell.detailTextLabel?.text = ""
-            }
-            return cell
+            guard
+                let filterCell = tableView.dequeueReusableCell(
+                    withIdentifier: Constants.filterCellIdentifier,
+                    for: indexPath) as? FilterTableViewCell
+            else { return UITableViewCell() }
+            filterCell.configureCell()
+            return filterCell
         default:
             break
         }
@@ -145,12 +154,8 @@ extension AddNewTrackerViewController {
         return UITableViewCell()
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
-        }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
     }
 }
 
@@ -159,16 +164,16 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
         let currentText = textField.text ?? ""
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
-        if newText.count > 10 {
-            tableView.performBatchUpdates {
+        if newText.count > 38 {
+            mainTableView.performBatchUpdates {
                 self.delegate?.updateCell(state: false)
             }
         } else {
-            tableView.performBatchUpdates {
+            mainTableView.performBatchUpdates {
                 self.delegate?.updateCell(state: true)
             }
         }
-    
-        return newText.count <= 10
+        
+        return newText.count <= 38
     }
 }
