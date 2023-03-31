@@ -5,7 +5,7 @@ final class AddCategoryViewController: UIViewController {
     private let defaultStack = DefaultStackView(
         title: "Привычки и события можно объединить по смыслу"
     )
-    private let button = CustomButton(title: "")
+    private let button = CustomButton(title: "Добавить категорию")
     
     var categories: [String] = []
     
@@ -24,6 +24,8 @@ final class AddCategoryViewController: UIViewController {
         addElements()
         setupConstraints()
         showScenario()
+    
+        button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
     }
     
     //MARK: - Helpers
@@ -55,11 +57,15 @@ final class AddCategoryViewController: UIViewController {
     
     private func showScenario() {
         if categories.isEmpty {
-            button.setTitle("Добавить категорию", for: .normal)
             defaultStack.isHidden = false
         } else {
-            button.setTitle("Готово", for: .normal)
             defaultStack.isHidden = true
         }
+    }
+    
+    @objc private func addCategory() {
+        let newCategoryVC = AddNewCategoryViewController()
+        let navVC = UINavigationController(rootViewController: newCategoryVC)
+        present(navVC, animated: true)
     }
 }
