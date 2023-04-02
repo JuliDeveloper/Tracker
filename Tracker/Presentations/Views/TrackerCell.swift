@@ -1,6 +1,6 @@
 import UIKit
 
-final class TaskCell: UICollectionViewCell {
+final class TrackerCell: UICollectionViewCell {
     
     //MARK: - Properties
     private let mainView: UIView = {
@@ -15,7 +15,6 @@ final class TaskCell: UICollectionViewCell {
         label.backgroundColor = .ypDefaultWhite.withAlphaComponent(0.3)
         label.clipsToBounds = true
         label.layer.cornerRadius = 24 / 2
-        label.text = "🥳"
         label.font = UIFont.ypFontMedium16
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -24,7 +23,6 @@ final class TaskCell: UICollectionViewCell {
     
     private let taskTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Поливать растения"
         label.textColor = .ypDefaultWhite
         label.font = UIFont.ypFontMedium12
         label.numberOfLines = 0
@@ -50,30 +48,43 @@ final class TaskCell: UICollectionViewCell {
         return label
     }()
     
-    private let plusButton: UIButton = {
+    private lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "plusCell"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 34 / 2
+        button.addTarget(self, action: #selector(addDay), for: .touchUpInside)
         return button
     }()
     
+    private var counter = 0
+    private var isCompletedTrackerToday = false
+    
     //MARK: - Helpers
-    func configure(for cell: TaskCell, title: String, emoji: String, counter: String, color: UIColor) {
+    func configure(for cell: TrackerCell, title: String, emoji: String, color: UIColor) {
         addElements()
         setupConstraints()
         
         mainView.backgroundColor = color
         plusButton.backgroundColor = color
         
+        let wordDay = pluralizeDays(counter)
+        
         taskTitleLabel.text = title
         emojiLabel.text = emoji
-        counterDayLabel.text = counter
+        counterDayLabel.text = "\(wordDay)"
+    }
+    
+    func changeStateButton() {
+        counter += 1
+        plusButton.setImage(UIImage(named: "doneButton"), for: .normal)
+        plusButton.layer.opacity = 0.3
+        plusButton.isEnabled = false
     }
     
     private func addElements() {
-        addSubview(mainView)
-        addSubview(stackView)
+        contentView.addSubview(mainView)
+        contentView.addSubview(stackView)
         
         mainView.addSubview(emojiLabel)
         mainView.addSubview(taskTitleLabel)
@@ -85,13 +96,13 @@ final class TaskCell: UICollectionViewCell {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             mainView.leadingAnchor.constraint(
-                equalTo: leadingAnchor
+                equalTo: contentView.leadingAnchor
             ),
             mainView.topAnchor.constraint(
-                equalTo: topAnchor
+                equalTo: contentView.topAnchor
             ),
             mainView.trailingAnchor.constraint(
-                equalTo: trailingAnchor
+                equalTo: contentView.trailingAnchor
             ),
             mainView.heightAnchor.constraint(
                 equalToConstant: 90
@@ -136,5 +147,36 @@ final class TaskCell: UICollectionViewCell {
                 constant: -12
             )
         ])
+    }
+    
+    private func pluralizeDays(_ count: Int) -> String {
+        let remainder10 = count % 10
+        let remainder100 = count % 100
+
+        if remainder10 == 1 && remainder100 != 11 {
+            return "\(count) день"
+        } else if remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 10 || remainder100 >= 20) {
+            return "\(count) дня"
+        } else {
+            return "\(count) дней"
+        }
+    }
+    
+    @objc private func addDay() {
+        isCompletedTrackerToday.toggle()
+        
+        if isCompletedTrackerToday {
+            counter += 1
+            let newDayCont = pluralizeDays(counter)
+            counterDayLabel.text = "\(newDayCont)"
+            plusButton.setImage(UIImage(named: "doneButton"), for: .normal)
+            plusButton.layer.opacity = 0.3
+        } else {
+            counter -= 1
+            let newDayCont = pluralizeDays(counter)
+            counterDayLabel.text = "\(newDayCont)"
+            plusButton.setImage(UIImage(named: "plusCell"), for: .normal)
+            plusButton.layer.opacity = 1
+        }
     }
 }

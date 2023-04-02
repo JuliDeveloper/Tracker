@@ -122,7 +122,7 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private var tasksList: [String] = []
+    private var tasksList: [String] = ["1"]
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
    
     //MARK: - Lifecycle
@@ -163,7 +163,7 @@ final class ListTrackersViewController: UIViewController {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.register(TaskCell.self, forCellWithReuseIdentifier: Constants.taskCellIdentifier)
+        collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: Constants.taskCellIdentifier)
         collectionView.register(HeaderSectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.headerCellIdentifier)
         
         collectionView.backgroundColor = .clear
@@ -359,9 +359,9 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TaskCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        cell.configure(for: cell, title: "Кошка заслонила камеру на созвоне", emoji: "😻", counter: "5 дней", color: .ypColorSection2)
+        cell.configure(for: cell, title: "Кошка заслонила камеру на созвоне", emoji: "😻", color: .ypColorSection2)
         
         return cell
     }
