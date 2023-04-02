@@ -25,16 +25,32 @@ final class ListTrackersViewController: UIViewController {
         return label
     }()
     
-    private let datePicker: UIDatePicker = {
+    private lazy var dateLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .ypBackgroundDatePicker
+        label.font = UIFont.ypFontMedium17
+        label.textAlignment = .center
+        label.textColor = .ypDefaultBlack
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.clipsToBounds = true
+        label.layer.cornerRadius = Constants.smallRadius
+        label.layer.zPosition = 10
+        return label
+    }()
+    
+    private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
-        picker.locale = Locale(identifier: "ru_RU")
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.clipsToBounds = true
         picker.layer.cornerRadius = Constants.smallRadius
         picker.tintColor = .ypBlue
-        picker.setValue(UIColor.ypBlack, forKeyPath: "textColor")
+        picker.addTarget(
+            self,
+            action: #selector(datePickerValueChanged),
+            for: .valueChanged
+        )
         return picker
     }()
     
@@ -116,6 +132,7 @@ final class ListTrackersViewController: UIViewController {
         setupConstraints()
         configureCollectionView()
         changeScenario()
+        updateDateLabelTitle(with: Date())
     }
     
     //MARK: - Helpers
@@ -133,6 +150,7 @@ final class ListTrackersViewController: UIViewController {
         
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
+        headerView.addSubview(dateLabel)
         headerView.addSubview(datePicker)
         headerView.addSubview(searchStackView)
         searchStackView.addArrangedSubview(searchTextField)
@@ -183,6 +201,19 @@ final class ListTrackersViewController: UIViewController {
                 constant: 21
             ),
             
+            dateLabel.trailingAnchor.constraint(
+                equalTo: headerView.trailingAnchor
+            ),
+            dateLabel.centerYAnchor.constraint(
+                equalTo: titleHeader.centerYAnchor
+            ),
+            dateLabel.widthAnchor.constraint(
+                equalToConstant: 77
+            ),
+            dateLabel.heightAnchor.constraint(
+                equalToConstant: 34
+            ),
+            
             datePicker.trailingAnchor.constraint(
                 equalTo: headerView.trailingAnchor
             ),
@@ -190,7 +221,10 @@ final class ListTrackersViewController: UIViewController {
                 equalTo: titleHeader.centerYAnchor
             ),
             datePicker.widthAnchor.constraint(
-                equalToConstant: 100
+                equalToConstant: 77
+            ),
+            datePicker.heightAnchor.constraint(
+                equalToConstant: 34
             ),
     
             searchStackView.leadingAnchor.constraint(
@@ -256,6 +290,22 @@ final class ListTrackersViewController: UIViewController {
             filterButton.isHidden = false
             defaultStackView.isHidden = true
         }
+    }
+    
+    private func formattedDate(from date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yy"
+        return dateFormatter.string(from: date)
+    }
+    
+    private func updateDateLabelTitle(with date: Date) {
+        let dateString = formattedDate(from: date)
+        dateLabel.text = dateString
+    }
+    
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        updateDateLabelTitle(with: selectedDate)
     }
     
     @objc private func addTask() {

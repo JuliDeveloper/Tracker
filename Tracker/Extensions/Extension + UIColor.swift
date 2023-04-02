@@ -2,6 +2,7 @@ import UIKit
 
 extension UIColor {
     static var ypDefaultWhite: UIColor { UIColor(named: "ypDefaultWhite") ?? UIColor() }
+    static var ypDefaultBlack: UIColor { UIColor(named: "ypDefaultBlack") ?? UIColor() }
     static var ypWhite: UIColor { UIColor(named: "ypWhite") ?? UIColor() }
     static var ypBlack: UIColor { UIColor(named: "ypBlack") ?? UIColor() }
     static var ypBackground: UIColor { UIColor(named: "ypBackground") ?? UIColor() }
@@ -9,6 +10,7 @@ extension UIColor {
     static var ypBlue: UIColor { UIColor(named: "ypBlue") ?? UIColor() }
     static var ypGray: UIColor { UIColor(named: "ypGray") ?? UIColor() }
     static var ypLightGray: UIColor { UIColor(named: "ypLightGray") ?? UIColor() }
+    static var ypBackgroundDatePicker: UIColor { UIColor(named: "ypBackgroundDatePicker") ?? UIColor() }
     static var ypColorSection1: UIColor { UIColor(named: "ypColorSection1") ?? UIColor() }
     static var ypColorSection2: UIColor { UIColor(named: "ypColorSection2") ?? UIColor() }
     static var ypColorSection3: UIColor { UIColor(named: "ypColorSection3") ?? UIColor() }
