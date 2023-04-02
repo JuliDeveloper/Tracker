@@ -130,10 +130,14 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
+        
+        switch indexPath.section {
+        case 0:
             return 99
-        } else if indexPath.section == 1 {
+        case 1:
             return 174
+        default:
+            break
         }
         
         return CGFloat()

@@ -8,7 +8,6 @@ final class CustomTextField: UITextField {
         backgroundColor = .ypBackground
         
         translatesAutoresizingMaskIntoConstraints = false
-        heightAnchor.constraint(equalToConstant: 75).isActive = true
         layer.cornerRadius = Constants.bigRadius
         
         let spacer = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 75))
