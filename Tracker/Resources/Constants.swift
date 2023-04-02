@@ -10,4 +10,5 @@ struct Constants {
     static let titleTrackerCellIdentifier = "titleTrackerCell"
     static let filterCellIdentifier = "filterCell"
     static let cellIdentifier = "cell"
+    static let categoryCellIdentifier = "categoryCell"
 }
