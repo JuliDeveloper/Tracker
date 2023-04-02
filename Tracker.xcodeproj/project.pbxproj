@@ -38,6 +38,7 @@
 		256E016E29D9F8DE00E2A413 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016D29D9F8DE00E2A413 /* Schedule.swift */; };
 		256E017029D9F9BF00E2A413 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016F29D9F9BF00E2A413 /* TrackerCategory.swift */; };
 		256E017229D9FA4900E2A413 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017129D9FA4900E2A413 /* TrackerRecord.swift */; };
+		256E017529DA11AA00E2A413 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017429DA11AA00E2A413 /* DataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +75,7 @@
 		256E016D29D9F8DE00E2A413 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		256E016F29D9F9BF00E2A413 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		256E017129D9FA4900E2A413 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
+		256E017429DA11AA00E2A413 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,8 +109,9 @@
 			isa = PBXGroup;
 			children = (
 				255B095129D1E4DE00A599E3 /* Presentations */,
-				256E015F29D77E9700E2A413 /* Protocols */,
 				256E016A29D9F83900E2A413 /* Models */,
+				256E017329DA118500E2A413 /* Services */,
+				256E015F29D77E9700E2A413 /* Protocols */,
 				255B095529D3305A00A599E3 /* Extensions */,
 				255B095229D1E4EC00A599E3 /* Resources */,
 				255B095029D1E4C200A599E3 /* App */,
@@ -238,6 +241,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		256E017329DA118500E2A413 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				256E017429DA11AA00E2A413 /* DataManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -327,6 +338,7 @@
 				256E016729D785A300E2A413 /* CustomTextField.swift in Sources */,
 				255B096A29D4472C00A599E3 /* Constants.swift in Sources */,
 				256E016329D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift in Sources */,
+				256E017529DA11AA00E2A413 /* DataManager.swift in Sources */,
 				255B096E29D597B600A599E3 /* HeaderSectionView.swift in Sources */,
 				256E017029D9F9BF00E2A413 /* TrackerCategory.swift in Sources */,
 				256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */,

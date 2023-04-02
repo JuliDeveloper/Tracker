@@ -137,9 +137,12 @@ final class ListTrackersViewController: UIViewController {
     var isSearching: Bool {
         return !(searchTextField.text?.isEmpty ?? false)
     }
+    
+    let dataManager = DataManager.shared
    
     //MARK: - Lifecycle
     override func viewDidLoad() {
+        getData()
         configureView()
         addElements()
         setupConstraints()
@@ -153,6 +156,10 @@ final class ListTrackersViewController: UIViewController {
         view.backgroundColor = .ypWhite
         searchTextField.delegate = self
         filterButton.layer.zPosition = 2
+    }
+    
+    private func getData() {
+        categories = dataManager.getCategories()
     }
     
     private func addElements() {
@@ -325,6 +332,9 @@ final class ListTrackersViewController: UIViewController {
         if visibleCategories.isEmpty {
             collectionView.isHidden = true
             defaultStackView.isHidden = false
+        } else {
+            collectionView.isHidden = false
+            defaultStackView.isHidden = true
         }
     }
     
@@ -409,17 +419,15 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let indexPath = IndexPath(row: 0, section: section)
-        let trackers = categories[indexPath.row].trackers
-        
+        let trackers = categories[section].trackers
         return trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        let cellData = isSearching ? categories : visibleCategories
-        let tracker = cellData[indexPath.row].trackers[indexPath.row]
+        let cellData = isSearching ? visibleCategories : categories
+        let tracker = cellData[indexPath.section].trackers[indexPath.row]
         
         cell.configure(for: cell, title: tracker.title, emoji: tracker.emoji, color: tracker.color)
         
