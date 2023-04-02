@@ -15,8 +15,6 @@ final class FilterTableViewCell: UITableViewCell {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
         
         tableView.separatorStyle = .singleLine
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
-        tableView.addGestureRecognizer(tapGesture)
         
         tableView.backgroundColor = .ypBackground
         tableView.layer.cornerRadius = Constants.bigRadius
@@ -40,10 +38,6 @@ final class FilterTableViewCell: UITableViewCell {
             ),
             tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
-    }
-    
-    @objc private func tableViewTapped() {
-        delegate?.showViewController()
     }
 }
 
@@ -93,6 +87,14 @@ extension FilterTableViewCell: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
         }
-    }    
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            delegate?.showViewController(AddCategoryViewController())
+        } else {
+            delegate?.showViewController(AddScheduleViewController())
+        }
+    }
 }
 

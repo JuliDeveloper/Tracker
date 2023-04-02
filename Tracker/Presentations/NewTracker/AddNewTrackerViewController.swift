@@ -72,9 +72,6 @@ final class AddNewTrackerViewController: UIViewController {
         
         mainTableView.translatesAutoresizingMaskIntoConstraints = false
         mainTableView.backgroundColor = .ypWhite
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
-        mainTableView.addGestureRecognizer(tapGesture)
     }
     
     private func addElements() {
@@ -95,10 +92,6 @@ final class AddNewTrackerViewController: UIViewController {
             buttonsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             buttonsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
-    }
-    
-    @objc private func tableViewTapped() {
-        view.endEditing(true)
     }
     
     @objc private func cancel() {
@@ -192,8 +185,8 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
 }
 
 extension AddNewTrackerViewController: AddNewTrackerViewControllerDelegate {
-    func showViewController() {
-        let viewController = AddCategoryViewController()
+    func showViewController(_ viewController: UIViewController) {
+        let viewController = viewController
         let navVC = UINavigationController(rootViewController: viewController)
         present(navVC, animated: true)
     }

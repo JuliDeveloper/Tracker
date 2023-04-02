@@ -33,6 +33,7 @@
 		256E016329D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016229D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift */; };
 		256E016529D7844100E2A413 /* AddNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */; };
 		256E016729D785A300E2A413 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016629D785A300E2A413 /* CustomTextField.swift */; };
+		256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		256E016229D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewControllerDelegate.swift; sourceTree = "<group>"; };
 		256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewCategoryViewController.swift; sourceTree = "<group>"; };
 		256E016629D785A300E2A413 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
+		256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +204,7 @@
 				255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */,
 				256E015B29D7557600E2A413 /* AddCategoryViewController.swift */,
 				256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */,
+				256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
 				255B097D29D5C6B300A599E3 /* AddNewTrackerViewController.swift in Sources */,
+				256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */,
 				256E016529D7844100E2A413 /* AddNewCategoryViewController.swift in Sources */,
 				255B097029D59F1500A599E3 /* GeometricParams.swift in Sources */,
 			);

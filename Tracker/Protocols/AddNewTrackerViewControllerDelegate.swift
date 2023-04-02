@@ -1,5 +1,5 @@
 import UIKit
 
 protocol AddNewTrackerViewControllerDelegate: AnyObject {
-    func showViewController()
+    func showViewController(_ viewController: UIViewController)
 }
