@@ -1,15 +1,15 @@
 import Foundation
 
 struct Schedule {
-    let weekDays: [WeekDay: Bool]
+    let weekDays: [WeekDay]
 }
 
-enum WeekDay: String {
-    case monday = "Понедельник"
-    case tuesday = "Вторник"
-    case wednesday = "Среда"
-    case thursday = "Четверг"
-    case friday = "Пятница"
-    case saturday = "Суббота"
-    case sunday = "Воскресенье"
+enum WeekDay: Int {
+    case monday = 1 //"Понедельник"
+    case tuesday = 2 //"Вторник"
+    case wednesday = 3 //"Среда"
+    case thursday = 4 //"Четверг"
+    case friday = 5 //"Пятница"
+    case saturday = 6 //"Суббота"
+    case sunday = 7 //"Воскресенье"
 }

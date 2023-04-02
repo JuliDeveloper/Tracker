@@ -63,7 +63,7 @@ final class ListTrackersViewController: UIViewController {
         return stack
     }()
     
-    private let searchTextField: UISearchTextField = {
+    private lazy var searchTextField: UISearchTextField = {
         let textField = UISearchTextField()
         textField.backgroundColor = .ypBackground
         textField.textColor = .ypBlack
@@ -81,6 +81,11 @@ final class ListTrackersViewController: UIViewController {
         )
         textField.attributedPlaceholder = attributedPlaceholder
         
+        textField.addTarget(
+            self,
+            action: #selector(searchTracker),
+            for: .editingChanged
+        )
         return textField
     }()
     
@@ -122,8 +127,16 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private var tasksList: [String] = ["1"]
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
+    
+    var categories: [TrackerCategory] = []
+    var visibleCategories: [TrackerCategory] = []
+    var completedTrackers: [TrackerRecord] = []
+    var idCompletedTrackers: Set<UUID> = []
+    var currentDate = Date()
+    var isSearching: Bool {
+        return !(searchTextField.text?.isEmpty ?? false)
+    }
    
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -282,7 +295,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func changeScenario() {
-        if tasksList.isEmpty {
+        if categories.isEmpty {
             collectionView.isHidden = true
             defaultStackView.isHidden = false
         } else {
@@ -303,20 +316,59 @@ final class ListTrackersViewController: UIViewController {
         dateLabel.text = dateString
     }
     
-    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        updateDateLabelTitle(with: selectedDate)
+    private func updateSearchState() {
+        searchTextField.text = ""
+        visibleCategories.removeAll()
     }
+    
+    private func checkVisibleCategories() {
+        if visibleCategories.isEmpty {
+            collectionView.isHidden = true
+            defaultStackView.isHidden = false
+        }
+    }
+    
+    @objc func datePickerValueChanged() {
+        let selectedDate = datePicker.date
+        
+        currentDate = selectedDate
+        updateDateLabelTitle(with: selectedDate)
+        
+        let calendar = Calendar.current
+        let dayOfWeek = calendar.component(.weekday, from: selectedDate)
+        let indexPath = IndexPath(row: 0, section: categories.count)
+        
+        visibleCategories = categories.filter({ trackerCategory in
+            trackerCategory.trackers.contains { tracker in
+                tracker.schedule?[indexPath.row].weekDays[indexPath.row].rawValue == dayOfWeek
+            }
+        })
+        
+        checkVisibleCategories()
+    }
+
     
     @objc private func addTask() {
         let createTrackerVC = CreateTrackerViewController()
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
     }
+    
+    @objc private func searchTracker() {
+        let searchText = searchTextField.text ?? ""
+        visibleCategories = categories.filter({ trackerCategory in
+            trackerCategory.trackers.contains { tracker in
+                tracker.title.contains(searchText)
+            }
+        })
+        
+        checkVisibleCategories()
+    }
 
     @objc private func cancelSearch() {
         closeButton(state: true)
         searchTextField.resignFirstResponder()
+        updateSearchState()
     }
     
     @objc private func selectFilter() {
@@ -329,6 +381,7 @@ extension ListTrackersViewController: UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         view.endEditing(true)
+        updateSearchState()
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -343,25 +396,32 @@ extension ListTrackersViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-       4
+        categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
         
-        view.configureHeader(title: "Домашний уют")
+        let titleCategory = categories[indexPath.row].title
+        view.configureHeader(title: titleCategory)
         
         return view
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        3
+        let indexPath = IndexPath(row: 0, section: section)
+        let trackers = categories[indexPath.row].trackers
+        
+        return trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        cell.configure(for: cell, title: "Кошка заслонила камеру на созвоне", emoji: "😻", color: .ypColorSection2)
+        let cellData = isSearching ? categories : visibleCategories
+        let tracker = cellData[indexPath.row].trackers[indexPath.row]
+        
+        cell.configure(for: cell, title: tracker.title, emoji: tracker.emoji, color: tracker.color)
         
         return cell
     }
