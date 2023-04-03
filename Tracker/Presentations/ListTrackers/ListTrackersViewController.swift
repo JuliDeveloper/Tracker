@@ -1,5 +1,9 @@
 import UIKit
 
+protocol ListTrackersViewControllerDelegate: AnyObject {
+    func updateCollectionView()
+}
+
 final class ListTrackersViewController: UIViewController {
     //MARK: - Properties
     private let headerView: UIView = {
@@ -149,6 +153,11 @@ final class ListTrackersViewController: UIViewController {
         configureCollectionView()
         changeScenario()
         updateDateLabelTitle(with: Date())
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateCollectionView()
     }
     
     //MARK: - Helpers
@@ -360,8 +369,9 @@ final class ListTrackersViewController: UIViewController {
     
     @objc private func addTask() {
         let createTrackerVC = CreateTrackerViewController()
-        let navVC = UINavigationController(rootViewController: createTrackerVC)
-        present(navVC, animated: true)
+        let newTrackerVC = AddNewTrackerViewController()
+        newTrackerVC.updateDelegate = self
+        present(createTrackerVC, animated: true)
     }
     
     @objc private func searchTracker() {
@@ -459,5 +469,12 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         params.cellSpacing
+    }
+}
+
+extension ListTrackersViewController: ListTrackersViewControllerDelegate{
+    func updateCollectionView() {
+        getData()
+        collectionView.reloadData()
     }
 }

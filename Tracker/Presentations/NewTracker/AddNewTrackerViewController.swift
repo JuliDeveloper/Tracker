@@ -33,6 +33,7 @@ final class AddNewTrackerViewController: UIViewController {
     }()
     
     weak var delegate: TitleTrackerCellDelegate?
+    weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -94,12 +95,37 @@ final class AddNewTrackerViewController: UIViewController {
         ])
     }
     
+    private func saveTracker() {
+        let dataManager = DataManager.shared
+        let categoryToUpdate = dataManager.category
+        let newTracker = Tracker(id: UUID(), title: "123", color: .ypColorSection6, emoji: "", schedule: nil)
+        let newTrackers = categoryToUpdate.trackers + [newTracker]
+
+        let updatedCategory = TrackerCategory(
+            title: categoryToUpdate.title,
+            trackers: newTrackers
+        )
+        
+        var categories = dataManager.getCategories()
+
+        if let index = dataManager.getCategories().firstIndex(where: { $0.title == categoryToUpdate.title }) {
+            categories[index] = updatedCategory
+            
+            dataManager.category = updatedCategory
+            dataManager.category = categories[index]
+        }
+    }
+    
     @objc private func cancel() {
         dismiss(animated: true)
     }
     
     @objc private func create() {
-        dismiss(animated: true)
+        saveTracker()
+        updateDelegate?.updateCollectionView()
+        let listVC = ListTrackersViewController()
+        listVC.modalPresentationStyle = .fullScreen
+        present(listVC, animated: true)
     }
 }
 
