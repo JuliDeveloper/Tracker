@@ -1,5 +1,9 @@
 import UIKit
 
+protocol NewTitleTrackerCellDelegate: AnyObject {
+    func updateTrackerTitle(_ newText: String)
+}
+
 final class AddNewTrackerViewController: UIViewController {
     //MARK: - Properties
     private let mainTableView = UITableView()
@@ -32,6 +36,8 @@ final class AddNewTrackerViewController: UIViewController {
         return button
     }()
     
+    var tracker: Tracker = Tracker(id: UUID(), title: "", color: .red, emoji: "", schedule: nil)
+    var trackerTitle = ""
     weak var delegate: TitleTrackerCellDelegate?
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
@@ -98,7 +104,8 @@ final class AddNewTrackerViewController: UIViewController {
     private func saveTracker() {
         let dataManager = DataManager.shared
         let categoryToUpdate = dataManager.category
-        let newTracker = Tracker(id: UUID(), title: "123", color: .ypColorSection6, emoji: "", schedule: nil)
+        
+        let newTracker = Tracker(id: UUID(), title: trackerTitle, color: .ypColorSection6, emoji: "", schedule: nil)
         let newTrackers = categoryToUpdate.trackers + [newTracker]
 
         let updatedCategory = TrackerCategory(
@@ -173,6 +180,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
             else { return UITableViewCell() }
             titleCell.configureCell(delegate: self)
             delegate = titleCell
+            titleCell.delegateUpdateTitle = self
             return titleCell
         case 1:
             guard
@@ -215,5 +223,11 @@ extension AddNewTrackerViewController: AddNewTrackerViewControllerDelegate {
         let viewController = viewController
         let navVC = UINavigationController(rootViewController: viewController)
         present(navVC, animated: true)
+    }
+}
+
+extension AddNewTrackerViewController: NewTitleTrackerCellDelegate {
+    func updateTrackerTitle(_ newText: String) {
+        trackerTitle = newText
     }
 }

@@ -26,6 +26,8 @@ final class TitleTrackerCell: UITableViewCell {
         return label
     }()
     
+    weak var delegateUpdateTitle: NewTitleTrackerCellDelegate?
+    
     //MARK: - Helpers
     func configureCell(delegate: AddNewTrackerViewController) {
         backgroundColor = .clear
@@ -34,6 +36,7 @@ final class TitleTrackerCell: UITableViewCell {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         trackerTitleTextField.delegate = delegate
+        trackerTitleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         
         addElements()
         setupConstraint()
@@ -78,6 +81,12 @@ final class TitleTrackerCell: UITableViewCell {
                 equalTo: contentView.centerXAnchor
             )
         ])
+    }
+    
+    @objc private func textFieldDidChange() {
+        if let text = trackerTitleTextField.text {
+            delegateUpdateTitle?.updateTrackerTitle(text)
+        }
     }
 }
 
