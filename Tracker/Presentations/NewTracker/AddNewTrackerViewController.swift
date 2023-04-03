@@ -158,16 +158,15 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        switch indexPath.section {
-        case 0:
-            return 99
-        case 1:
-            return 174
-        default:
-            break
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.titleTrackerCellIdentifier) as! TitleTrackerCell
+            cell.configureCell(delegate: self)
+            
+            let size = cell.contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+            return size.height
+        } else {
+            return 175
         }
-        
-        return CGFloat()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

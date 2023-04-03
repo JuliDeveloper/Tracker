@@ -36,7 +36,9 @@ final class FilterTableViewCell: UITableViewCell {
             tableView.topAnchor.constraint(
                 equalTo: contentView.topAnchor, constant: 24
             ),
-            tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            tableView.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor
+            )
         ])
     }
 }

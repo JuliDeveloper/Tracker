@@ -32,8 +32,6 @@ final class TitleTrackerCell: UITableViewCell {
     func configureCell(delegate: AddNewTrackerViewController) {
         backgroundColor = .clear
         selectionStyle = .none
-                
-        contentView.translatesAutoresizingMaskIntoConstraints = false
         
         trackerTitleTextField.delegate = delegate
         trackerTitleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
@@ -55,30 +53,20 @@ final class TitleTrackerCell: UITableViewCell {
     
     private func setupConstraint() {
         NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(
-                equalTo: leadingAnchor, constant: 16
+            cellStackView.topAnchor.constraint(
+                equalTo: contentView.topAnchor,constant: 24
             ),
-            contentView.trailingAnchor.constraint(
-                equalTo: trailingAnchor, constant: -16
-            ),
-            contentView.topAnchor.constraint(
-                equalTo: topAnchor, constant: 24
-            ),
-            contentView.heightAnchor.constraint(
-                equalToConstant: 75
-            ),
-            
             cellStackView.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor
+                equalTo: contentView.leadingAnchor, constant: 16
             ),
             cellStackView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor
+                equalTo: contentView.trailingAnchor, constant: -16
             ),
             cellStackView.heightAnchor.constraint(
                 equalToConstant: 75
             ),
-            cellStackView.centerXAnchor.constraint(
-                equalTo: contentView.centerXAnchor
+            cellStackView.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor
             )
         ])
     }
