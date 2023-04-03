@@ -371,7 +371,8 @@ final class ListTrackersViewController: UIViewController {
         let createTrackerVC = CreateTrackerViewController()
         let newTrackerVC = AddNewTrackerViewController()
         newTrackerVC.updateDelegate = self
-        present(createTrackerVC, animated: true)
+        let navVC = UINavigationController(rootViewController: createTrackerVC)
+        present(navVC, animated: true)
     }
     
     @objc private func searchTracker() {

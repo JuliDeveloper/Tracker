@@ -66,7 +66,7 @@ final class CreateTrackerViewController: UIViewController {
     
     @objc private func addHabits() {
         let addTrackerVC = AddNewTrackerViewController()
-        present(addTrackerVC, animated: true)
+        navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
     @objc private func addIrregularEvent() {

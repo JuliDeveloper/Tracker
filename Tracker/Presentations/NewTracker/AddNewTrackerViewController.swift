@@ -59,6 +59,7 @@ final class AddNewTrackerViewController: UIViewController {
             .font: UIFont.ypFontMedium16,
             .foregroundColor: UIColor.ypBlack
         ]
+        self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
     private func configureMainTableView() {
