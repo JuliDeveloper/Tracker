@@ -131,9 +131,9 @@ final class AddNewTrackerViewController: UIViewController {
     @objc private func create() {
         saveTracker()
         updateDelegate?.updateCollectionView()
-        let listVC = ListTrackersViewController()
-        listVC.modalPresentationStyle = .fullScreen
-        present(listVC, animated: true)
+        let tabBar = TabBarController()
+        tabBar.modalPresentationStyle = .fullScreen
+        present(tabBar, animated: true)
     }
 }
 
