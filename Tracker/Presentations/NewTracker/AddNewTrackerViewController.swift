@@ -32,14 +32,18 @@ final class AddNewTrackerViewController: UIViewController {
         let button = CustomButton(title: "Создать")
         button.setTitleColor(.ypDefaultWhite, for: .normal)
         button.backgroundColor = .ypGray
+        button.isEnabled = false
         button.addTarget(self, action: #selector(create), for: .touchUpInside)
         return button
     }()
     
-    var tracker: Tracker = Tracker(id: UUID(), title: "", color: .red, emoji: "", schedule: nil)
-    var trackerTitle = ""
+    private var tracker: Tracker = Tracker(id: UUID(), title: "", color: .red, emoji: "", schedule: nil)
+    private var trackerTitle = ""
+    
     weak var delegate: TitleTrackerCellDelegate?
     weak var updateDelegate: ListTrackersViewControllerDelegate?
+    
+    let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -106,7 +110,8 @@ final class AddNewTrackerViewController: UIViewController {
         let dataManager = DataManager.shared
         let categoryToUpdate = dataManager.category
         
-        let newTracker = Tracker(id: UUID(), title: trackerTitle, color: .ypColorSection6, emoji: "", schedule: nil)
+        let color = colors.randomElement() ?? UIColor()
+        let newTracker = Tracker(id: UUID(), title: trackerTitle, color: color, emoji: "🐶", schedule: nil)
         let newTrackers = categoryToUpdate.trackers + [newTracker]
 
         let updatedCategory = TrackerCategory(
@@ -203,6 +208,14 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentText = textField.text ?? ""
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
+        
+        if newText.count >= 1 {
+            createButton.backgroundColor = .ypBlack
+            createButton.isEnabled = true
+        } else {
+            createButton.backgroundColor = .ypGray
+            createButton.isEnabled = false
+        }
         
         if newText.count > 38 {
             mainTableView.performBatchUpdates {
