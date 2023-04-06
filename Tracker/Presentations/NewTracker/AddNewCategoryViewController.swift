@@ -46,7 +46,6 @@ final class AddNewCategoryViewController: UIViewController {
             textField.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24
             ),
-            textField.heightAnchor.constraint(equalToConstant: 75),
             
             button.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor, constant: 20

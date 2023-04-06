@@ -1,13 +1,7 @@
 import UIKit
 
-protocol NewTitleTrackerCellDelegate: AnyObject {
-    func updateTrackerTitle(_ newText: String)
-}
-
 final class AddNewTrackerViewController: UIViewController {
-    //MARK: - Properties
-    private let mainTableView = UITableView()
-        
+    private let scrollView = UIScrollView()
     private let buttonsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -37,25 +31,63 @@ final class AddNewTrackerViewController: UIViewController {
         return button
     }()
     
+    private let titleStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .fill
+        stack.spacing = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private let trackerTitleTextField = CustomTextField(
+        text: "Введите название трекера"
+    )
+    
+    private let warningLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.font = UIFont.ypFontMedium17
+        label.textColor = .ypRed
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let tableView = UITableView()
+    
+    private let titlesCells = ["Категория", "Расписание"]
+    private let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
     private var tracker: Tracker = Tracker(id: UUID(), title: "", color: .red, emoji: "", schedule: nil)
     private var trackerTitle = ""
     
-    weak var delegate: TitleTrackerCellDelegate?
+    weak var delegate: AddNewTrackerViewControllerDelegate?
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
-    let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
-    
-    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        addElements()
         configureNavBar()
-        configureMainTableView()
+        addElements()
+        configureScrollView()
+        configureTableView()
+        configureTextField()
         setupConstraints()
     }
     
-    //MARK: - Helpers
+    func addElements() {
+        view.addSubview(buttonsStackView)
+        view.addSubview(scrollView)
+        
+        scrollView.addSubview(titleStackView)
+        scrollView.addSubview(tableView)
+        
+        titleStackView.addArrangedSubview(trackerTitleTextField)
+        
+        buttonsStackView.addArrangedSubview(cancelButton)
+        buttonsStackView.addArrangedSubview(createButton)
+    }
+    
     private func configureNavBar() {
         title = "Новая привычка"
         
@@ -66,44 +98,85 @@ final class AddNewTrackerViewController: UIViewController {
         self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
-    private func configureMainTableView() {
-        mainTableView.delegate = self
-        mainTableView.dataSource = self
-        
-        mainTableView.register(
-            TitleTrackerCell.self,
-            forCellReuseIdentifier: Constants.titleTrackerCellIdentifier
-        )
-        mainTableView.register(
-            FilterTableViewCell.self,
-            forCellReuseIdentifier: Constants.filterCellIdentifier
-        )
-        
-        mainTableView.backgroundColor = .red
-        mainTableView.separatorStyle = .none
-        
-        mainTableView.translatesAutoresizingMaskIntoConstraints = false
-        mainTableView.backgroundColor = .ypWhite
+    func configureScrollView() {
+        scrollView.frame = view.bounds
+        scrollView.contentSize = CGSize(width: view.bounds.width, height: view.bounds.height)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .ypWhite
     }
     
-    private func addElements() {
-        view.addSubview(mainTableView)
-        view.addSubview(buttonsStackView)
-        buttonsStackView.addArrangedSubview(cancelButton)
-        buttonsStackView.addArrangedSubview(createButton)
+    func configureTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
+        
+        tableView.separatorStyle = .singleLine
+        
+        tableView.backgroundColor = .ypBackground
+        tableView.layer.cornerRadius = Constants.bigRadius
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    func configureTextField() {
+        trackerTitleTextField.delegate = self
+        trackerTitleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            mainTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mainTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mainTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            mainTableView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
+            buttonsStackView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
+            buttonsStackView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor, constant: 16
+            ),
+            buttonsStackView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor, constant: -16
+            ),
             
-            buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            buttonsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            buttonsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            scrollView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor
+            ),
+            scrollView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor
+            ),
+            scrollView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor
+            ),
+            scrollView.bottomAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor
+            ),
+            
+            titleStackView.topAnchor.constraint(
+                equalTo: scrollView.topAnchor, constant: 24
+            ),
+            titleStackView.leadingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.leadingAnchor, constant: 16
+            ),
+            titleStackView.trailingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.trailingAnchor, constant: -16
+            ),
+            
+            tableView.leadingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.leadingAnchor, constant: 16
+            ),
+            tableView.trailingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.trailingAnchor, constant: -16
+            ),
+            tableView.topAnchor.constraint(
+                equalTo: titleStackView.bottomAnchor, constant: 24
+            ),
+            tableView.heightAnchor.constraint(
+                equalToConstant: 150
+            )
         ])
+    }
+    
+    private func showViewController(_ viewController: UIViewController) {
+        let viewController = viewController
+        let navVC = UINavigationController(rootViewController: viewController)
+        present(navVC, animated: true)
     }
     
     private func saveTracker() {
@@ -129,78 +202,36 @@ final class AddNewTrackerViewController: UIViewController {
         }
     }
     
+    private func showWarningLabel(state: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            if state {
+                self.titleStackView.addArrangedSubview(self.warningLabel)
+                self.warningLabel.alpha = 1
+            } else {
+                self.warningLabel.alpha = 0
+                self.titleStackView.removeArrangedSubview(self.warningLabel)
+                self.warningLabel.removeFromSuperview()
+            }
+        }
+    }
+
+    @objc private func textFieldDidChange() {
+        if let text = trackerTitleTextField.text {
+            trackerTitle = text
+        }
+    }
+    
     @objc private func cancel() {
         dismiss(animated: true)
     }
     
     @objc private func create() {
+        print("hi")
         saveTracker()
         updateDelegate?.updateCollectionView()
         let tabBar = TabBarController()
         tabBar.modalPresentationStyle = .fullScreen
         present(tabBar, animated: true)
-    }
-}
-
-extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        2
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        switch section {
-        case 0:
-            return 1
-        case 1:
-            return 1
-        default:
-            break
-        }
-        
-        return Int()
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.titleTrackerCellIdentifier) as! TitleTrackerCell
-            cell.configureCell(delegate: self)
-            
-            let size = cell.contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-            return size.height
-        } else {
-            return 175
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        switch indexPath.section {
-        case 0:
-            guard
-                let titleCell = tableView.dequeueReusableCell(
-                    withIdentifier: Constants.titleTrackerCellIdentifier,
-                    for: indexPath) as? TitleTrackerCell
-            else { return UITableViewCell() }
-            titleCell.configureCell(delegate: self)
-            delegate = titleCell
-            titleCell.delegateUpdateTitle = self
-            return titleCell
-        case 1:
-            guard
-                let filterCell = tableView.dequeueReusableCell(
-                    withIdentifier: Constants.filterCellIdentifier,
-                    for: indexPath) as? FilterTableViewCell
-            else { return UITableViewCell() }
-            filterCell.configureCell()
-            filterCell.delegate = self
-            return filterCell
-        default:
-            break
-        }
-        
-        return UITableViewCell()
     }
 }
 
@@ -218,29 +249,67 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
         }
         
         if newText.count > 38 {
-            mainTableView.performBatchUpdates {
-                self.delegate?.updateCell(state: false)
-            }
+            showWarningLabel(state: true)
         } else {
-            mainTableView.performBatchUpdates {
-                self.delegate?.updateCell(state: true)
-            }
+            showWarningLabel(state: false)
         }
         
         return newText.count <= 38
     }
 }
 
-extension AddNewTrackerViewController: AddNewTrackerViewControllerDelegate {
-    func showViewController(_ viewController: UIViewController) {
-        let viewController = viewController
-        let navVC = UINavigationController(rootViewController: viewController)
-        present(navVC, animated: true)
+extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        2
     }
-}
-
-extension AddNewTrackerViewController: NewTitleTrackerCellDelegate {
-    func updateTrackerTitle(_ newText: String) {
-        trackerTitle = newText
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        75
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: Constants.cellIdentifier, for: indexPath
+        )
+        
+        let title = titlesCells[indexPath.row]
+        
+        cell.backgroundColor = .ypBackground
+        cell.selectionStyle = .none
+        cell.accessoryType = .disclosureIndicator
+        
+        if #available(iOS 14.0, *) {
+            var content = cell.defaultContentConfiguration()
+            
+            content.text = title
+            content.secondaryText = ""
+            
+            content.textProperties.font = UIFont.ypFontMedium17
+            content.textProperties.color = .ypBlack
+            content.secondaryTextProperties.font = UIFont.ypFontMedium17
+            content.secondaryTextProperties.color = .ypGray
+            
+            cell.contentConfiguration = content
+        } else {
+            cell.textLabel?.text = title
+            cell.detailTextLabel?.text = ""
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            showViewController(AddCategoryViewController())
+        } else {
+            showViewController(AddScheduleViewController())
+        }
     }
 }

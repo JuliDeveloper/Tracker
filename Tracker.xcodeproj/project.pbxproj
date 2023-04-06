@@ -24,9 +24,6 @@
 		255B097029D59F1500A599E3 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B096F29D59F1500A599E3 /* GeometricParams.swift */; };
 		255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */; };
 		255B097A29D5BD1800A599E3 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097929D5BD1800A599E3 /* CustomButton.swift */; };
-		255B097D29D5C6B300A599E3 /* AddNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */; };
-		255B098129D7186F00A599E3 /* TitleTrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B098029D7186F00A599E3 /* TitleTrackerCell.swift */; };
-		256E015A29D73E3400E2A413 /* FilterTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015929D73E3400E2A413 /* FilterTableView.swift */; };
 		256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015B29D7557600E2A413 /* AddCategoryViewController.swift */; };
 		256E015E29D7581D00E2A413 /* DefaultStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015D29D7581D00E2A413 /* DefaultStackView.swift */; };
 		256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */; };
@@ -39,6 +36,7 @@
 		256E017029D9F9BF00E2A413 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016F29D9F9BF00E2A413 /* TrackerCategory.swift */; };
 		256E017229D9FA4900E2A413 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017129D9FA4900E2A413 /* TrackerRecord.swift */; };
 		256E017529DA11AA00E2A413 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017429DA11AA00E2A413 /* DataManager.swift */; };
+		256E017D29DEED7A00E2A413 /* AddNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,9 +59,6 @@
 		255B096F29D59F1500A599E3 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrackerViewController.swift; sourceTree = "<group>"; };
 		255B097929D5BD1800A599E3 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
-		255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewController.swift; sourceTree = "<group>"; };
-		255B098029D7186F00A599E3 /* TitleTrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTrackerCell.swift; sourceTree = "<group>"; };
-		256E015929D73E3400E2A413 /* FilterTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableView.swift; sourceTree = "<group>"; };
 		256E015B29D7557600E2A413 /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		256E015D29D7581D00E2A413 /* DefaultStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultStackView.swift; sourceTree = "<group>"; };
 		256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTrackerCellDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +71,7 @@
 		256E016F29D9F9BF00E2A413 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		256E017129D9FA4900E2A413 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		256E017429DA11AA00E2A413 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,8 +180,6 @@
 				255B096D29D597B600A599E3 /* HeaderSectionView.swift */,
 				255B096B29D4841200A599E3 /* TrackerCell.swift */,
 				255B097929D5BD1800A599E3 /* CustomButton.swift */,
-				255B098029D7186F00A599E3 /* TitleTrackerCell.swift */,
-				256E015929D73E3400E2A413 /* FilterTableView.swift */,
 				256E015D29D7581D00E2A413 /* DefaultStackView.swift */,
 				256E016629D785A300E2A413 /* CustomTextField.swift */,
 			);
@@ -213,7 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */,
-				255B097C29D5C6B300A599E3 /* AddNewTrackerViewController.swift */,
+				256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */,
 				256E015B29D7557600E2A413 /* AddCategoryViewController.swift */,
 				256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */,
 				256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */,
@@ -331,10 +325,9 @@
 				255B093F29D1E00E00A599E3 /* SceneDelegate.swift in Sources */,
 				255B096C29D4841200A599E3 /* TrackerCell.swift in Sources */,
 				256E015E29D7581D00E2A413 /* DefaultStackView.swift in Sources */,
-				256E015A29D73E3400E2A413 /* FilterTableView.swift in Sources */,
-				255B098129D7186F00A599E3 /* TitleTrackerCell.swift in Sources */,
 				256E016C29D9F84900E2A413 /* Tracker.swift in Sources */,
 				256E016E29D9F8DE00E2A413 /* Schedule.swift in Sources */,
+				256E017D29DEED7A00E2A413 /* AddNewTrackerViewController.swift in Sources */,
 				256E016729D785A300E2A413 /* CustomTextField.swift in Sources */,
 				255B096A29D4472C00A599E3 /* Constants.swift in Sources */,
 				256E016329D77EDA00E2A413 /* AddNewTrackerViewControllerDelegate.swift in Sources */,
@@ -344,7 +337,6 @@
 				256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */,
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
-				255B097D29D5C6B300A599E3 /* AddNewTrackerViewController.swift in Sources */,
 				256E017229D9FA4900E2A413 /* TrackerRecord.swift in Sources */,
 				256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */,
 				256E016529D7844100E2A413 /* AddNewCategoryViewController.swift in Sources */,

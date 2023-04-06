@@ -22,6 +22,8 @@ final class CustomTextField: UITextField {
             attributes: attributes
         )
         self.attributedPlaceholder = attributedPlaceholder
+        
+        heightAnchor.constraint(equalToConstant: 75).isActive = true
     }
     
     required init?(coder: NSCoder) {
