@@ -1,6 +1,7 @@
 import UIKit
 
 final class CustomButton: UIButton {
+    
     //MARK: - Lifecycle
     init(title: String) {
         super.init(frame: .zero)

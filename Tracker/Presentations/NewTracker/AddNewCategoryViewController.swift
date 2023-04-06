@@ -1,6 +1,7 @@
 import UIKit
 
 final class AddNewCategoryViewController: UIViewController {
+    
     //MARK: - Properties
     private let textField = CustomTextField(text: "Введите название категории")
     private let button = CustomButton(title: "Готово")
@@ -26,7 +27,11 @@ final class AddNewCategoryViewController: UIViewController {
         
         setStateButton(for: textField)
         
-        textField.addTarget(self, action: #selector(checkTextField(_:)), for: .editingChanged)
+        textField.addTarget(
+            self,
+            action: #selector(checkTextField),
+            for: .editingChanged
+        )
     }
     
     //MARK: - Helpers
@@ -67,11 +72,12 @@ final class AddNewCategoryViewController: UIViewController {
         }
     }
     
-    @objc private func checkTextField(_ textField: UITextField) {
+    @objc private func checkTextField() {
         setStateButton(for: textField)
     }
 }
 
+//MARK: - UITextFieldDelegate
 extension AddNewCategoryViewController: UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)

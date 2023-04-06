@@ -1,10 +1,7 @@
 import UIKit
 
-protocol AddCategoryViewControllerDelegate: AnyObject {
-    func setSelectOnCell(from indexPath: IndexPath?)
-}
-
 final class AddCategoryViewController: UIViewController {
+    
     //MARK: - Properties
     private let defaultStack = DefaultStackView(
         title: "Привычки и события можно объединить по смыслу"
@@ -13,7 +10,8 @@ final class AddCategoryViewController: UIViewController {
     private let tableView = UITableView()
     private let button = CustomButton(title: "Добавить категорию")
     
-    private var categories: [String] = ["Важное"]
+    private let dataManager = DataManager.shared
+    private var categories = [TrackerCategory]()
     private var titleCategory = ""
     
     var selectedIndexPath: IndexPath?
@@ -31,30 +29,31 @@ final class AddCategoryViewController: UIViewController {
             .foregroundColor: UIColor.ypBlack
         ]
         
+        getData()
         configureTableView()
         addElements()
         setupConstraints()
         showScenario()
-    
-        button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if let indexPath = selectedIndexPath {
-            let cell = tableView.cellForRow(at: indexPath)
-            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-            cell?.accessoryType = .checkmark
-            tableView.reloadData()
-        }
+        
+        button.addTarget(
+            self,
+            action: #selector(addCategory),
+            for: .touchUpInside
+        )
     }
     
     //MARK: - Helpers
+    private func getData() {
+        categories = dataManager.getCategories()
+    }
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.categoryCellIdentifier)
+        tableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: Constants.categoryCellIdentifier
+        )
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = Constants.bigRadius
@@ -118,6 +117,7 @@ final class AddCategoryViewController: UIViewController {
     }
 }
 
+//MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         categories.count
@@ -130,21 +130,32 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.categoryCellIdentifier, for: indexPath)
         
-        let title = categories[indexPath.row]
+        let title = categories[indexPath.row].title
         let lastIndex = categories.count - 1
-
+        
         cell.backgroundColor = .ypBackground
         cell.selectionStyle = .none
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        cell.separatorInset = UIEdgeInsets(
+            top: 0, left: 16, bottom: 0, right: 16
+        )
         
         if indexPath.row == lastIndex {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+            cell.separatorInset = UIEdgeInsets(
+                top: 0, left: cell.bounds.size.width, bottom: 0, right: 0
+            )
             
             let maskLayer = CAShapeLayer()
-            maskLayer.path = UIBezierPath(roundedRect: cell.bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: 16, height: 16)).cgPath
+            maskLayer.path = UIBezierPath(
+                roundedRect: cell.bounds,
+                byRoundingCorners: [.bottomLeft, .bottomRight],
+                cornerRadii: CGSize(width: 16, height: 16)
+            ).cgPath
             cell.layer.mask = maskLayer
         }
         
+        if indexPath == selectedIndexPath {
+            cell.accessoryType = .checkmark
+        }
         
         if #available(iOS 14.0, *) {
             var content = cell.defaultContentConfiguration()
@@ -169,10 +180,10 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         selectedIndexPath = indexPath
         guard let currentCell = tableView.cellForRow(at: selectedIndexPath ?? IndexPath()) else { return }
-                
+        
         currentCell.accessoryType = .checkmark
         
-        titleCategory = categories[indexPath.row]
+        titleCategory = categories[indexPath.row].title
         delegate?.updateCategorySubtitle(from: titleCategory, and: selectedIndexPath)
     }
 }

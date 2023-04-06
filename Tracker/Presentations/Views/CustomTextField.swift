@@ -1,6 +1,8 @@
 import UIKit
 
 final class CustomTextField: UITextField {
+    
+    //MARK: - Lifecycle
     init(text: String) {
         super.init(frame: .zero)
         font = UIFont.ypFontMedium17

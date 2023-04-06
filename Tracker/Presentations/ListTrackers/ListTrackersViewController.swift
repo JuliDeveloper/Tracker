@@ -1,10 +1,7 @@
 import UIKit
 
-protocol ListTrackersViewControllerDelegate: AnyObject {
-    func updateCollectionView()
-}
-
 final class ListTrackersViewController: UIViewController {
+    
     //MARK: - Properties
     private let headerView: UIView = {
         let view = UIView()
@@ -131,7 +128,12 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
+    private let params = GeometricParams(
+        cellCount: 2,
+        leftInset: 16,
+        rightInset: 16,
+        cellSpacing: 9
+    )
     
     var categories: [TrackerCategory] = []
     var visibleCategories: [TrackerCategory] = []
@@ -192,8 +194,15 @@ final class ListTrackersViewController: UIViewController {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: Constants.taskCellIdentifier)
-        collectionView.register(HeaderSectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.headerCellIdentifier)
+        collectionView.register(
+            TrackerCell.self,
+            forCellWithReuseIdentifier: Constants.taskCellIdentifier
+        )
+        collectionView.register(
+            HeaderSectionView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: Constants.headerCellIdentifier
+        )
         
         collectionView.backgroundColor = .clear
     }
@@ -362,10 +371,8 @@ final class ListTrackersViewController: UIViewController {
                 tracker.schedule?[indexPath.row].weekDays[indexPath.row].rawValue == dayOfWeek
             }
         })
-        
         checkVisibleCategories()
     }
-
     
     @objc private func addTask() {
         let createTrackerVC = CreateTrackerViewController()
@@ -440,7 +447,12 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         let cellData = isSearching ? visibleCategories : categories
         let tracker = cellData[indexPath.section].trackers[indexPath.row]
         
-        cell.configure(for: cell, title: tracker.title, emoji: tracker.emoji, color: tracker.color)
+        cell.configure(
+            for: cell,
+            title: tracker.title,
+            emoji: tracker.emoji,
+            color: tracker.color
+        )
         
         return cell
     }
@@ -473,7 +485,7 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension ListTrackersViewController: ListTrackersViewControllerDelegate{
+extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     func updateCollectionView() {
         getData()
         collectionView.reloadData()

@@ -1,11 +1,8 @@
 import UIKit
 
-protocol UpdateSubtitleDelegate: AnyObject {
-    func updateCategorySubtitle(from string: String?, and indexPath: IndexPath?)
-    func updateScheduleSubtitle(from array: [String]?, and switchStates: [Int: Bool])
-}
-
 final class AddNewTrackerViewController: UIViewController {
+    
+    //MARK: - Properties
     private let scrollView = UIScrollView()
     private let buttonsStackView: UIStackView = {
         let stack = UIStackView()
@@ -15,7 +12,7 @@ final class AddNewTrackerViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
-        
+    
     private lazy var cancelButton: CustomButton = {
         let button = CustomButton(title: "Отменить")
         button.backgroundColor = .ypWhite
@@ -74,9 +71,9 @@ final class AddNewTrackerViewController: UIViewController {
     private var setSchedule = [String]()
     private var currentSwitchStates = [Int: Bool]()
     
-    weak var delegate: AddNewTrackerViewControllerDelegate?
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -88,7 +85,8 @@ final class AddNewTrackerViewController: UIViewController {
         setupConstraints()
     }
     
-    func addElements() {
+    //MARK: - Helpers
+    private func addElements() {
         view.addSubview(buttonsStackView)
         view.addSubview(scrollView)
         
@@ -111,14 +109,14 @@ final class AddNewTrackerViewController: UIViewController {
         self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
-    func configureScrollView() {
+    private func configureScrollView() {
         scrollView.frame = view.bounds
         scrollView.contentSize = CGSize(width: view.bounds.width, height: view.bounds.height)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.backgroundColor = .ypWhite
     }
     
-    func configureTableView() {
+    private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -199,14 +197,14 @@ final class AddNewTrackerViewController: UIViewController {
         let color = colors.randomElement() ?? UIColor()
         let newTracker = Tracker(id: UUID(), title: trackerTitle, color: color, emoji: "🐶", schedule: nil)
         let newTrackers = categoryToUpdate.trackers + [newTracker]
-
+        
         let updatedCategory = TrackerCategory(
             title: categoryToUpdate.title,
             trackers: newTrackers
         )
         
         var categories = dataManager.getCategories()
-
+        
         if let index = dataManager.getCategories().firstIndex(where: { $0.title == categoryToUpdate.title }) {
             categories[index] = updatedCategory
             
@@ -232,7 +230,7 @@ final class AddNewTrackerViewController: UIViewController {
         let scheduleSubtitle = array.joined(separator: ", ")
         return scheduleSubtitle
     }
-
+    
     @objc private func textFieldDidChange() {
         if let text = trackerTitleTextField.text {
             trackerTitle = text
@@ -253,6 +251,7 @@ final class AddNewTrackerViewController: UIViewController {
     }
 }
 
+//MARK: - UITextFieldDelegate
 extension AddNewTrackerViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentText = textField.text ?? ""
@@ -276,6 +275,7 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         2
@@ -349,6 +349,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     }
 }
 
+//MARK: - UpdateSubtitleDelegate
 extension AddNewTrackerViewController: UpdateSubtitleDelegate {
     func updateCategorySubtitle(from string: String?, and indexPath: IndexPath?) {
         categorySubtitle = string ?? ""

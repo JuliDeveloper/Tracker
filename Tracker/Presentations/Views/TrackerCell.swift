@@ -1,7 +1,7 @@
 import UIKit
 
 final class TrackerCell: UICollectionViewCell {
-    
+
     //MARK: - Properties
     private let mainView: UIView = {
         let view = UIView()

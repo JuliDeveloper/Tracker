@@ -2,19 +2,33 @@ import UIKit
 
 final class AddScheduleViewController: UIViewController {
     
+    //MARK: - Properties
     private let weekDayTableView = UITableView()
     private lazy var doneButton: CustomButton = {
         let button = CustomButton(title: "Готово")
-        button.addTarget(self, action: #selector(saveSchedule), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(saveSchedule),
+            for: .touchUpInside
+        )
         return button
     }()
     
-    private let weekDay = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    private let weekDay = [
+        "Понедельник",
+        "Вторник",
+        "Среда",
+        "Четверг",
+        "Пятница",
+        "Суббота",
+        "Воскресенье"
+    ]
     
     var schedule: [String] = []
     var switchStates = [Int: Bool]()
     weak var delegate: UpdateSubtitleDelegate?
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -34,15 +48,22 @@ final class AddScheduleViewController: UIViewController {
         weekDayTableView.delegate = self
         weekDayTableView.dataSource = self
         
-        weekDayTableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.weekDayCellIdentifier)
-
+        weekDayTableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: Constants.weekDayCellIdentifier
+        )
+        
         weekDayTableView.backgroundColor = .ypBackground
         weekDayTableView.layer.cornerRadius = Constants.bigRadius
         weekDayTableView.translatesAutoresizingMaskIntoConstraints = false
-        weekDayTableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: weekDayTableView.bounds.width, height: 0))
-
+        weekDayTableView.tableHeaderView = UIView(frame: CGRect(
+            x: 0, y: 0, width: weekDayTableView.bounds.width, height: 0)
+        )
+        
         weekDayTableView.separatorStyle = .singleLine
-        weekDayTableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        weekDayTableView.separatorInset = UIEdgeInsets(
+            top: 0, left: 0, bottom: 0, right: 0
+        )
         weekDayTableView.isScrollEnabled = false
     }
     
@@ -81,6 +102,12 @@ final class AddScheduleViewController: UIViewController {
         ])
     }
     
+    private func removeWeekDay(_ weekDay: String) {
+        if let index = schedule.firstIndex(of: weekDay) {
+            schedule.remove(at: index)
+        }
+    }
+    
     @objc func switchToggled(_ sender: UISwitch) {
         if sender.isOn {
             switchStates[sender.tag] = true
@@ -106,48 +133,32 @@ final class AddScheduleViewController: UIViewController {
             switchStates[sender.tag] = false
             switch sender.tag {
             case 0:
-                if let index = schedule.firstIndex(of: WeekDayTitle.monday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.monday.rawValue)
             case 1:
-                if let index = schedule.firstIndex(of: WeekDayTitle.tuesday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.tuesday.rawValue)
             case 2:
-                if let index = schedule.firstIndex(of: WeekDayTitle.wednesday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.wednesday.rawValue)
             case 3:
-                if let index = schedule.firstIndex(of: WeekDayTitle.thursday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.thursday.rawValue)
             case 4:
-                if let index = schedule.firstIndex(of: WeekDayTitle.friday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.friday.rawValue)
             case 5:
-                if let index = schedule.firstIndex(of: WeekDayTitle.saturday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.saturday.rawValue)
             case 6:
-                if let index = schedule.firstIndex(of: WeekDayTitle.sunday.rawValue) {
-                    schedule.remove(at: index)
-                }
+                removeWeekDay(WeekDayTitle.sunday.rawValue)
             default:
                 break
             }
         }
-        
-        print(schedule)
     }
-        
-        
+    
     @objc private func saveSchedule() {
         delegate?.updateScheduleSubtitle(from: schedule, and: switchStates)
         dismiss(animated: true)
     }
 }
 
+//MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         weekDay.count
@@ -165,11 +176,15 @@ extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource 
         
         cell.backgroundColor = .ypBackground
         cell.selectionStyle = .none
-
+        
         let switcher = UISwitch()
         switcher.onTintColor = .ypBlue
         switcher.tag = indexPath.row
-        switcher.addTarget(self, action: #selector(switchToggled(_:)), for: .valueChanged)
+        switcher.addTarget(
+            self,
+            action: #selector(switchToggled(_:)),
+            for: .valueChanged
+        )
         cell.accessoryView = switcher
         
         if let switchState = switchStates[indexPath.row] {
@@ -178,10 +193,14 @@ extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource 
             switcher.setOn(false, animated: false)
         }
         
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        cell.separatorInset = UIEdgeInsets(
+            top: 0, left: 16, bottom: 0, right: 16
+        )
         
         if indexPath.row == lastIndex {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+            cell.separatorInset = UIEdgeInsets(
+                top: 0, left: cell.bounds.size.width, bottom: 0, right: 0
+            )
         }
         
         if #available(iOS 14.0, *) {

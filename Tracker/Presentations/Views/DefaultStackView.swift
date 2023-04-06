@@ -1,6 +1,7 @@
 import UIKit
 
 final class DefaultStackView: UIStackView {
+    
     //MARK: - Properties
     let imageView: UIImageView = {
         let imageView = UIImageView()
