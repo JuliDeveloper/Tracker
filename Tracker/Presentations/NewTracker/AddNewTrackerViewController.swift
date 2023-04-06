@@ -1,5 +1,10 @@
 import UIKit
 
+protocol UpdateSubtitleDelegate: AnyObject {
+    func updateCategorySubtitle(from string: String?, and indexPath: IndexPath?)
+    func updateScheduleSubtitle(from array: [String]?, and switchStates: [Int: Bool])
+}
+
 final class AddNewTrackerViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let buttonsStackView: UIStackView = {
@@ -58,8 +63,16 @@ final class AddNewTrackerViewController: UIViewController {
     
     private let titlesCells = ["Категория", "Расписание"]
     private let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
-    private var tracker: Tracker = Tracker(id: UUID(), title: "", color: .red, emoji: "", schedule: nil)
+    
+    private var tracker: Tracker = Tracker(
+        id: UUID(), title: "", color: .red, emoji: "", schedule: nil
+    )
+    
     private var trackerTitle = ""
+    private var categorySubtitle = ""
+    private var currentIndexCategory: IndexPath?
+    private var setSchedule = [String]()
+    private var currentSwitchStates = [Int: Bool]()
     
     weak var delegate: AddNewTrackerViewControllerDelegate?
     weak var updateDelegate: ListTrackersViewControllerDelegate?
@@ -118,7 +131,7 @@ final class AddNewTrackerViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    func configureTextField() {
+    private func configureTextField() {
         trackerTitleTextField.delegate = self
         trackerTitleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
@@ -214,6 +227,11 @@ final class AddNewTrackerViewController: UIViewController {
             }
         }
     }
+    
+    private func getSchedule(from array: [String]) -> String {
+        let scheduleSubtitle = array.joined(separator: ", ")
+        return scheduleSubtitle
+    }
 
     @objc private func textFieldDidChange() {
         if let text = trackerTitleTextField.text {
@@ -282,7 +300,12 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
             var content = cell.defaultContentConfiguration()
             
             content.text = title
-            content.secondaryText = ""
+            
+            if indexPath.row == 0 {
+                content.secondaryText = categorySubtitle
+            } else {
+                content.secondaryText = getSchedule(from: setSchedule)
+            }
             
             content.textProperties.font = UIFont.ypFontMedium17
             content.textProperties.color = .ypBlack
@@ -292,7 +315,12 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
             cell.contentConfiguration = content
         } else {
             cell.textLabel?.text = title
-            cell.detailTextLabel?.text = ""
+            
+            if indexPath.row == 0 {
+                cell.detailTextLabel?.text = categorySubtitle
+            } else {
+                cell.detailTextLabel?.text = getSchedule(from: setSchedule)
+            }
         }
         return cell
     }
@@ -307,9 +335,35 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            showViewController(AddCategoryViewController())
+            let vc = AddCategoryViewController()
+            vc.delegate = self
+            vc.selectedIndexPath = currentIndexCategory
+            showViewController(vc)
         } else {
-            showViewController(AddScheduleViewController())
+            let vc = AddScheduleViewController()
+            vc.delegate = self
+            vc.schedule = setSchedule
+            vc.switchStates = currentSwitchStates
+            showViewController(vc)
         }
+    }
+}
+
+extension AddNewTrackerViewController: UpdateSubtitleDelegate {
+    func updateCategorySubtitle(from string: String?, and indexPath: IndexPath?) {
+        categorySubtitle = string ?? ""
+        currentIndexCategory = indexPath
+        
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    func updateScheduleSubtitle(from array: [String]?, and switchStates: [Int: Bool]) {
+        setSchedule = array ?? []
+        currentSwitchStates = switchStates
+        
+        let indexPath = IndexPath(row: 1, section: 0)
+        tableView.reloadData()
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
 }

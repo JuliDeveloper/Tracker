@@ -1,5 +1,9 @@
 import UIKit
 
+protocol AddCategoryViewControllerDelegate: AnyObject {
+    func setSelectOnCell(from indexPath: IndexPath?)
+}
+
 final class AddCategoryViewController: UIViewController {
     //MARK: - Properties
     private let defaultStack = DefaultStackView(
@@ -7,11 +11,13 @@ final class AddCategoryViewController: UIViewController {
     )
     
     private let tableView = UITableView()
-    
     private let button = CustomButton(title: "Добавить категорию")
     
-    private var selectedIndexPath: IndexPath? = nil
-    var categories: [String] = ["Важное"]
+    private var categories: [String] = ["Важное"]
+    private var titleCategory = ""
+    
+    var selectedIndexPath: IndexPath?
+    weak var delegate: UpdateSubtitleDelegate?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -31,6 +37,16 @@ final class AddCategoryViewController: UIViewController {
         showScenario()
     
         button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let indexPath = selectedIndexPath {
+            let cell = tableView.cellForRow(at: indexPath)
+            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            cell?.accessoryType = .checkmark
+            tableView.reloadData()
+        }
     }
     
     //MARK: - Helpers
@@ -153,7 +169,10 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         selectedIndexPath = indexPath
         guard let currentCell = tableView.cellForRow(at: selectedIndexPath ?? IndexPath()) else { return }
-        
+                
         currentCell.accessoryType = .checkmark
+        
+        titleCategory = categories[indexPath.row]
+        delegate?.updateCategorySubtitle(from: titleCategory, and: selectedIndexPath)
     }
 }

@@ -10,7 +10,10 @@ final class AddScheduleViewController: UIViewController {
     }()
     
     private let weekDay = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    private var schedule: [String] = []
+    
+    var schedule: [String] = []
+    var switchStates = [Int: Bool]()
+    weak var delegate: UpdateSubtitleDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,6 +83,7 @@ final class AddScheduleViewController: UIViewController {
     
     @objc func switchToggled(_ sender: UISwitch) {
         if sender.isOn {
+            switchStates[sender.tag] = true
             switch sender.tag {
             case 0:
                 schedule.append(WeekDayTitle.monday.rawValue)
@@ -99,6 +103,7 @@ final class AddScheduleViewController: UIViewController {
                 break
             }
         } else {
+            switchStates[sender.tag] = false
             switch sender.tag {
             case 0:
                 if let index = schedule.firstIndex(of: WeekDayTitle.monday.rawValue) {
@@ -132,11 +137,14 @@ final class AddScheduleViewController: UIViewController {
                 break
             }
         }
+        
+        print(schedule)
     }
         
         
     @objc private func saveSchedule() {
-        print("done")
+        delegate?.updateScheduleSubtitle(from: schedule, and: switchStates)
+        dismiss(animated: true)
     }
 }
 
@@ -163,6 +171,12 @@ extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource 
         switcher.tag = indexPath.row
         switcher.addTarget(self, action: #selector(switchToggled(_:)), for: .valueChanged)
         cell.accessoryView = switcher
+        
+        if let switchState = switchStates[indexPath.row] {
+            switcher.setOn(switchState, animated: false)
+        } else {
+            switcher.setOn(false, animated: false)
+        }
         
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
