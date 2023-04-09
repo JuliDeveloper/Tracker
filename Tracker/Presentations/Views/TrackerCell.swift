@@ -50,7 +50,10 @@ final class TrackerCell: UICollectionViewCell {
     
     private lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(named: "plusCell"), for: .normal)
+        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
+        let image = UIImage(systemName: "plus", withConfiguration: pointSize)
+        button.tintColor = .ypWhite
+        button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 34 / 2
         button.addTarget(self, action: #selector(addDay), for: .touchUpInside)
@@ -175,7 +178,9 @@ final class TrackerCell: UICollectionViewCell {
             counter -= 1
             let newDayCont = pluralizeDays(counter)
             counterDayLabel.text = "\(newDayCont)"
-            plusButton.setImage(UIImage(named: "plusCell"), for: .normal)
+            let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
+            let image = UIImage(systemName: "plus", withConfiguration: pointSize)
+            plusButton.setImage(image, for: .normal)
             plusButton.layer.opacity = 1
         }
     }
