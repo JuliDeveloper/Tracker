@@ -43,6 +43,7 @@ final class ListTrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "ru_Ru")
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.clipsToBounds = true
         picker.layer.cornerRadius = Constants.smallRadius
@@ -135,16 +136,16 @@ final class ListTrackersViewController: UIViewController {
         cellSpacing: 9
     )
     
-    var categories: [TrackerCategory] = []
-    var visibleCategories: [TrackerCategory] = []
-    var completedTrackers: [TrackerRecord] = []
-    var idCompletedTrackers: Set<UUID> = []
-    var currentDate = Date()
-    var isSearching: Bool {
+    private var categories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = []
+    private var idCompletedTrackers: Set<UUID> = []
+    private var currentDate = Date()
+    private var isSearching: Bool {
         return searchTextField.text != nil && searchTextField.text?.isEmpty ?? false
     }
     
-    let dataManager = DataManager.shared
+    private let dataManager = DataManager.shared
    
     //MARK: - Lifecycle
     override func viewDidLoad() {
