@@ -141,7 +141,7 @@ final class ListTrackersViewController: UIViewController {
     var idCompletedTrackers: Set<UUID> = []
     var currentDate = Date()
     var isSearching: Bool {
-        return !(searchTextField.text?.isEmpty ?? false)
+        return searchTextField.text != nil && searchTextField.text?.isEmpty ?? false
     }
     
     let dataManager = DataManager.shared
@@ -347,11 +347,13 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func checkVisibleCategories() {
-        if visibleCategories.isEmpty {
-            collectionView.isHidden = true
-            defaultStackView.isHidden = false
+        if !isSearching {
+            if visibleCategories.isEmpty {
+                defaultStackView.isHidden = false
+            } else {
+                defaultStackView.isHidden = true
+            }
         } else {
-            collectionView.isHidden = false
             defaultStackView.isHidden = true
         }
     }
@@ -384,12 +386,15 @@ final class ListTrackersViewController: UIViewController {
     
     @objc private func searchTracker() {
         let searchText = searchTextField.text ?? ""
-        visibleCategories = categories.filter({ trackerCategory in
-            trackerCategory.trackers.contains { tracker in
-                tracker.title.contains(searchText)
+     
+        visibleCategories = categories.map { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                return tracker.title.lowercased().contains(searchText.lowercased())
             }
-        })
+            return TrackerCategory(title: category.title, trackers: filteredTrackers)
+        }.filter { $0.trackers.count > 0 }
         
+        collectionView.reloadData()
         checkVisibleCategories()
     }
 
@@ -424,7 +429,7 @@ extension ListTrackersViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        categories.count
+        return isSearching ? categories.count : visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -437,14 +442,16 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let trackers = categories[section].trackers
+        let trackers = isSearching
+            ? categories[section].trackers
+            : visibleCategories[section].trackers
         return trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        let cellData = isSearching ? visibleCategories : categories
+        let cellData = isSearching ? categories : visibleCategories
         let tracker = cellData[indexPath.section].trackers[indexPath.row]
         
         cell.configure(
