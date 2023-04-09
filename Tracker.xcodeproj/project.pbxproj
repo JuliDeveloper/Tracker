@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		254AD8E129E31E7B0061B7B7 /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 254AD8E029E31E7B0061B7B7 /* WeekDay.swift */; };
+		254AD8E629E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 254AD8E529E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift */; };
 		255B093D29D1E00E00A599E3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B093C29D1E00E00A599E3 /* AppDelegate.swift */; };
 		255B093F29D1E00E00A599E3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B093E29D1E00E00A599E3 /* SceneDelegate.swift */; };
 		255B094629D1E00F00A599E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 255B094529D1E00F00A599E3 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		254AD8E029E31E7B0061B7B7 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
+		254AD8E529E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewControllerDelegate.swift; sourceTree = "<group>"; };
 		255B093929D1E00E00A599E3 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		255B093C29D1E00E00A599E3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		255B093E29D1E00E00A599E3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -87,6 +89,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		254AD8E229E31F410061B7B7 /* AddCategory */ = {
+			isa = PBXGroup;
+			children = (
+				256E015B29D7557600E2A413 /* AddCategoryViewController.swift */,
+				256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */,
+			);
+			path = AddCategory;
+			sourceTree = "<group>";
+		};
+		254AD8E329E31F610061B7B7 /* AddNewTraker */ = {
+			isa = PBXGroup;
+			children = (
+				255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */,
+				256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */,
+			);
+			path = AddNewTraker;
+			sourceTree = "<group>";
+		};
+		254AD8E429E31F770061B7B7 /* AddSchedule */ = {
+			isa = PBXGroup;
+			children = (
+				256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */,
+			);
+			path = AddSchedule;
+			sourceTree = "<group>";
+		};
 		255B093029D1E00E00A599E3 = {
 			isa = PBXGroup;
 			children = (
@@ -208,11 +236,9 @@
 		255B097B29D5C33500A599E3 /* NewTracker */ = {
 			isa = PBXGroup;
 			children = (
-				255B097729D5BC7C00A599E3 /* CreateTrackerViewController.swift */,
-				256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */,
-				256E015B29D7557600E2A413 /* AddCategoryViewController.swift */,
-				256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */,
-				256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */,
+				254AD8E329E31F610061B7B7 /* AddNewTraker */,
+				254AD8E229E31F410061B7B7 /* AddCategory */,
+				254AD8E429E31F770061B7B7 /* AddSchedule */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -223,6 +249,7 @@
 				256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */,
 				256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */,
 				256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */,
+				254AD8E529E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -341,6 +368,7 @@
 				256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */,
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
+				254AD8E629E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift in Sources */,
 				256E017229D9FA4900E2A413 /* TrackerRecord.swift in Sources */,
 				256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */,
 				256E016529D7844100E2A413 /* AddNewCategoryViewController.swift in Sources */,

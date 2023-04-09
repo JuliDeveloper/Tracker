@@ -1,9 +1,5 @@
 import UIKit
 
-protocol AddCategoryViewControllerDelegate: AnyObject {
-    func updateListCategories(newCategory: TrackerCategory)
-}
-
 final class AddCategoryViewController: UIViewController {
     
     //MARK: - Properties
