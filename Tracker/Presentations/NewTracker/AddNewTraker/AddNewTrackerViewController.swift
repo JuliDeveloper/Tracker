@@ -61,10 +61,6 @@ final class AddNewTrackerViewController: UIViewController {
     private let titlesCells = ["Категория", "Расписание"]
     private let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
     
-    private var tracker: Tracker = Tracker(
-        id: UUID(), title: "", color: .red, emoji: "", schedule: nil
-    )
-    
     private var trackerTitle = ""
     private var categorySubtitle = ""
     private var currentIndexCategory: IndexPath?
@@ -195,7 +191,7 @@ final class AddNewTrackerViewController: UIViewController {
         let categoryToUpdate = dataManager.category
         
         let color = colors.randomElement() ?? UIColor()
-        let newTracker = Tracker(id: UUID(), title: trackerTitle, color: color, emoji: "🐶", schedule: nil)
+        let newTracker = Tracker(id: UUID(), title: trackerTitle, color: color, emoji: "🐶", schedule: setSchedule)
         let newTrackers = categoryToUpdate.trackers + [newTracker]
         
         let updatedCategory = TrackerCategory(

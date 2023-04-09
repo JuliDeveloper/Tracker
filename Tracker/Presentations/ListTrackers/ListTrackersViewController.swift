@@ -44,6 +44,7 @@ final class ListTrackersViewController: UIViewController {
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
         picker.locale = Locale(identifier: "ru_Ru")
+        picker.calendar.firstWeekday = 2
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.clipsToBounds = true
         picker.layer.cornerRadius = Constants.smallRadius
@@ -140,9 +141,16 @@ final class ListTrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var idCompletedTrackers: Set<UUID> = []
-    private var currentDate = Date()
+    private var currentDate: Date? = nil
+    
     private var isSearching: Bool {
-        return searchTextField.text != nil && searchTextField.text?.isEmpty ?? false
+        return !(searchTextField.text?.isEmpty ?? false)
+    }
+    private var isCheckDate: Bool {
+        return datePicker.date == currentDate
+    }
+    private var isFiltering: Bool {
+        return isSearching || isCheckDate
     }
     
     private let dataManager = DataManager.shared
@@ -157,11 +165,6 @@ final class ListTrackersViewController: UIViewController {
         changeScenario()
         updateDateLabelTitle(with: Date())
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        updateCollectionView()
-//    }
     
     //MARK: - Helpers
     private func configureView() {
@@ -347,34 +350,18 @@ final class ListTrackersViewController: UIViewController {
         visibleCategories.removeAll()
     }
     
-    private func checkVisibleCategories() {
-        if !isSearching {
-            if visibleCategories.isEmpty {
-                defaultStackView.isHidden = false
-            } else {
-                defaultStackView.isHidden = true
-            }
-        } else {
-            defaultStackView.isHidden = true
+    private func checkScenario() {
+        if isFiltering {
+            checkVisibleCategories()
         }
     }
     
-    @objc func datePickerValueChanged() {
-        let selectedDate = datePicker.date
-        
-        currentDate = selectedDate
-        updateDateLabelTitle(with: selectedDate)
-        
-        let calendar = Calendar.current
-        let dayOfWeek = calendar.component(.weekday, from: selectedDate)
-        let indexPath = IndexPath(row: 0, section: categories.count)
-        
-        visibleCategories = categories.filter({ trackerCategory in
-            trackerCategory.trackers.contains { tracker in
-                tracker.schedule?[indexPath.row].numberValue == dayOfWeek
-            }
-        })
-        checkVisibleCategories()
+    private func checkVisibleCategories() {
+        if !visibleCategories.isEmpty {
+            defaultStackView.isHidden = true
+        } else {
+            defaultStackView.isHidden = false
+        }
     }
     
     @objc private func addTask() {
@@ -383,6 +370,27 @@ final class ListTrackersViewController: UIViewController {
         newTrackerVC.updateDelegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
+    }
+    
+    @objc func datePickerValueChanged() {
+        currentDate = datePicker.date
+        updateDateLabelTitle(with: currentDate ?? Date())
+                
+        let calendar = Calendar.current
+        let currentWeekDay = calendar.component(.weekday, from: currentDate ?? Date())
+        
+        visibleCategories = categories.map { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                let containsCurrentWeekDay = tracker.schedule?.contains(where: { weekDay in
+                    return weekDay.numberValue == currentWeekDay
+                }) ?? false
+                return containsCurrentWeekDay
+            }
+            return TrackerCategory(title: category.title, trackers: filteredTrackers)
+        }
+        
+        collectionView.reloadData()
+        checkScenario()
     }
     
     @objc private func searchTracker() {
@@ -396,7 +404,7 @@ final class ListTrackersViewController: UIViewController {
         }.filter { $0.trackers.count > 0 }
         
         collectionView.reloadData()
-        checkVisibleCategories()
+        checkScenario()
     }
 
     @objc private func cancelSearch() {
@@ -430,29 +438,31 @@ extension ListTrackersViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return isSearching ? categories.count : visibleCategories.count
+        return isFiltering ? visibleCategories.count : categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
         
-        let titleCategory = categories[indexPath.row].title
+        let titleCategory = isFiltering
+            ? visibleCategories[indexPath.row].title
+            : categories[indexPath.row].title
         view.configureHeader(title: titleCategory)
         
         return view
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let trackers = isSearching
-            ? categories[section].trackers
-            : visibleCategories[section].trackers
+        let trackers = isFiltering
+            ? visibleCategories[section].trackers
+            : categories[section].trackers
         return trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        let cellData = isSearching ? categories : visibleCategories
+        let cellData = isFiltering ? visibleCategories : categories
         let tracker = cellData[indexPath.section].trackers[indexPath.row]
         
         cell.configure(

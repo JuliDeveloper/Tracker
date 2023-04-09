@@ -11,14 +11,14 @@ class DataManager {
                 title: "Поливать растения",
                 color: .ypColorSection5,
                 emoji: "❤️",
-                schedule: nil
+                schedule: [WeekDay.monday, WeekDay.saturday]
             ),
             Tracker(
                 id: UUID(),
                 title: "Свидание в апреле",
                 color: .ypColorSection14,
                 emoji: "🌺",
-                schedule: nil
+                schedule: [WeekDay.tuesday, WeekDay.friday]
             )
         ]
     )
