@@ -62,6 +62,9 @@ final class TrackerCell: UICollectionViewCell {
     
     private var counter = 0
     private var isCompletedTrackerToday = false
+    let currentDate: Date? = nil
+
+    weak var delegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Helpers
     func configure(for cell: TrackerCell, title: String, emoji: String, color: UIColor) {
@@ -76,13 +79,8 @@ final class TrackerCell: UICollectionViewCell {
         taskTitleLabel.text = title
         emojiLabel.text = emoji
         counterDayLabel.text = "\(wordDay)"
-    }
-    
-    func changeStateButton() {
-        counter += 1
-        plusButton.setImage(UIImage(named: "doneButton"), for: .normal)
-        plusButton.layer.opacity = 0.3
-        plusButton.isEnabled = false
+        
+        checkDate()
     }
     
     private func addElements() {
@@ -165,23 +163,45 @@ final class TrackerCell: UICollectionViewCell {
         }
     }
     
+    private func checkDate() {
+        let selectedDate = delegate?.updateButtonStateFromDate() ?? Date()
+        
+        if selectedDate > currentDate ?? Date() {
+            isCompletedTrackerToday = false
+            configureButton(image: setDefaultImage(), value: 1)
+            plusButton.isEnabled = false
+        } else if selectedDate <= currentDate ?? Date() {
+            isCompletedTrackerToday = false
+            configureButton(image: setDefaultImage(), value: 1)
+            plusButton.isEnabled = true
+        }
+    }
+    
+    private func configureButton(image: UIImage, value: Float) {
+        let newDayCont = pluralizeDays(counter)
+        counterDayLabel.text = "\(newDayCont)"
+        plusButton.setImage(image, for: .normal)
+        plusButton.layer.opacity = value
+    }
+    
+    private func setDefaultImage() -> UIImage {
+        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
+        let image = UIImage(
+            systemName: "plus",
+            withConfiguration: pointSize
+        ) ?? UIImage()
+        return image
+    }
+    
     @objc private func addDay() {
         isCompletedTrackerToday.toggle()
-        
+
         if isCompletedTrackerToday {
             counter += 1
-            let newDayCont = pluralizeDays(counter)
-            counterDayLabel.text = "\(newDayCont)"
-            plusButton.setImage(UIImage(named: "doneButton"), for: .normal)
-            plusButton.layer.opacity = 0.3
+            configureButton(image: UIImage(named: "doneButton") ?? UIImage(), value: 0.3)
         } else {
             counter -= 1
-            let newDayCont = pluralizeDays(counter)
-            counterDayLabel.text = "\(newDayCont)"
-            let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
-            let image = UIImage(systemName: "plus", withConfiguration: pointSize)
-            plusButton.setImage(image, for: .normal)
-            plusButton.layer.opacity = 1
+            configureButton(image: setDefaultImage(), value: 1)
         }
     }
 }

@@ -465,6 +465,7 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         let cellData = isFiltering ? visibleCategories : categories
         let tracker = cellData[indexPath.section].trackers[indexPath.row]
         
+        cell.delegate = self
         cell.configure(
             for: cell,
             title: tracker.title,
@@ -507,5 +508,9 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     func updateCollectionView() {
         getData()
         collectionView.reloadData()
+    }
+    
+    func updateButtonStateFromDate() -> Date {
+        return datePicker.date
     }
 }
