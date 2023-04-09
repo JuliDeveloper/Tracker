@@ -6,7 +6,7 @@ final class AddNewCategoryViewController: UIViewController {
     private let textField = CustomTextField(text: "Введите название категории")
     private let button = CustomButton(title: "Готово")
     
-    var categories: [String] = []
+    weak var delegate: AddCategoryViewControllerDelegate?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -31,6 +31,12 @@ final class AddNewCategoryViewController: UIViewController {
             self,
             action: #selector(checkTextField),
             for: .editingChanged
+        )
+        
+        button.addTarget(
+            self,
+            action: #selector(saveNewCategory),
+            for: .touchUpInside
         )
     }
     
@@ -74,6 +80,15 @@ final class AddNewCategoryViewController: UIViewController {
     
     @objc private func checkTextField() {
         setStateButton(for: textField)
+    }
+    
+    @objc private func saveNewCategory() {
+        let newTitleCategory = textField.text ?? ""
+        let newCategory = TrackerCategory(title: newTitleCategory, trackers: [])
+        
+        delegate?.updateListCategories(newCategory: newCategory)
+        
+        dismiss(animated: true)
     }
 }
 

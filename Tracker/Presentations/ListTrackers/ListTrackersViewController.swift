@@ -158,10 +158,10 @@ final class ListTrackersViewController: UIViewController {
         updateDateLabelTitle(with: Date())
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        updateCollectionView()
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        updateCollectionView()
+//    }
     
     //MARK: - Helpers
     private func configureView() {

@@ -242,7 +242,6 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     @objc private func create() {
-        print("hi")
         saveTracker()
         updateDelegate?.updateCollectionView()
         let tabBar = TabBarController()

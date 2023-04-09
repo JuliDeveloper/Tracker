@@ -1,5 +1,9 @@
 import UIKit
 
+protocol AddCategoryViewControllerDelegate: AnyObject {
+    func updateListCategories(newCategory: TrackerCategory)
+}
+
 final class AddCategoryViewController: UIViewController {
     
     //MARK: - Properties
@@ -112,6 +116,7 @@ final class AddCategoryViewController: UIViewController {
     
     @objc private func addCategory() {
         let newCategoryVC = AddNewCategoryViewController()
+        newCategoryVC.delegate = self
         let navVC = UINavigationController(rootViewController: newCategoryVC)
         present(navVC, animated: true)
     }
@@ -185,5 +190,12 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         titleCategory = categories[indexPath.row].title
         delegate?.updateCategorySubtitle(from: titleCategory, and: selectedIndexPath)
+    }
+}
+
+extension AddCategoryViewController: AddCategoryViewControllerDelegate {
+    func updateListCategories(newCategory: TrackerCategory) {
+        categories.append(newCategory)
+        tableView.reloadData()
     }
 }
