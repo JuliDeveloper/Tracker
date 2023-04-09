@@ -371,7 +371,7 @@ final class ListTrackersViewController: UIViewController {
         
         visibleCategories = categories.filter({ trackerCategory in
             trackerCategory.trackers.contains { tracker in
-                tracker.schedule?[indexPath.row].weekDays[indexPath.row].rawValue == dayOfWeek
+                tracker.schedule?[indexPath.row].numberValue == dayOfWeek
             }
         })
         checkVisibleCategories()

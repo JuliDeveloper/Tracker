@@ -14,17 +14,9 @@ final class AddScheduleViewController: UIViewController {
         return button
     }()
     
-    private let weekDay = [
-        "Понедельник",
-        "Вторник",
-        "Среда",
-        "Четверг",
-        "Пятница",
-        "Суббота",
-        "Воскресенье"
-    ]
+    private let weekDay = WeekDay.allCases
     
-    var schedule: [String] = []
+    var schedule = [WeekDay]()
     var switchStates = [Int: Bool]()
     weak var delegate: UpdateSubtitleDelegate?
     
@@ -102,7 +94,7 @@ final class AddScheduleViewController: UIViewController {
         ])
     }
     
-    private func removeWeekDay(_ weekDay: String) {
+    private func removeWeekDay(_ weekDay: WeekDay) {
         if let index = schedule.firstIndex(of: weekDay) {
             schedule.remove(at: index)
         }
@@ -113,19 +105,19 @@ final class AddScheduleViewController: UIViewController {
             switchStates[sender.tag] = true
             switch sender.tag {
             case 0:
-                schedule.append(WeekDayTitle.monday.rawValue)
+                schedule.append(WeekDay.monday)
             case 1:
-                schedule.append(WeekDayTitle.tuesday.rawValue)
+                schedule.append(WeekDay.tuesday)
             case 2:
-                schedule.append(WeekDayTitle.wednesday.rawValue)
+                schedule.append(WeekDay.wednesday)
             case 3:
-                schedule.append(WeekDayTitle.thursday.rawValue)
+                schedule.append(WeekDay.thursday)
             case 4:
-                schedule.append(WeekDayTitle.friday.rawValue)
+                schedule.append(WeekDay.friday)
             case 5:
-                schedule.append(WeekDayTitle.saturday.rawValue)
+                schedule.append(WeekDay.saturday)
             case 6:
-                schedule.append(WeekDayTitle.sunday.rawValue)
+                schedule.append(WeekDay.sunday)
             default:
                 break
             }
@@ -133,19 +125,19 @@ final class AddScheduleViewController: UIViewController {
             switchStates[sender.tag] = false
             switch sender.tag {
             case 0:
-                removeWeekDay(WeekDayTitle.monday.rawValue)
+                removeWeekDay(WeekDay.monday)
             case 1:
-                removeWeekDay(WeekDayTitle.tuesday.rawValue)
+                removeWeekDay(WeekDay.tuesday)
             case 2:
-                removeWeekDay(WeekDayTitle.wednesday.rawValue)
+                removeWeekDay(WeekDay.wednesday)
             case 3:
-                removeWeekDay(WeekDayTitle.thursday.rawValue)
+                removeWeekDay(WeekDay.thursday)
             case 4:
-                removeWeekDay(WeekDayTitle.friday.rawValue)
+                removeWeekDay(WeekDay.friday)
             case 5:
-                removeWeekDay(WeekDayTitle.saturday.rawValue)
+                removeWeekDay(WeekDay.saturday)
             case 6:
-                removeWeekDay(WeekDayTitle.sunday.rawValue)
+                removeWeekDay(WeekDay.sunday)
             default:
                 break
             }
@@ -171,7 +163,7 @@ extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.weekDayCellIdentifier, for: indexPath)
         
-        let day = weekDay[indexPath.row]
+        let day = weekDay[indexPath.row].rawValue
         let lastIndex = weekDay.count - 1
         
         cell.backgroundColor = .ypBackground

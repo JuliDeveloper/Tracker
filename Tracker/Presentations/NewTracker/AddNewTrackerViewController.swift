@@ -68,7 +68,7 @@ final class AddNewTrackerViewController: UIViewController {
     private var trackerTitle = ""
     private var categorySubtitle = ""
     private var currentIndexCategory: IndexPath?
-    private var setSchedule = [String]()
+    private var setSchedule = [WeekDay]()
     private var currentSwitchStates = [Int: Bool]()
     
     weak var updateDelegate: ListTrackersViewControllerDelegate?
@@ -226,8 +226,8 @@ final class AddNewTrackerViewController: UIViewController {
         }
     }
     
-    private func getSchedule(from array: [String]) -> String {
-        let scheduleSubtitle = array.joined(separator: ", ")
+    private func getSchedule(from array: [WeekDay]) -> String {
+        let scheduleSubtitle = array.compactMap { $0.abbreviationValue }.joined(separator: ", ")
         return scheduleSubtitle
     }
     
@@ -358,8 +358,8 @@ extension AddNewTrackerViewController: UpdateSubtitleDelegate {
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
-    func updateScheduleSubtitle(from array: [String]?, and switchStates: [Int: Bool]) {
-        setSchedule = array ?? []
+    func updateScheduleSubtitle(from weekDays: [WeekDay]?, and switchStates: [Int: Bool]) {
+        setSchedule = weekDays ?? []
         currentSwitchStates = switchStates
         
         let indexPath = IndexPath(row: 1, section: 0)

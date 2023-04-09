@@ -2,5 +2,5 @@ import Foundation
 
 protocol UpdateSubtitleDelegate: AnyObject {
     func updateCategorySubtitle(from string: String?, and indexPath: IndexPath?)
-    func updateScheduleSubtitle(from array: [String]?, and switchStates: [Int: Bool])
+    func updateScheduleSubtitle(from weekDays: [WeekDay]?, and switchStates: [Int: Bool])
 }
