@@ -140,7 +140,6 @@ final class ListTrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
-    private var idCompletedTrackers: Set<UUID> = []
     private var currentDate: Date? = nil
     
     private var isSearching: Bool {
@@ -467,6 +466,7 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         cell.delegate = self
         cell.configure(
             for: cell,
+            tracker: tracker,
             title: tracker.title,
             emoji: tracker.emoji,
             color: tracker.color
@@ -511,5 +511,18 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     
     func updateButtonStateFromDate() -> Date {
         return datePicker.date
+    }
+    
+    func updateCompletedTrackers(tracker: Tracker) {
+        currentDate = datePicker.date
+        
+        if let index = completedTrackers.firstIndex(where: { $0.trackerId == tracker.id && $0.date == currentDate }) {
+            completedTrackers.remove(at: index)
+        } else {
+            let trackerRecord = TrackerRecord(
+                trackerId: tracker.id, date: currentDate ?? Date()
+            )
+            completedTrackers.append(trackerRecord)
+        }
     }
 }

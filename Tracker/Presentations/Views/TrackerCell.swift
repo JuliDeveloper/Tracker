@@ -63,16 +63,25 @@ final class TrackerCell: UICollectionViewCell {
     private var counter = 0
     private var isCompletedTrackerToday = false
     let currentDate: Date? = nil
-
+    var tracker = Tracker(
+        id: UUID(),
+        title: "",
+        color: UIColor(),
+        emoji: "",
+        schedule: []
+    )
+    
     weak var delegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Helpers
-    func configure(for cell: TrackerCell, title: String, emoji: String, color: UIColor) {
+    func configure(for cell: TrackerCell, tracker: Tracker, title: String, emoji: String, color: UIColor) {
         addElements()
         setupConstraints()
         
         mainView.backgroundColor = color
         plusButton.backgroundColor = color
+        
+        self.tracker = tracker
         
         let wordDay = pluralizeDays(counter)
         
@@ -198,10 +207,22 @@ final class TrackerCell: UICollectionViewCell {
 
         if isCompletedTrackerToday {
             counter += 1
-            configureButton(image: UIImage(named: "doneButton") ?? UIImage(), value: 0.3)
+            configureButton(
+                image: UIImage(named: "doneButton") ?? UIImage(),
+                value: 0.3
+            )
+            delegate?.updateCompletedTrackers(
+                tracker: tracker
+            )
         } else {
             counter -= 1
-            configureButton(image: setDefaultImage(), value: 1)
+            configureButton(
+                image: setDefaultImage(),
+                value: 1
+            )
+            delegate?.updateCompletedTrackers(
+                tracker: tracker
+            )
         }
     }
 }
