@@ -78,7 +78,13 @@ final class AddNewTrackerViewController: UIViewController {
         configureScrollView()
         configureTableView()
         configureTextField()
-        setupConstraints()
+        
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            setupConstraintsForSEScreen()
+        } else {
+            setupConstraintForDefaultScreen()
+        }
     }
     
     //MARK: - Helpers
@@ -132,9 +138,6 @@ final class AddNewTrackerViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            buttonsStackView.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor
-            ),
             buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor, constant: 16
             ),
@@ -178,6 +181,23 @@ final class AddNewTrackerViewController: UIViewController {
                 equalToConstant: 150
             )
         ])
+    }
+    
+    private func setupConstraintForDefaultScreen() {
+        buttonsStackView.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor
+        ).isActive = true
+        
+        setupConstraints()
+    }
+    
+    private func setupConstraintsForSEScreen() {
+        buttonsStackView.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor,
+            constant:  -24
+        ).isActive = true
+        
+        setupConstraints()
     }
     
     private func showViewController(_ viewController: UIViewController) {

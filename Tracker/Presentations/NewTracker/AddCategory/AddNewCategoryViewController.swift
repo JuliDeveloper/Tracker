@@ -23,7 +23,7 @@ final class AddNewCategoryViewController: UIViewController {
         textField.delegate = self
         
         addElements()
-        setupConstraints()
+        showScenario()
         
         setStateButton(for: textField)
         
@@ -63,11 +63,33 @@ final class AddNewCategoryViewController: UIViewController {
             ),
             button.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor, constant: -20
-            ),
-            button.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor, constant: -50
             )
         ])
+    }
+    
+    private func setupConstraintForDefaultScreen() {
+        button.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor, constant: -50
+        ).isActive = true
+        
+        setupConstraints()
+    }
+    
+    private func setupConstraintsForSEScreen() {
+        button.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor, constant: -24
+        ).isActive = true
+        
+        setupConstraints()
+    }
+    
+    private func showScenario() {
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            setupConstraintsForSEScreen()
+        } else {
+            setupConstraintForDefaultScreen()
+        }
     }
     
     private func setStateButton(for textField: UITextField) {

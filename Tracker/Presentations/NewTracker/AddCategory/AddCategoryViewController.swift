@@ -32,7 +32,6 @@ final class AddCategoryViewController: UIViewController {
         getData()
         configureTableView()
         addElements()
-        setupConstraints()
         showScenario()
         
         button.addTarget(
@@ -93,14 +92,38 @@ final class AddCategoryViewController: UIViewController {
             ),
             button.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor, constant: -20
-            ),
-            button.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor, constant: -50
             )
         ])
     }
     
+    private func setupConstraintForDefaultScreen() {
+        NSLayoutConstraint.activate([
+            button.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor, constant: -50
+            )
+        ])
+        
+        setupConstraints()
+    }
+    
+    private func setupConstraintsForSEScreen() {
+        NSLayoutConstraint.activate([
+            button.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor, constant: -24
+            )
+        ])
+        
+        setupConstraints()
+    }
+    
     private func showScenario() {
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            setupConstraintsForSEScreen()
+        } else {
+            setupConstraintForDefaultScreen()
+        }
+        
         if categories.isEmpty {
             defaultStack.isHidden = false
             tableView.isHidden = false

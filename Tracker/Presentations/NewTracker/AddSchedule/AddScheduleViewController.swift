@@ -31,9 +31,9 @@ final class AddScheduleViewController: UIViewController {
             .foregroundColor: UIColor.ypBlack
         ]
         
-        configureWeekDayTableView()
         addElements()
-        setupConstraints()
+        configureWeekDayTableView()
+        showScenario()
     }
     
     private func configureWeekDayTableView() {
@@ -56,7 +56,8 @@ final class AddScheduleViewController: UIViewController {
         weekDayTableView.separatorInset = UIEdgeInsets(
             top: 0, left: 0, bottom: 0, right: 0
         )
-        weekDayTableView.isScrollEnabled = false
+        
+        weekDayTableView.showsVerticalScrollIndicator = false
     }
     
     private func addElements() {
@@ -78,20 +79,50 @@ final class AddScheduleViewController: UIViewController {
             weekDayTableView.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor, constant: -16
             ),
-            weekDayTableView.heightAnchor.constraint(
-                equalToConstant: 525
-            ),
             
             doneButton.leadingAnchor.constraint(
                 equalTo: weekDayTableView.leadingAnchor
             ),
             doneButton.trailingAnchor.constraint(
                 equalTo: weekDayTableView.trailingAnchor
-            ),
-            doneButton.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor, constant: -50
             )
         ])
+    }
+    
+    private func setupConstraintForDefaultScreen() {
+        weekDayTableView.isScrollEnabled = false
+        weekDayTableView.heightAnchor.constraint(
+            equalToConstant: 525
+        ).isActive = true
+        doneButton.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor, constant: -50
+        ).isActive = true
+        
+        setupConstraints()
+    }
+    
+    private func setupConstraintsForSEScreen() {
+        weekDayTableView.isScrollEnabled = true
+        weekDayTableView.heightAnchor.constraint(
+            equalToConstant: 525
+        ).isActive = false
+        weekDayTableView.bottomAnchor.constraint(
+            equalTo: doneButton.topAnchor, constant: -39
+        ).isActive = true
+        doneButton.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor, constant: -24
+        ).isActive = true
+        
+        setupConstraints()
+    }
+    
+    private func showScenario() {
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            setupConstraintsForSEScreen()
+        } else {
+            setupConstraintForDefaultScreen()
+        }
     }
     
     private func removeWeekDay(_ weekDay: WeekDay) {
