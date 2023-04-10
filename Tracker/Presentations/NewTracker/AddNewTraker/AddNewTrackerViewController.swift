@@ -269,9 +269,8 @@ final class AddNewTrackerViewController: UIViewController {
     @objc private func create() {
         saveTracker()
         updateDelegate?.updateCollectionView()
-        let tabBar = TabBarController()
-        tabBar.modalPresentationStyle = .fullScreen
-        present(tabBar, animated: true)
+        dismiss(animated: true)
+        presentingViewController?.dismiss(animated: true)
     }
 }
 

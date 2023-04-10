@@ -31,6 +31,8 @@ final class CreateTrackerViewController: UIViewController {
         return stack
     }()
     
+    weak var updateDelegate: ListTrackersViewControllerDelegate?
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,6 +68,7 @@ final class CreateTrackerViewController: UIViewController {
     
     @objc private func addHabits() {
         let addTrackerVC = AddNewTrackerViewController()
+        addTrackerVC.updateDelegate = updateDelegate
         navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
