@@ -21,6 +21,7 @@ final class AddNewCategoryViewController: UIViewController {
         ]
         
         textField.delegate = self
+        textField.returnKeyType = .done
         
         addElements()
         showScenario()
@@ -118,5 +119,10 @@ final class AddNewCategoryViewController: UIViewController {
 extension AddNewCategoryViewController: UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

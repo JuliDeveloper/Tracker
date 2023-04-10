@@ -116,6 +116,10 @@ final class AddNewTrackerViewController: UIViewController {
         scrollView.contentSize = CGSize(width: view.bounds.width, height: view.bounds.height)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.backgroundColor = .ypWhite
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tapGesture.delegate = self
+        scrollView.addGestureRecognizer(tapGesture)
     }
     
     private func configureTableView() {
@@ -133,6 +137,7 @@ final class AddNewTrackerViewController: UIViewController {
     
     private func configureTextField() {
         trackerTitleTextField.delegate = self
+        trackerTitleTextField.returnKeyType = .done
         trackerTitleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
@@ -247,6 +252,10 @@ final class AddNewTrackerViewController: UIViewController {
         return scheduleSubtitle
     }
     
+    @objc func hideKeyboard() {
+        scrollView.endEditing(true)
+    }
+    
     @objc private func textFieldDidChange() {
         if let text = trackerTitleTextField.text {
             trackerTitle = text
@@ -268,6 +277,11 @@ final class AddNewTrackerViewController: UIViewController {
 
 //MARK: - UITextFieldDelegate
 extension AddNewTrackerViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentText = textField.text ?? ""
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
@@ -381,5 +395,14 @@ extension AddNewTrackerViewController: UpdateSubtitleDelegate {
         let indexPath = IndexPath(row: 1, section: 0)
         tableView.reloadData()
         tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+}
+
+extension AddNewTrackerViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let view = touch.view, view.isDescendant(of: tableView) {
+            return false
+        }
+        return true
     }
 }

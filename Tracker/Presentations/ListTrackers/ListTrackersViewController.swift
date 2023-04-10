@@ -170,6 +170,7 @@ final class ListTrackersViewController: UIViewController {
     private func configureView() {
         view.backgroundColor = .ypWhite
         searchTextField.delegate = self
+        searchTextField.returnKeyType = .done
         filterButton.layer.zPosition = 2
     }
     
@@ -420,10 +421,9 @@ final class ListTrackersViewController: UIViewController {
 
 //MARK: - UITextFieldDelegate
 extension ListTrackersViewController: UITextFieldDelegate {
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        view.endEditing(true)
-        updateSearchState()
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
