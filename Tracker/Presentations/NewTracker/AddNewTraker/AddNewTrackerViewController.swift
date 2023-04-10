@@ -384,7 +384,7 @@ extension AddNewTrackerViewController: UpdateSubtitleDelegate {
         currentIndexCategory = indexPath
         
         let indexPath = IndexPath(row: 0, section: 0)
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
     
     func updateScheduleSubtitle(from weekDays: [WeekDay]?, and switchStates: [Int: Bool]) {
@@ -392,8 +392,7 @@ extension AddNewTrackerViewController: UpdateSubtitleDelegate {
         currentSwitchStates = switchStates
         
         let indexPath = IndexPath(row: 1, section: 0)
-        tableView.reloadData()
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
 }
 
