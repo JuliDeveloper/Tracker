@@ -58,6 +58,19 @@ final class AddNewTrackerViewController: UIViewController {
     
     private let tableView = UITableView()
     
+    private let collectionView = UICollectionView(
+        frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
+    )
+    private let params = GeometricParams1(
+        cellCount: 6,
+        leftInset: 25,
+        rightInset: 25,
+        cellSpacing: 17,
+        smallCellSpacing: 4,
+        lineCellSpacing: 12,
+        smallLineCellSpacing: 8
+    )
+    
     private let titlesCells = ["Категория", "Расписание"]
     private let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
     
@@ -78,6 +91,7 @@ final class AddNewTrackerViewController: UIViewController {
         configureScrollView()
         configureTableView()
         configureTextField()
+        configureCollectionView()
         
         if 568 <= UIScreen.main.bounds.size.height,
            UIScreen.main.bounds.size.height <= 667 {
@@ -94,6 +108,7 @@ final class AddNewTrackerViewController: UIViewController {
         
         scrollView.addSubview(titleStackView)
         scrollView.addSubview(tableView)
+        scrollView.addSubview(collectionView)
         
         titleStackView.addArrangedSubview(trackerTitleTextField)
         
@@ -141,6 +156,23 @@ final class AddNewTrackerViewController: UIViewController {
         trackerTitleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
+    private func configureCollectionView() {
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        collectionView.backgroundColor = .clear
+        collectionView.register(AddNewTrackerCell.self, forCellWithReuseIdentifier: Constants.cellCollectionView)
+        
+        collectionView.register(
+            HeaderSectionView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: Constants.headerCellIdentifier
+        )
+        
+        collectionView.isScrollEnabled = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             buttonsStackView.leadingAnchor.constraint(
@@ -184,6 +216,19 @@ final class AddNewTrackerViewController: UIViewController {
             ),
             tableView.heightAnchor.constraint(
                 equalToConstant: 150
+            ),
+            
+            collectionView.topAnchor.constraint(
+                equalTo: tableView.bottomAnchor
+            ),
+            collectionView.leadingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.leadingAnchor
+            ),
+            collectionView.trailingAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.trailingAnchor
+            ),
+            collectionView.bottomAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.bottomAnchor
             )
         ])
     }
@@ -376,6 +421,98 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         }
     }
 }
+
+//MARK: - UICollectionViewDelegateFlowLayout, UICollectionViewDataSource
+extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch section {
+        case 0:
+            return Constants.emojis.count
+        case 1:
+            return Constants.colors.count
+        default:
+            break
+        }
+        
+        return Int()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
+        
+        var title = ""
+        switch indexPath.section {
+        case 0:
+            title = "Emoji"
+        case 1:
+            title = "Цвет"
+        default:
+            break
+        }
+        
+        view.configureHeader(title: title)
+        
+        return view
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellCollectionView, for: indexPath) as? AddNewTrackerCell else { return UICollectionViewCell() }
+        
+        let emoji = Constants.emojis[indexPath.row]
+        let color = Constants.colors[indexPath.row]
+        
+        switch indexPath.section {
+        case 0: cell.configureCell(for: 0, title: emoji, color: nil)
+        case 1: cell.configureCell(for: 1, title: nil, color: color)
+        default: break
+        }
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let spacer: CGFloat = 30
+        let size = CGSize(width: collectionView.frame.width, height: 18 + spacer)
+        return size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let availableWidth = collectionView.frame.width - params.paddingWidth
+          let cellWidth =  availableWidth / CGFloat(params.cellCount)
+          return CGSize(width: cellWidth, height: cellWidth)
+      }
+      
+      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+          UIEdgeInsets(
+              top: 32,
+              left: params.leftInset,
+              bottom: 0,
+              right: params.rightInset
+          )
+      }
+      
+      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+          if 568 <= UIScreen.main.bounds.size.height,
+             UIScreen.main.bounds.size.height <= 667 {
+              return params.smallLineCellSpacing ?? 0
+          } else {
+              return params.lineCellSpacing ?? 0
+          }
+      }
+      
+      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+          if 568 <= UIScreen.main.bounds.size.height,
+             UIScreen.main.bounds.size.height <= 667 {
+              return params.smallCellSpacing ?? 0
+          } else {
+              return params.cellSpacing
+          }
+      }
+  }
 
 //MARK: - UpdateSubtitleDelegate
 extension AddNewTrackerViewController: UpdateSubtitleDelegate {

@@ -39,6 +39,7 @@
 		256E017D29DEED7A00E2A413 /* AddNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */; };
 		256E017F29DF613500E2A413 /* UpdateSubtitleDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */; };
 		256E018129DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */; };
+		25F97EBF29E84FDF005D82C0 /* AddNewTrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,7 @@
 		256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewController.swift; sourceTree = "<group>"; };
 		256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSubtitleDelegate.swift; sourceTree = "<group>"; };
 		256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTrackersViewControllerDelegate.swift; sourceTree = "<group>"; };
+		25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				255B097929D5BD1800A599E3 /* CustomButton.swift */,
 				256E015D29D7581D00E2A413 /* DefaultStackView.swift */,
 				256E016629D785A300E2A413 /* CustomTextField.swift */,
+				25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 				255B095729D3307500A599E3 /* Extension + UIColor.swift in Sources */,
 				255B093D29D1E00E00A599E3 /* AppDelegate.swift in Sources */,
 				255B095E29D3391A00A599E3 /* TabBarController.swift in Sources */,
+				25F97EBF29E84FDF005D82C0 /* AddNewTrackerCell.swift in Sources */,
 				255B096229D33B4900A599E3 /* StatisticsViewController.swift in Sources */,
 				255B096029D339F500A599E3 /* ListTrackersViewController.swift in Sources */,
 				255B093F29D1E00E00A599E3 /* SceneDelegate.swift in Sources */,
