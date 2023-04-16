@@ -17,9 +17,7 @@ final class HeaderSectionView: UICollectionReusableView {
         titleLabel.text = title
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(
-                equalTo: topAnchor, constant: 24
-            ),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             titleLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor, constant: 28
             ),
