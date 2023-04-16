@@ -292,7 +292,8 @@ final class ListTrackersViewController: UIViewController {
                 equalTo: view.leadingAnchor
             ),
             collectionView.topAnchor.constraint(
-                equalTo: headerView.bottomAnchor
+                equalTo: headerView.bottomAnchor,
+                constant: 24
             ),
             collectionView.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor
@@ -479,8 +480,7 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
 //MARK: - UICollectionViewDelegateFlowLayout
 extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let size = CGSize(width: collectionView.frame.width, height: 49)
-        return size
+        CGSize(width: collectionView.frame.width, height: 18)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -491,7 +491,7 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 12, left: params.leftInset, bottom: 0, right: params.rightInset)
+        UIEdgeInsets(top: 12, left: params.leftInset, bottom: 32, right: params.rightInset)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
