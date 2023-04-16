@@ -4,6 +4,8 @@ final class AddNewTrackerViewController: UIViewController {
     
     //MARK: - Properties
     private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
     private let buttonsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -92,23 +94,27 @@ final class AddNewTrackerViewController: UIViewController {
         configureTableView()
         configureTextField()
         configureCollectionView()
+        showScenario()
         
-        if 568 <= UIScreen.main.bounds.size.height,
-           UIScreen.main.bounds.size.height <= 667 {
-            setupConstraintsForSEScreen()
-        } else {
-            setupConstraintForDefaultScreen()
-        }
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateHeight(for: collectionView)
     }
     
     //MARK: - Helpers
     private func addElements() {
-        view.addSubview(buttonsStackView)
         view.addSubview(scrollView)
         
-        scrollView.addSubview(titleStackView)
-        scrollView.addSubview(tableView)
-        scrollView.addSubview(collectionView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(titleStackView)
+        contentView.addSubview(tableView)
+        contentView.addSubview(collectionView)
+        contentView.addSubview(buttonsStackView)
         
         titleStackView.addArrangedSubview(trackerTitleTextField)
         
@@ -129,6 +135,10 @@ final class AddNewTrackerViewController: UIViewController {
     private func configureScrollView() {
         scrollView.frame = view.bounds
         scrollView.contentSize = CGSize(width: view.bounds.width, height: view.bounds.height)
+        scrollView.isScrollEnabled = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
+        
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.backgroundColor = .ypWhite
         
@@ -173,15 +183,18 @@ final class AddNewTrackerViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
+    func updateHeight(for view: UIView) {
+        if let collectionView = view as? UICollectionView {
+            collectionView.layoutIfNeeded()
+            let height = collectionView.contentSize.height
+            collectionView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        }
+    }
+    
     private func setupConstraints() {
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
-            buttonsStackView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor, constant: 16
-            ),
-            buttonsStackView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor, constant: -16
-            ),
-            
             scrollView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor
             ),
@@ -191,25 +204,38 @@ final class AddNewTrackerViewController: UIViewController {
             scrollView.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor
             ),
-            scrollView.bottomAnchor.constraint(
-                equalTo: buttonsStackView.topAnchor
+            
+            contentView.topAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.topAnchor
+            ),
+            contentView.leadingAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.leadingAnchor
+            ),
+            contentView.trailingAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.trailingAnchor
+            ),
+            contentView.bottomAnchor.constraint(
+                equalTo: scrollView.contentLayoutGuide.bottomAnchor
+            ),
+            contentView.widthAnchor.constraint(
+                equalTo: scrollView.frameLayoutGuide.widthAnchor
             ),
             
             titleStackView.topAnchor.constraint(
-                equalTo: scrollView.topAnchor, constant: 24
+                equalTo: contentView.topAnchor, constant: 24
             ),
             titleStackView.leadingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.leadingAnchor, constant: 16
+                equalTo: contentView.leadingAnchor, constant: 16
             ),
             titleStackView.trailingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.trailingAnchor, constant: -16
+                equalTo: contentView.trailingAnchor, constant: -16
             ),
             
             tableView.leadingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.leadingAnchor, constant: 16
+                equalTo: contentView.leadingAnchor, constant: 16
             ),
             tableView.trailingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.trailingAnchor, constant: -16
+                equalTo: contentView.trailingAnchor, constant: -16
             ),
             tableView.topAnchor.constraint(
                 equalTo: titleStackView.bottomAnchor, constant: 24
@@ -219,22 +245,41 @@ final class AddNewTrackerViewController: UIViewController {
             ),
             
             collectionView.topAnchor.constraint(
-                equalTo: tableView.bottomAnchor
+                equalTo: tableView.bottomAnchor, constant: 32
             ),
             collectionView.leadingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.leadingAnchor
+                equalTo: contentView.leadingAnchor
             ),
             collectionView.trailingAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.trailingAnchor
+                equalTo: contentView.trailingAnchor
             ),
-            collectionView.bottomAnchor.constraint(
-                equalTo: scrollView.frameLayoutGuide.bottomAnchor
+            
+            buttonsStackView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor, constant: 16
+            ),
+            buttonsStackView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor, constant: -16
+            ),
+            buttonsStackView.topAnchor.constraint(
+                equalTo: collectionView.bottomAnchor
+            ),
+            buttonsStackView.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor
             )
         ])
     }
     
+    private func showScenario() {
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            setupConstraintsForSEScreen()
+        } else {
+            setupConstraintForDefaultScreen()
+        }
+    }
+    
     private func setupConstraintForDefaultScreen() {
-        buttonsStackView.bottomAnchor.constraint(
+        scrollView.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor
         ).isActive = true
         
@@ -242,8 +287,8 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func setupConstraintsForSEScreen() {
-        buttonsStackView.bottomAnchor.constraint(
-            equalTo: view.bottomAnchor,
+        scrollView.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
             constant:  -24
         ).isActive = true
         
@@ -475,44 +520,42 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let spacer: CGFloat = 30
-        let size = CGSize(width: collectionView.frame.width, height: 18 + spacer)
-        return size
+        CGSize(width: collectionView.frame.width, height: 18)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.frame.width - params.paddingWidth
-          let cellWidth =  availableWidth / CGFloat(params.cellCount)
-          return CGSize(width: cellWidth, height: cellWidth)
-      }
-      
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-          UIEdgeInsets(
-              top: 32,
-              left: params.leftInset,
-              bottom: 0,
-              right: params.rightInset
-          )
-      }
-      
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-          if 568 <= UIScreen.main.bounds.size.height,
-             UIScreen.main.bounds.size.height <= 667 {
-              return params.smallLineCellSpacing ?? 0
-          } else {
-              return params.lineCellSpacing ?? 0
-          }
-      }
-      
-      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-          if 568 <= UIScreen.main.bounds.size.height,
-             UIScreen.main.bounds.size.height <= 667 {
-              return params.smallCellSpacing ?? 0
-          } else {
-              return params.cellSpacing
-          }
-      }
-  }
+        let cellWidth =  availableWidth / CGFloat(params.cellCount)
+        return CGSize(width: cellWidth, height: cellWidth)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(
+            top: 30,
+            left: params.leftInset,
+            bottom: 46,
+            right: params.rightInset
+        )
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            return params.smallLineCellSpacing ?? 0
+        } else {
+            return params.lineCellSpacing ?? 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            return params.smallCellSpacing ?? 0
+        } else {
+            return params.cellSpacing
+        }
+    }
+}
 
 //MARK: - UpdateSubtitleDelegate
 extension AddNewTrackerViewController: UpdateSubtitleDelegate {
