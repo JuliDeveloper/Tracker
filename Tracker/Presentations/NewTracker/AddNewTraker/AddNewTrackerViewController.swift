@@ -84,7 +84,7 @@ final class AddNewTrackerViewController: UIViewController {
     private var currentSwitchStates = [Int: Bool]()
     private var selectedIndexPathsInSection: [Int: IndexPath] = [:]
     private var currentEmoji = String()
-    private var currentColor = UIColor()
+    private var currentColor: UIColor? = nil
     
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
@@ -310,8 +310,14 @@ final class AddNewTrackerViewController: UIViewController {
         let dataManager = DataManager.shared
         let categoryToUpdate = dataManager.category
         
-        let color = colors.randomElement() ?? UIColor()
-        let newTracker = Tracker(id: UUID(), title: trackerTitle, color: color, emoji: "🐶", schedule: setSchedule)
+        let newTracker = Tracker(
+            id: UUID(),
+            title: trackerTitle,
+            color: currentColor ?? UIColor(),
+            emoji: currentEmoji,
+            schedule: setSchedule
+        )
+        
         let newTrackers = categoryToUpdate.trackers + [newTracker]
         
         let updatedCategory = TrackerCategory(
@@ -345,6 +351,16 @@ final class AddNewTrackerViewController: UIViewController {
     private func getSchedule(from array: [WeekDay]) -> String {
         let scheduleSubtitle = array.compactMap { $0.abbreviationValue }.joined(separator: ", ")
         return scheduleSubtitle
+    }
+    
+    private func updateCreateButton() {
+        if !trackerTitle.isEmpty && !categorySubtitle.isEmpty && currentColor != nil && !currentEmoji.isEmpty {
+            createButton.isEnabled = true
+            createButton.backgroundColor = .ypBlack
+        } else {
+            createButton.isEnabled = false
+            createButton.backgroundColor = .ypGray
+        }
     }
     
     @objc func hideKeyboard() {
@@ -381,11 +397,9 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
         if newText.count >= 1 {
-            createButton.backgroundColor = .ypBlack
-            createButton.isEnabled = true
+            updateCreateButton()
         } else {
-            createButton.backgroundColor = .ypGray
-            createButton.isEnabled = false
+            updateCreateButton()
         }
         
         if newText.count > 38 {
@@ -572,6 +586,8 @@ extension AddNewTrackerViewController: UpdateSubtitleDelegate {
         
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.reloadRows(at: [indexPath], with: .none)
+        
+        updateCreateButton()
     }
     
     func updateScheduleSubtitle(from weekDays: [WeekDay]?, and switchStates: [Int: Bool]) {
@@ -608,8 +624,10 @@ extension AddNewTrackerViewController: AddNewTrackerCellDelegate {
         
         if currentSection == 0 {
             currentEmoji = emojis[indexPath.item]
+            updateCreateButton()
         } else {
             currentColor = colors[indexPath.item]
+            updateCreateButton()
         }
     }
 }
