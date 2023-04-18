@@ -29,6 +29,9 @@ final class AddNewTrackerCell: UICollectionViewCell {
         }
     }
     
+    private var buttonWidthConstraint: NSLayoutConstraint?
+    private var buttonHeightConstraint: NSLayoutConstraint?
+    
     private var section: Int = 0
     private var currentEmoji = String()
     private var currentColor = UIColor()
@@ -48,6 +51,11 @@ final class AddNewTrackerCell: UICollectionViewCell {
         selectedEmojiView.translatesAutoresizingMaskIntoConstraints = false
         selectedColorBorderView.translatesAutoresizingMaskIntoConstraints = false
 
+        buttonWidthConstraint = button.widthAnchor.constraint(equalToConstant: 40)
+        buttonHeightConstraint = button.heightAnchor.constraint(equalToConstant: 40)
+        
+        guard let buttonWidthConstraint, let buttonHeightConstraint else { return }
+        
         NSLayoutConstraint.activate([
             button.centerXAnchor.constraint(
                 equalTo: contentView.centerXAnchor
@@ -55,12 +63,8 @@ final class AddNewTrackerCell: UICollectionViewCell {
             button.centerYAnchor.constraint(
                 equalTo: contentView.centerYAnchor
             ),
-            button.heightAnchor.constraint(
-                equalToConstant: 40
-            ),
-            button.widthAnchor.constraint(
-                equalToConstant: 40
-            ),
+            buttonWidthConstraint,
+            buttonHeightConstraint,
             
             selectedEmojiView.centerXAnchor.constraint(
                 equalTo: contentView.centerXAnchor
@@ -117,6 +121,16 @@ final class AddNewTrackerCell: UICollectionViewCell {
         default:
             break
         }
+    }
+    
+    func shrinkButton() {
+        buttonWidthConstraint?.constant -= 4
+        buttonHeightConstraint?.constant -= 4
+    }
+    
+    func expandButton() {
+        buttonWidthConstraint?.constant += 4
+        buttonHeightConstraint?.constant += 4
     }
     
     private func updateSelectionState() {

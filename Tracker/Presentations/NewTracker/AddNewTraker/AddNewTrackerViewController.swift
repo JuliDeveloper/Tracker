@@ -66,9 +66,11 @@ final class AddNewTrackerViewController: UIViewController {
     private let params = GeometricParams1(
         cellCount: 6,
         leftInset: 25,
+        smallLeftInset: 20,
         rightInset: 25,
+        smallRightInset: 20,
         cellSpacing: 17,
-        smallCellSpacing: 4,
+        smallCellSpacing: 8,
         lineCellSpacing: 12,
         smallLineCellSpacing: 8
     )
@@ -559,12 +561,22 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(
-            top: 30,
-            left: params.leftInset,
-            bottom: 46,
-            right: params.rightInset
-        )
+        if 568 <= UIScreen.main.bounds.size.height,
+           UIScreen.main.bounds.size.height <= 667 {
+            return UIEdgeInsets(
+                top: 30,
+                left: params.smallLeftInset ?? 0,
+                bottom: 46,
+                right: params.smallRightInset ?? 0
+            )
+        } else {
+            return UIEdgeInsets(
+                top: 30,
+                left: params.leftInset,
+                bottom: 46,
+                right: params.rightInset
+            )
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -617,16 +629,20 @@ extension AddNewTrackerViewController: UIGestureRecognizerDelegate {
 }
 
 extension AddNewTrackerViewController: AddNewTrackerCellDelegate {
-    func cellTapped(_ cell: UICollectionViewCell) {
+    func cellTapped(_ cell: AddNewTrackerCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
         
         let currentSection = indexPath.section
         
         if let previousSelectedIndexPath = selectedIndexPathsInSection[currentSection] {
+            if let previousCell = collectionView.cellForItem(at: previousSelectedIndexPath) as? AddNewTrackerCell {
+                previousCell.expandButton()
+            }
             collectionView.deselectItem(at: previousSelectedIndexPath, animated: true)
         }
         
         collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+        cell.shrinkButton()
         
         selectedIndexPathsInSection[currentSection] = indexPath
         
