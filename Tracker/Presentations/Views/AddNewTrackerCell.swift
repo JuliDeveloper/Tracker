@@ -23,10 +23,18 @@ final class AddNewTrackerCell: UICollectionViewCell {
         return view
     }()
     
-    private var isSelectedEmoji = false
-    private var isSelectedColor = false
+    override var isSelected: Bool {
+        didSet {
+            updateSelectionState()
+        }
+    }
+    
+    private var section: Int = 0
     private var currentEmoji = String()
     private var currentColor = UIColor()
+    
+    weak var delegate: AddNewTrackerCellDelegate?
+
     
     //MARK: - LifeCycle
     override init(frame: CGRect) {
@@ -84,6 +92,8 @@ final class AddNewTrackerCell: UICollectionViewCell {
     
     //MARK: - Helpers
     func configureCell(for section: Int, title: String?, color: UIColor?) {
+        self.section = section
+        
         switch section {
         case 0:
             currentEmoji = title ?? ""
@@ -108,15 +118,21 @@ final class AddNewTrackerCell: UICollectionViewCell {
             break
         }
     }
+    
+    private func updateSelectionState() {
+        if section == 0 {
+            selectedEmojiView.alpha = isSelected ? 1 : 0
+        } else {
+            selectedColorBorderView.layer.borderColor = currentColor.withAlphaComponent(0.3).cgColor
+            selectedColorBorderView.alpha = isSelected ? 1 : 0
+        }
+    }
 
     @objc private func selectedEmoji() {
-        isSelectedEmoji.toggle()
-        selectedEmojiView.alpha = isSelectedEmoji ? 1 : 0
+        delegate?.cellTapped(self)
     }
 
     @objc private func selectedColor() {
-        isSelectedColor.toggle()
-        selectedColorBorderView.layer.borderColor = currentColor.withAlphaComponent(0.3).cgColor
-        selectedColorBorderView.alpha = isSelectedColor ? 1 : 0
+        delegate?.cellTapped(self)
     }
 }

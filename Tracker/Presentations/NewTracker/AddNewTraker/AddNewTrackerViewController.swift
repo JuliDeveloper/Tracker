@@ -74,13 +74,17 @@ final class AddNewTrackerViewController: UIViewController {
     )
     
     private let titlesCells = ["Категория", "Расписание"]
-    private let colors: [UIColor] = [.ypColorSection4, .ypColorSection15, .ypColorSection7]
+    private let emojis = Constants.emojis
+    private let colors = Constants.colors
     
     private var trackerTitle = ""
     private var categorySubtitle = ""
     private var currentIndexCategory: IndexPath?
     private var setSchedule = [WeekDay]()
     private var currentSwitchStates = [Int: Bool]()
+    private var selectedIndexPathsInSection: [Int: IndexPath] = [:]
+    private var currentEmoji = String()
+    private var currentColor = UIColor()
     
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
@@ -170,6 +174,7 @@ final class AddNewTrackerViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         
+        collectionView.allowsMultipleSelection = true
         collectionView.backgroundColor = .clear
         collectionView.register(AddNewTrackerCell.self, forCellWithReuseIdentifier: Constants.cellCollectionView)
         
@@ -183,7 +188,7 @@ final class AddNewTrackerViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    func updateHeight(for view: UIView) {
+    private func updateHeight(for view: UIView) {
         if let collectionView = view as? UICollectionView {
             collectionView.layoutIfNeeded()
             let height = collectionView.contentSize.height
@@ -507,8 +512,10 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellCollectionView, for: indexPath) as? AddNewTrackerCell else { return UICollectionViewCell() }
         
-        let emoji = Constants.emojis[indexPath.row]
-        let color = Constants.colors[indexPath.row]
+        cell.delegate = self
+        
+        let emoji = emojis[indexPath.item]
+        let color = colors[indexPath.item]
         
         switch indexPath.section {
         case 0: cell.configureCell(for: 0, title: emoji, color: nil)
@@ -582,5 +589,27 @@ extension AddNewTrackerViewController: UIGestureRecognizerDelegate {
             return false
         }
         return true
+    }
+}
+
+extension AddNewTrackerViewController: AddNewTrackerCellDelegate {
+    func cellTapped(_ cell: UICollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        
+        let currentSection = indexPath.section
+        
+        if let previousSelectedIndexPath = selectedIndexPathsInSection[currentSection] {
+            collectionView.deselectItem(at: previousSelectedIndexPath, animated: true)
+        }
+        
+        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+        
+        selectedIndexPathsInSection[currentSection] = indexPath
+        
+        if currentSection == 0 {
+            currentEmoji = emojis[indexPath.item]
+        } else {
+            currentColor = colors[indexPath.item]
+        }
     }
 }
