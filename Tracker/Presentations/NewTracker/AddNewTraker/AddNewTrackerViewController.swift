@@ -73,7 +73,6 @@ final class AddNewTrackerViewController: UIViewController {
         smallLineCellSpacing: 8
     )
     
-    private let titlesCells = ["Категория", "Расписание"]
     private let emojis = Constants.emojis
     private let colors = Constants.colors
     
@@ -86,6 +85,7 @@ final class AddNewTrackerViewController: UIViewController {
     private var currentEmoji = String()
     private var currentColor: UIColor? = nil
     
+    var titlesCells: [String] = []
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
@@ -245,9 +245,6 @@ final class AddNewTrackerViewController: UIViewController {
             tableView.topAnchor.constraint(
                 equalTo: titleStackView.bottomAnchor, constant: 24
             ),
-            tableView.heightAnchor.constraint(
-                equalToConstant: 150
-            ),
             
             collectionView.topAnchor.constraint(
                 equalTo: tableView.bottomAnchor, constant: 32
@@ -272,6 +269,17 @@ final class AddNewTrackerViewController: UIViewController {
                 equalTo: contentView.bottomAnchor
             )
         ])
+        
+        if titlesCells.count == 1 {
+            tableView.heightAnchor.constraint(
+                equalToConstant: 75
+            ).isActive = true
+            tableView.separatorStyle = .none
+        } else {
+            tableView.heightAnchor.constraint(
+                equalToConstant: 150
+            ).isActive = true
+        }
     }
     
     private func showScenario() {
@@ -415,7 +423,7 @@ extension AddNewTrackerViewController: UITextFieldDelegate {
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        titlesCells.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
