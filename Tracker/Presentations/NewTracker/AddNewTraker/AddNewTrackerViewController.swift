@@ -78,6 +78,9 @@ final class AddNewTrackerViewController: UIViewController {
     private let emojis = Constants.emojis
     private let colors = Constants.colors
     
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    
     private var trackerTitle = ""
     private var categorySubtitle = ""
     private var currentIndexCategory: IndexPath?
@@ -317,31 +320,20 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func saveTracker() {
-        let dataManager = DataManager.shared
-        let categoryToUpdate = dataManager.category
-        
+        guard let category = trackerCategoryStore.categories.randomElement() else { return }
         let newTracker = Tracker(
             id: UUID(),
             title: trackerTitle,
             color: currentColor ?? UIColor(),
             emoji: currentEmoji,
-            schedule: setSchedule
+            schedule: setSchedule,
+            countRecords: 0
         )
         
-        let newTrackers = categoryToUpdate.trackers + [newTracker]
-        
-        let updatedCategory = TrackerCategory(
-            title: categoryToUpdate.title,
-            trackers: newTrackers
-        )
-        
-        var categories = dataManager.getCategories()
-        
-        if let index = dataManager.getCategories().firstIndex(where: { $0.title == categoryToUpdate.title }) {
-            categories[index] = updatedCategory
-            
-            dataManager.category = updatedCategory
-            dataManager.category = categories[index]
+        do {
+            try trackerStore.addNewTracker(from: newTracker, and: category)
+        } catch let error {
+            print(error.localizedDescription)
         }
     }
     
