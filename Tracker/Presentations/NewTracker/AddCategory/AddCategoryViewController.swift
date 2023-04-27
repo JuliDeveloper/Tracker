@@ -10,7 +10,8 @@ final class AddCategoryViewController: UIViewController {
     private let tableView = UITableView()
     private let button = CustomButton(title: "Добавить категорию")
     
-    private let dataManager = DataManager.shared
+    private let trackerCategoryStore = TrackerCategoryStore()
+    
     private var categories = [TrackerCategory]()
     private var titleCategory = ""
     
@@ -43,8 +44,9 @@ final class AddCategoryViewController: UIViewController {
     
     //MARK: - Helpers
     private func getData() {
-        categories = dataManager.getCategories()
+        categories = trackerCategoryStore.categories
     }
+    
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
