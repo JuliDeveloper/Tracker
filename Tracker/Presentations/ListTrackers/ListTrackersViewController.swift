@@ -137,6 +137,9 @@ final class ListTrackersViewController: UIViewController {
         cellSpacing: 9
     )
     
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -151,9 +154,7 @@ final class ListTrackersViewController: UIViewController {
     private var isFiltering: Bool {
         return isSearching || isCheckDate
     }
-    
-    private let dataManager = DataManager.shared
-   
+       
     //MARK: - Lifecycle
     override func viewDidLoad() {
         getData()
@@ -174,7 +175,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func getData() {
-        categories = dataManager.getCategories()
+        categories = trackerCategoryStore.categories
     }
     
     private func addElements() {
@@ -437,40 +438,40 @@ extension ListTrackersViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return isFiltering ? visibleCategories.count : categories.count
+        trackerStore.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
-        
-        let titleCategory = isFiltering
-            ? visibleCategories[indexPath.row].title
-            : categories[indexPath.row].title
+
+        guard let titleCategory = trackerStore.headerTitleSection(indexPath.section) else { return UICollectionReusableView() }
         view.configureHeader(title: titleCategory)
         
         return view
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let trackers = isFiltering
-            ? visibleCategories[section].trackers
-            : categories[section].trackers
-        return trackers.count
+        trackerStore.countTrackers
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        let cellData = isFiltering ? visibleCategories : categories
-        let tracker = cellData[indexPath.section].trackers[indexPath.row]
+        let tracker = trackerStore.getTracker(at: indexPath)
         
         cell.delegate = self
         cell.configure(
             for: cell,
-            tracker: tracker,
-            title: tracker.title,
-            emoji: tracker.emoji,
-            color: tracker.color
+            tracker: tracker ?? Tracker(id: UUID(),
+                                        title: "",
+                                        color: UIColor(),
+                                        emoji: "",
+                                        schedule: [],
+                                        countRecords: 0
+                                       ),
+            title: tracker?.title ?? "",
+            emoji: tracker?.emoji ?? "",
+            color: tracker?.color ?? UIColor()
         )
         
         return cell
