@@ -68,7 +68,8 @@ final class TrackerCell: UICollectionViewCell {
         title: "",
         color: UIColor(),
         emoji: "",
-        schedule: []
+        schedule: [],
+        countRecords: 0
     )
     
     weak var delegate: ListTrackersViewControllerDelegate?
