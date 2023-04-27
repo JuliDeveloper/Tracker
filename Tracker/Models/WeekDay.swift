@@ -32,4 +32,17 @@ enum WeekDay: String, CaseIterable {
         case .sunday: return 1
         }
     }
+    
+    static func weekdaysToString(weekdays: [WeekDay]?) -> String? {
+        guard let weekdays = weekdays else { return nil }
+        let weekdayStrings = weekdays.map { $0.rawValue }
+        return weekdayStrings.joined(separator: ",")
+    }
+
+    static func stringToWeekdays(string: String?) -> [WeekDay]? {
+        guard let string = string else { return nil }
+        let weekdayStrings = string.split(separator: ",")
+        let weekdays = weekdayStrings.compactMap { WeekDay(rawValue: String($0)) }
+        return weekdays
+    }
 }

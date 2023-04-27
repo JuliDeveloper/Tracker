@@ -72,20 +72,19 @@ final class TrackerStore: NSObject {
             throw TrackerStoreError.decodingErrorInvalidEmoji
         }
 
-        //разобраться с расписанием !!!
-//        guard let scheduleSet = trackerCoreData.schedule else {
-//            throw TrackerStoreError.decodingErrorInvalidSchedule
-//        }
+        guard let scheduleString = trackerCoreData.schedule else {
+            throw TrackerStoreError.decodingErrorInvalidSchedule
+        }
 
         let color = uiColorMarshalling.fromHexString(hex: colorHex)
-        //let schedule = Array(scheduleSet)
+        let schedule = WeekDay.stringToWeekdays(string: scheduleString)
 
         return Tracker(
             id: id,
             title: title,
             color: color,
             emoji: emoji,
-            schedule: nil,
+            schedule: schedule,
             countRecords: countRecords
         )
     }
@@ -142,7 +141,7 @@ extension TrackerStore: TrackerStoreProtocol {
         trackerCoreData.title = tracker.title
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.colorHex = uiColorMarshalling.toHexString(color: tracker.color)
-        trackerCoreData.schedule = nil
+        trackerCoreData.schedule = WeekDay.weekdaysToString(weekdays: tracker.schedule)
         trackerCoreData.createdAt = Date()
         trackerCoreData.category = categoryCoreData
 
