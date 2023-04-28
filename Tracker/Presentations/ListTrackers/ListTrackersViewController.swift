@@ -157,7 +157,9 @@ final class ListTrackersViewController: UIViewController {
        
     //MARK: - Lifecycle
     override func viewDidLoad() {
-        getData()
+        categories = trackerCategoryStore.categories
+        trackerStore.delegate = self
+        
         configureView()
         addElements()
         setupConstraints()
@@ -172,10 +174,6 @@ final class ListTrackersViewController: UIViewController {
         searchTextField.delegate = self
         searchTextField.returnKeyType = .done
         filterButton.layer.zPosition = 2
-    }
-    
-    private func getData() {
-        categories = trackerCategoryStore.categories
     }
     
     private func addElements() {
@@ -506,8 +504,9 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     func updateCollectionView() {
-        getData()
-        collectionView.reloadData()
+//        collectionView.performBatchUpdates {
+//            getData()
+//        }
     }
     
     func updateButtonStateFromDate() -> Date {
@@ -524,6 +523,16 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
                 trackerId: tracker.id, date: currentDate ?? Date()
             )
             completedTrackers.append(trackerRecord)
+        }
+    }
+}
+
+// MARK: - TrackerStoreDelegate
+extension ListTrackersViewController: TrackerStoreDelegate {
+    func didUpdate(_ update: TrackerStoreUpdate) {
+        collectionView.performBatchUpdates {
+            collectionView.insertSections(update.insertedSections)
+            collectionView.insertItems(at: update.insertedIndexes)
         }
     }
 }

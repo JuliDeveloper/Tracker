@@ -381,7 +381,6 @@ final class AddNewTrackerViewController: UIViewController {
     
     @objc private func create() {
         saveTracker()
-        updateDelegate?.updateCollectionView()
         dismiss(animated: true)
         presentingViewController?.dismiss(animated: true)
     }
