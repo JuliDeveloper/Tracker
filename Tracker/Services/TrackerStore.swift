@@ -10,7 +10,8 @@ enum TrackerStoreError: Error {
 }
 
 struct TrackerStoreUpdate {
-   let insertedIndexes: IndexSet
+    let insertedSections: IndexSet
+    let insertedIndexes: [IndexPath]
 }
 
 final class TrackerStore: NSObject {
@@ -20,7 +21,8 @@ final class TrackerStore: NSObject {
     private let uiColorMarshalling = UIColorMarshalling()
     private let trackerCategoryStore = TrackerCategoryStore()
     
-    private var insertedIndexes: IndexSet?
+    private var insertedSections = IndexSet()
+    private var insertedIndexPaths: [IndexPath] = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
@@ -38,6 +40,8 @@ final class TrackerStore: NSObject {
         try? fetchedResultsController.performFetch()
         return fetchedResultsController
     }()
+    
+    weak var delegate: TrackerStoreDelegate?
         
     // MARK: - Lifecycle
     convenience override init() {
@@ -50,7 +54,12 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
-    //MARK: - Helpers
+    //MARK: - Methods
+    private func updatedIndexes() {
+        insertedIndexPaths = []
+        insertedSections = IndexSet()
+    }
+    
     func getTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.trackerId else {
             throw TrackerStoreError.decodingErrorInvalidId
@@ -88,22 +97,9 @@ final class TrackerStore: NSObject {
             countRecords: countRecords
         )
     }
-    
-    func getTrackerCoreData(by id: UUID) throws -> TrackerCoreData? {
-        fetchedResultsController.fetchRequest.predicate = NSPredicate(
-            format: "%K == %@",
-            #keyPath(TrackerCoreData.trackerId), id as CVarArg
-        )
-        
-        do {
-            try fetchedResultsController.performFetch()
-            return fetchedResultsController.fetchedObjects?.first
-        } catch {
-            throw error
-        }
-    }
 }
 
+//MARK: - TrackerStoreProtocol
 extension TrackerStore: TrackerStoreProtocol {
     var countTrackers: Int {
         fetchedResultsController.fetchedObjects?.count ?? 0
@@ -149,12 +145,35 @@ extension TrackerStore: TrackerStoreProtocol {
     }
 }
 
+//MARK: - NSFetchedResultsControllerDelegate
 extension TrackerStore: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        insertedIndexes = IndexSet()
-    }
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.insertedIndexes = nil
+        delegate?.didUpdate(
+            TrackerStoreUpdate(
+                insertedSections: insertedSections,
+                insertedIndexes: insertedIndexPaths
+            )
+        )
+        updatedIndexes()
+    }
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        switch type {
+        case .insert:
+            insertedSections.insert(sectionIndex)
+        default:
+            break
+        }
+    }
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            if let indexPath = newIndexPath {
+                insertedIndexPaths.append(indexPath)
+            }
+        default:
+            break
+        }
     }
 }
