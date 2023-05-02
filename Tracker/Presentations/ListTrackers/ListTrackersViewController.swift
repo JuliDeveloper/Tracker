@@ -106,8 +106,8 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private let defaultStackView = DefaultStackView(
-        title: "Ничего не найдено", image: "errorSearch"
+    private var defaultStackView = DefaultStackView(
+        title: "Что будем отслеживать?", image: "star"
     )
     private let collectionView = UICollectionView(
         frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
@@ -142,19 +142,21 @@ final class ListTrackersViewController: UIViewController {
     private let trackerRecordStore = TrackerRecordsStore()
     
     private var categories: [TrackerCategory] = []
-    private var currentDate: Date? = nil
+    private var currentDate: Date {
+        getDate()
+    }
        
     //MARK: - Lifecycle
     override func viewDidLoad() {
         categories = trackerCategoryStore.categories
         trackerStore.delegate = self
-        
+        getStartData()
         configureView()
         addElements()
         setupConstraints()
         configureCollectionView()
-        changeScenario()
-        updateDateLabelTitle(with: Date())
+        showScenario()
+        updateDateLabelTitle(with: currentDate)
     }
     
     //MARK: - Helpers
@@ -312,10 +314,31 @@ final class ListTrackersViewController: UIViewController {
         }
     }
     
+    private func getStartData() {
+        let calendar = Calendar.current
+        let currentWeekDay = calendar.component(.weekday, from: currentDate)
+        trackerStore.loadInitialData(date: String(currentWeekDay))
+        collectionView.reloadData()
+    }
+    
+    private func showScenario() {
+        if trackerStore.numberOfSections == 0 {
+            collectionView.isHidden = true
+            filterButton.isHidden = true
+            defaultStackView.isHidden = false
+        } else {
+            collectionView.isHidden = false
+            filterButton.isHidden = false
+            defaultStackView.isHidden = true
+        }
+    }
+    
     private func changeScenario() {
         if trackerStore.numberOfSections == 0 {
             collectionView.isHidden = true
             filterButton.isHidden = true
+            defaultStackView.label.text = "Ничего не найдено"
+            defaultStackView.imageView.image = UIImage(named: "errorSearch")
             defaultStackView.isHidden = false
         } else {
             collectionView.isHidden = false
@@ -353,19 +376,17 @@ final class ListTrackersViewController: UIViewController {
     }
 
     private func saveTrackerRecord(for trackerId: UUID) {
-        currentDate = getDate()
         let trackerRecord = TrackerRecord(
             trackerId: trackerId,
-            date: currentDate ?? Date()
+            date: currentDate
         )
         try? trackerRecordStore.saveRecord(trackerRecord)
     }
 
     private func deleteTrackerRecord(for trackerId: UUID) {
-        currentDate = getDate()
         let trackerRecord = TrackerRecord(
             trackerId: trackerId,
-            date: currentDate ?? Date()
+            date: currentDate
         )
         try? trackerRecordStore.deleteRecord(trackerRecord)
     }
@@ -378,18 +399,17 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc func datePickerValueChanged() {
-        currentDate = datePicker.date
-        updateDateLabelTitle(with: currentDate ?? Date())
+        updateDateLabelTitle(with: currentDate)
                         
         let calendar = Calendar.current
-        let currentWeekDay = calendar.component(.weekday, from: currentDate ?? Date())
-        trackerStore.trackerFiltering(from:  String(currentWeekDay), or: nil)
+        let currentWeekDay = calendar.component(.weekday, from: currentDate)
+        trackerStore.trackerFiltering(from: String(currentWeekDay), or: nil)
         updateData()
     }
     
     @objc private func searchTracker() {
         let searchText = searchTextField.text ?? ""
-        trackerStore.trackerFiltering(from:  nil, or: searchText)
+        trackerStore.trackerFiltering(from: nil, or: searchText)
         updateData()
     }
 

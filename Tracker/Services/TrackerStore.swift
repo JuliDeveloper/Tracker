@@ -28,12 +28,13 @@ final class TrackerStore: NSObject {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(keyPath: \TrackerCoreData.category?.title, ascending: true),
-            NSSortDescriptor(keyPath: \TrackerCoreData.createdAt, ascending: true)
+            NSSortDescriptor(keyPath: \TrackerCoreData.title, ascending: true)
         ]
+        fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDayOfWeek())
         let fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: context,
-            sectionNameKeyPath: "category",
+            sectionNameKeyPath: #keyPath(TrackerCoreData.category.title),
             cacheName: nil
         )
         fetchedResultsController.delegate = self
@@ -54,12 +55,27 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
-    //MARK: - Methods
+    //MARK: - Helpers
+    private func currentDayOfWeek() -> String {
+        return Date().currentDayOfWeek()
+    }
+    
     private func updatedIndexes() {
         insertedIndexPaths = []
         insertedSections = IndexSet()
     }
     
+    private func getRecord(from recordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
+        guard let trackerId = recordCoreData.tracker?.trackerId else {
+            throw TrackerRecordsStoreError.decodingErrorInvalidId
+        }
+        guard let date = recordCoreData.date else {
+            throw TrackerRecordsStoreError.decodingErrorInvalidDate
+        }
+        return TrackerRecord(trackerId: trackerId, date: date)
+    }
+    
+    //MARK: - Methods
     func getTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.trackerId else {
             throw TrackerStoreError.decodingErrorInvalidId
@@ -98,14 +114,9 @@ final class TrackerStore: NSObject {
         )
     }
     
-    private func getRecord(from recordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
-        guard let trackerId = recordCoreData.tracker?.trackerId else {
-            throw TrackerRecordsStoreError.decodingErrorInvalidId
-        }
-        guard let date = recordCoreData.date else {
-            throw TrackerRecordsStoreError.decodingErrorInvalidDate
-        }
-        return TrackerRecord(trackerId: trackerId, date: date)
+    func loadInitialData(date: String) {
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), date)
+        try? fetchedResultsController.performFetch()
     }
 }
 

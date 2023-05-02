@@ -3,7 +3,7 @@ import UIKit
 final class DefaultStackView: UIStackView {
     
     //MARK: - Properties
-    let imageView: UIImageView = {
+    var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "star")
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -12,7 +12,7 @@ final class DefaultStackView: UIStackView {
         return imageView
     }()
     
-    private let label: UILabel = {
+    var label: UILabel = {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
         label.font = UIFont.ypFontMedium12
