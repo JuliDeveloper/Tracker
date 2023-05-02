@@ -3,5 +3,6 @@ import Foundation
 protocol ListTrackersViewControllerDelegate: AnyObject {
     func updateCollectionView()
     func updateButtonStateFromDate() -> Date
-    func updateCompletedTrackers(tracker: Tracker)
+    func completedTracker(_ trackerId: UUID, _ trackerRecords: Set<TrackerRecord>) -> Bool
+    func updateCompletedTrackers(cell: TrackerCell,  _ tracker: Tracker)
 }

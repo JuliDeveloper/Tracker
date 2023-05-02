@@ -60,10 +60,11 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
-    private var counter = 0
-    private var isCompletedTrackerToday = false
-    let currentDate: Date? = nil
-    var tracker = Tracker(
+    private var currentDate: Date? {
+        return delegate?.updateButtonStateFromDate()
+    }
+    private var isCompletedTrackerToday = Bool()
+    private var tracker = Tracker(
         id: UUID(),
         title: "",
         color: UIColor(),
@@ -75,22 +76,33 @@ final class TrackerCell: UICollectionViewCell {
     weak var delegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Helpers
-    func configure(for cell: TrackerCell, tracker: Tracker, title: String, emoji: String, color: UIColor) {
+    func configure(for cell: TrackerCell, tracker: Tracker, _ trackerRecords: Set<TrackerRecord>, isCompleted: Bool) {
         addElements()
         setupConstraints()
         
-        mainView.backgroundColor = color
-        plusButton.backgroundColor = color
+        isCompletedTrackerToday = isCompleted
+        
+        mainView.backgroundColor = tracker.color
+        plusButton.backgroundColor = tracker.color
         
         self.tracker = tracker
         
-        let wordDay = pluralizeDays(counter)
+        let dayCounter = trackerRecords.count
+        counterDayLabel.text = pluralizeDays(dayCounter)
         
-        taskTitleLabel.text = title
-        emojiLabel.text = emoji
-        counterDayLabel.text = "\(wordDay)"
+        taskTitleLabel.text = tracker.title
+        emojiLabel.text = tracker.emoji
         
         checkDate()
+        updateTrackerState(isCompleted: isCompletedTrackerToday)
+    }
+    
+    func updateTrackerState(isCompleted: Bool) {
+        if isCompleted {
+            setupButton(isCompleted: isCompletedTrackerToday)
+        } else {
+            setupButton(isCompleted: isCompletedTrackerToday)
+        }
     }
     
     private func addElements() {
@@ -175,21 +187,33 @@ final class TrackerCell: UICollectionViewCell {
     
     private func checkDate() {
         let selectedDate = delegate?.updateButtonStateFromDate() ?? Date()
-        
+
         if selectedDate > currentDate ?? Date() {
-            isCompletedTrackerToday = false
-            configureButton(image: setDefaultImage(), value: 1)
+            setupButton(isCompleted: isCompletedTrackerToday)
             plusButton.isEnabled = false
         } else if selectedDate <= currentDate ?? Date() {
-            isCompletedTrackerToday = false
-            configureButton(image: setDefaultImage(), value: 1)
+            setupButton(isCompleted: isCompletedTrackerToday)
             plusButton.isEnabled = true
         }
     }
     
-    private func configureButton(image: UIImage, value: Float) {
-        let newDayCont = pluralizeDays(counter)
-        counterDayLabel.text = "\(newDayCont)"
+//    private func setupPlusButton() {
+//        configureButton(
+//            image: setDefaultImage(),
+//            value: 1,
+//            isCompleted: isCompletedTrackerToday
+//        )
+//    }
+//
+//    private func setupCheckmarkButton() {
+//        configureButton(
+//            image: UIImage(named: "doneButton") ?? UIImage(),
+//            value: 0.3,
+//            isCompleted: isCompletedTrackerToday
+//        )
+//    }
+    
+    private func configureButton(image: UIImage, value: Float, isCompleted: Bool) {
         plusButton.setImage(image, for: .normal)
         plusButton.layer.opacity = value
     }
@@ -203,27 +227,15 @@ final class TrackerCell: UICollectionViewCell {
         return image
     }
     
+    private func setupButton(isCompleted: Bool) {
+        let image = isCompleted ? UIImage(named: "doneButton") ?? UIImage() : setDefaultImage()
+        let value: Float = isCompleted ? 0.3 : 1
+        configureButton(image: image, value: value, isCompleted: isCompleted)
+    }
+    
     @objc private func addDay() {
         isCompletedTrackerToday.toggle()
-
-        if isCompletedTrackerToday {
-            counter += 1
-            configureButton(
-                image: UIImage(named: "doneButton") ?? UIImage(),
-                value: 0.3
-            )
-            delegate?.updateCompletedTrackers(
-                tracker: tracker
-            )
-        } else {
-            counter -= 1
-            configureButton(
-                image: setDefaultImage(),
-                value: 1
-            )
-            delegate?.updateCompletedTrackers(
-                tracker: tracker
-            )
-        }
+        setupButton(isCompleted: isCompletedTrackerToday)
+        delegate?.updateCompletedTrackers(cell: self, tracker)
     }
 }

@@ -139,10 +139,9 @@ final class ListTrackersViewController: UIViewController {
     
     private let trackerStore = TrackerStore()
     private let trackerCategoryStore = TrackerCategoryStore()
-
+    private let trackerRecordStore = TrackerRecordsStore()
+    
     private var categories: [TrackerCategory] = []
-    private var visibleCategories: [TrackerCategory] = []
-    private var completedTrackers: [TrackerRecord] = []
     private var currentDate: Date? = nil
        
     //MARK: - Lifecycle
@@ -345,6 +344,32 @@ final class ListTrackersViewController: UIViewController {
         changeScenario()
     }
     
+    private func getDate() -> Date {
+        let calendar = Calendar.current
+        let selectedDate = datePicker.date
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        guard let currentDate = calendar.date(from: dateComponents) else { return Date()}
+        return currentDate
+    }
+
+    private func saveTrackerRecord(for trackerId: UUID) {
+        currentDate = getDate()
+        let trackerRecord = TrackerRecord(
+            trackerId: trackerId,
+            date: currentDate ?? Date()
+        )
+        try? trackerRecordStore.saveRecord(trackerRecord)
+    }
+
+    private func deleteTrackerRecord(for trackerId: UUID) {
+        currentDate = getDate()
+        let trackerRecord = TrackerRecord(
+            trackerId: trackerId,
+            date: currentDate ?? Date()
+        )
+        try? trackerRecordStore.deleteRecord(trackerRecord)
+    }
+    
     @objc private func addTask() {
         let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.updateDelegate = self
@@ -417,22 +442,13 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.taskCellIdentifier, for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         
-        let tracker = trackerStore.getTracker(at: indexPath)
+        guard let tracker = trackerStore.getTracker(at: indexPath) else { return UICollectionViewCell() }
         
+        let trackerRecords = trackerStore.getRecords(for: indexPath)
+        let isCompleted = completedTracker(tracker.id, trackerRecords)
+        
+        cell.configure(for: cell, tracker: tracker, trackerRecords, isCompleted: isCompleted)
         cell.delegate = self
-        cell.configure(
-            for: cell,
-            tracker: tracker ?? Tracker(id: UUID(),
-                                        title: "",
-                                        color: UIColor(),
-                                        emoji: "",
-                                        schedule: [],
-                                        countRecords: 0
-                                       ),
-            title: tracker?.title ?? "",
-            emoji: tracker?.emoji ?? "",
-            color: tracker?.color ?? UIColor()
-        )
         
         return cell
     }
@@ -475,17 +491,30 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         return datePicker.date
     }
     
-    func updateCompletedTrackers(tracker: Tracker) {
-        currentDate = datePicker.date
+    func completedTracker(_ trackerId: UUID, _ trackerRecords: Set<TrackerRecord>) -> Bool {
+        let selectedDate = datePicker.date
+        return trackerRecords.contains(where: { record in
+            record.trackerId == trackerId && Calendar.current.isDate(record.date, inSameDayAs: selectedDate)
+        })
+    }
+    
+    func updateCompletedTrackers(cell: TrackerCell, _ tracker: Tracker) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
         
-        if let index = completedTrackers.firstIndex(where: { $0.trackerId == tracker.id && $0.date == currentDate }) {
-            completedTrackers.remove(at: index)
+        let trackerRecords = trackerStore.getRecords(for: indexPath)
+        
+        if completedTracker(tracker.id, trackerRecords) {
+            deleteTrackerRecord(for: tracker.id)
         } else {
-            let trackerRecord = TrackerRecord(
-                trackerId: tracker.id, date: currentDate ?? Date()
-            )
-            completedTrackers.append(trackerRecord)
+            saveTrackerRecord(for: tracker.id)
         }
+        
+        let updatedTrackerRecords = trackerStore.getRecords(for: indexPath)
+        let isCompleted = completedTracker(tracker.id, updatedTrackerRecords)
+        
+        cell.updateTrackerState(isCompleted: isCompleted)
+        
+        collectionView.reloadItems(at: [indexPath])
     }
 }
 
