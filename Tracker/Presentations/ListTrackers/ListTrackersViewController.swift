@@ -133,8 +133,13 @@ final class ListTrackersViewController: UIViewController {
     private let params = GeometricParams(
         cellCount: 2,
         leftInset: 16,
+        smallLeftInset: nil,
         rightInset: 16,
-        cellSpacing: 9
+        smallRightInset: nil,
+        cellSpacing: 9,
+        smallCellSpacing: nil,
+        lineCellSpacing: nil,
+        smallLineCellSpacing: nil
     )
     
     private let trackerStore = TrackerStore()

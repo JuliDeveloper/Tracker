@@ -63,7 +63,7 @@ final class AddNewTrackerViewController: UIViewController {
     private let collectionView = UICollectionView(
         frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
     )
-    private let params = GeometricParams1(
+    private let params = GeometricParams(
         cellCount: 6,
         leftInset: 25,
         smallLeftInset: 20,
