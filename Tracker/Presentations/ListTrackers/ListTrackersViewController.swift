@@ -515,6 +515,7 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
 // MARK: - TrackerStoreDelegate
 extension ListTrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
+        changeScenario()
         collectionView.performBatchUpdates {
             collectionView.insertSections(update.insertedSections)
             collectionView.insertItems(at: update.insertedIndexes)

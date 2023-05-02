@@ -197,22 +197,6 @@ final class TrackerCell: UICollectionViewCell {
         }
     }
     
-//    private func setupPlusButton() {
-//        configureButton(
-//            image: setDefaultImage(),
-//            value: 1,
-//            isCompleted: isCompletedTrackerToday
-//        )
-//    }
-//
-//    private func setupCheckmarkButton() {
-//        configureButton(
-//            image: UIImage(named: "doneButton") ?? UIImage(),
-//            value: 0.3,
-//            isCompleted: isCompletedTrackerToday
-//        )
-//    }
-    
     private func configureButton(image: UIImage, value: Float, isCompleted: Bool) {
         plusButton.setImage(image, for: .normal)
         plusButton.layer.opacity = value
