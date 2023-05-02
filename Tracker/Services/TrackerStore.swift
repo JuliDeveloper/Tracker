@@ -143,6 +143,16 @@ extension TrackerStore: TrackerStoreProtocol {
 
         try context.save()
     }
+    
+    func trackerFiltering(from currentDate: String?, or searchText: String?) {
+        if currentDate != nil {
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDate ?? "")
+        } else {
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.title), searchText ?? "")
+        }
+        
+        try? fetchedResultsController.performFetch()
+    }
 }
 
 //MARK: - NSFetchedResultsControllerDelegate

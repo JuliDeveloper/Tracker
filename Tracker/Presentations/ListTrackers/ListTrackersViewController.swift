@@ -107,7 +107,7 @@ final class ListTrackersViewController: UIViewController {
     }()
     
     private let defaultStackView = DefaultStackView(
-        title: "Что будем отслеживать?"
+        title: "Ничего не найдено", image: "errorSearch"
     )
     private let collectionView = UICollectionView(
         frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
@@ -144,16 +144,6 @@ final class ListTrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var currentDate: Date? = nil
-    
-    private var isSearching: Bool {
-        return !(searchTextField.text?.isEmpty ?? false)
-    }
-    private var isCheckDate: Bool {
-        return datePicker.date == currentDate
-    }
-    private var isFiltering: Bool {
-        return isSearching || isCheckDate
-    }
        
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -324,8 +314,9 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func changeScenario() {
-        if categories.isEmpty {
+        if trackerStore.numberOfSections == 0 {
             collectionView.isHidden = true
+            filterButton.isHidden = true
             defaultStackView.isHidden = false
         } else {
             collectionView.isHidden = false
@@ -347,21 +338,11 @@ final class ListTrackersViewController: UIViewController {
     
     private func updateSearchState() {
         searchTextField.text = ""
-        visibleCategories.removeAll()
     }
     
-    private func checkScenario() {
-        if isFiltering {
-            checkVisibleCategories()
-        }
-    }
-    
-    private func checkVisibleCategories() {
-        if !visibleCategories.isEmpty {
-            defaultStackView.isHidden = true
-        } else {
-            defaultStackView.isHidden = false
-        }
+    private func updateData() {
+        collectionView.reloadData()
+        changeScenario()
     }
     
     @objc private func addTask() {
@@ -374,36 +355,17 @@ final class ListTrackersViewController: UIViewController {
     @objc func datePickerValueChanged() {
         currentDate = datePicker.date
         updateDateLabelTitle(with: currentDate ?? Date())
-                
+                        
         let calendar = Calendar.current
         let currentWeekDay = calendar.component(.weekday, from: currentDate ?? Date())
-        
-        visibleCategories = categories.map { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                let containsCurrentWeekDay = tracker.schedule?.contains(where: { weekDay in
-                    return weekDay.numberValue == currentWeekDay
-                }) ?? false
-                return containsCurrentWeekDay
-            }
-            return TrackerCategory(title: category.title, trackers: filteredTrackers)
-        }
-        
-        collectionView.reloadData()
-        checkScenario()
+        trackerStore.trackerFiltering(from:  String(currentWeekDay), or: nil)
+        updateData()
     }
     
     @objc private func searchTracker() {
         let searchText = searchTextField.text ?? ""
-     
-        visibleCategories = categories.map { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                return tracker.title.lowercased().contains(searchText.lowercased())
-            }
-            return TrackerCategory(title: category.title, trackers: filteredTrackers)
-        }.filter { $0.trackers.count > 0 }
-        
-        collectionView.reloadData()
-        checkScenario()
+        trackerStore.trackerFiltering(from:  nil, or: searchText)
+        updateData()
     }
 
     @objc private func cancelSearch() {
