@@ -66,18 +66,19 @@ final class CreateTrackerViewController: UIViewController {
         ])
     }
     
-    private func showViewController(with array: [String]) {
+    private func showViewController(with array: [String], isIrregular: Bool) {
         let addTrackerVC = AddNewTrackerViewController()
         addTrackerVC.updateDelegate = updateDelegate
         addTrackerVC.titlesCells = array
+        addTrackerVC.isIrregular = isIrregular
         navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
     @objc private func addHabits() {
-        showViewController(with: ["Категория", "Расписание"])
+        showViewController(with: ["Категория", "Расписание"], isIrregular: false)
     }
     
     @objc private func addIrregularEvent() {
-        showViewController(with: ["Категория"])
+        showViewController(with: ["Категория"], isIrregular: true)
     }
 }

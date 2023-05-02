@@ -91,6 +91,7 @@ final class AddNewTrackerViewController: UIViewController {
     private var currentColor: UIColor? = nil
     
     var titlesCells: [String] = []
+    var isIrregular = Bool()
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
@@ -104,6 +105,11 @@ final class AddNewTrackerViewController: UIViewController {
         configureTextField()
         configureCollectionView()
         showScenario()
+        
+        if isIrregular {
+            setSchedule = []
+            WeekDay.allCases.forEach { setSchedule.append($0) }
+        }
         
         tableView.reloadData()
         collectionView.reloadData()
