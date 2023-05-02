@@ -8,4 +8,5 @@ protocol TrackerStoreProtocol {
     func getTracker(at indexPath: IndexPath) -> Tracker?
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws
     func trackerFiltering(from currentDate: String?, or searchText: String?)
+    func getRecords(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
 }

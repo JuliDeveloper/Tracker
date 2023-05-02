@@ -97,6 +97,16 @@ final class TrackerStore: NSObject {
             countRecords: countRecords
         )
     }
+    
+    private func getRecord(from recordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
+        guard let trackerId = recordCoreData.tracker?.trackerId else {
+            throw TrackerRecordsStoreError.decodingErrorInvalidId
+        }
+        guard let date = recordCoreData.date else {
+            throw TrackerRecordsStoreError.decodingErrorInvalidDate
+        }
+        return TrackerRecord(trackerId: trackerId, date: date)
+    }
 }
 
 //MARK: - TrackerStoreProtocol
@@ -152,6 +162,19 @@ extension TrackerStore: TrackerStoreProtocol {
         }
         
         try? fetchedResultsController.performFetch()
+    }
+    
+    func getRecords(for indexPath: IndexPath) -> Set<TrackerRecord> {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        
+        guard let trackerRecordsCoreData = trackerCoreData.records as? Set<TrackerRecordCoreData> else { return Set<TrackerRecord>() }
+        
+        do {
+            let trackerRecords = try trackerRecordsCoreData.map { try getRecord(from: $0) }
+            return Set(trackerRecords)
+        } catch {
+            return Set<TrackerRecord>()
+        }
     }
 }
 
