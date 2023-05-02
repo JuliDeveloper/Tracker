@@ -25,7 +25,7 @@ final class DefaultStackView: UIStackView {
     }()
     
     //MARK: - Lifecycle
-    init(title: String) {
+    init(title: String, image: String) {
         super.init(frame: .zero)
         
         axis = .vertical
@@ -38,6 +38,7 @@ final class DefaultStackView: UIStackView {
         addArrangedSubview(imageView)
         addArrangedSubview(label)
         
+        imageView.image = UIImage(named: image)
         label.text = title
     }
     

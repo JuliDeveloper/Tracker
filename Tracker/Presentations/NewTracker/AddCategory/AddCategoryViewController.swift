@@ -4,7 +4,7 @@ final class AddCategoryViewController: UIViewController {
     
     //MARK: - Properties
     private let defaultStack = DefaultStackView(
-        title: "Привычки и события можно объединить по смыслу"
+        title: "Привычки и события можно объединить по смыслу", image: "star"
     )
     
     private let tableView = UITableView()
