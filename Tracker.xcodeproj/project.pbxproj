@@ -36,7 +36,6 @@
 		255B097A29D5BD1800A599E3 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255B097929D5BD1800A599E3 /* CustomButton.swift */; };
 		256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015B29D7557600E2A413 /* AddCategoryViewController.swift */; };
 		256E015E29D7581D00E2A413 /* DefaultStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E015D29D7581D00E2A413 /* DefaultStackView.swift */; };
-		256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */; };
 		256E016529D7844100E2A413 /* AddNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */; };
 		256E016729D785A300E2A413 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016629D785A300E2A413 /* CustomTextField.swift */; };
 		256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */; };
@@ -81,7 +80,6 @@
 		255B097929D5BD1800A599E3 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		256E015B29D7557600E2A413 /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		256E015D29D7581D00E2A413 /* DefaultStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultStackView.swift; sourceTree = "<group>"; };
-		256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTrackerCellDelegate.swift; sourceTree = "<group>"; };
 		256E016429D7844100E2A413 /* AddNewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewCategoryViewController.swift; sourceTree = "<group>"; };
 		256E016629D785A300E2A413 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		256E016829D9BDB500E2A413 /* AddScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddScheduleViewController.swift; sourceTree = "<group>"; };
@@ -254,7 +252,6 @@
 			isa = PBXGroup;
 			children = (
 				25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */,
-				256E016029D77EAE00E2A413 /* TitleTrackerCellDelegate.swift */,
 				256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */,
 				256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */,
 				254AD8E529E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift */,
@@ -387,7 +384,6 @@
 				256E018129DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift in Sources */,
 				25411F9A29FC169A00B69950 /* TrackerStoreDelegate.swift in Sources */,
 				25411F9C2A0128D100B69950 /* TrackerRecordStore.swift in Sources */,
-				256E016129D77EAE00E2A413 /* TitleTrackerCellDelegate.swift in Sources */,
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
 				254AD8E629E31F8B0061B7B7 /* AddCategoryViewControllerDelegate.swift in Sources */,

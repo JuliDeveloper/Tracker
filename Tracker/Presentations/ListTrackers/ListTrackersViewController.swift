@@ -480,13 +480,7 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension ListTrackersViewController: ListTrackersViewControllerDelegate {
-    func updateCollectionView() {
-//        collectionView.performBatchUpdates {
-//            getData()
-//        }
-    }
-    
+extension ListTrackersViewController: ListTrackersViewControllerDelegate {    
     func updateButtonStateFromDate() -> Date {
         return datePicker.date
     }
