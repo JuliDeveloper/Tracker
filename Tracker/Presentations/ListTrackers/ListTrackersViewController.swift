@@ -374,6 +374,16 @@ final class ListTrackersViewController: UIViewController {
         guard let currentDate = calendar.date(from: dateComponents) else { return Date()}
         return currentDate
     }
+    
+    private func deleteTracker(from indexPath: IndexPath) {
+        let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
+        let action = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            try? self?.trackerStore.deleteTracker(at: indexPath)
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true)
+    }
 
     private func saveTrackerRecord(for trackerId: UUID) {
         let trackerRecord = TrackerRecord(
@@ -472,6 +482,23 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard indexPaths.count > 0 else {
+            return nil
+        }
+        
+        let indexPath = indexPaths[0]
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [
+                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                    self?.deleteTracker(from: indexPath)
+                }
+            ])
+        })
+    }
 }
 
 //MARK: - UICollectionViewDelegateFlowLayout
@@ -539,6 +566,8 @@ extension ListTrackersViewController: TrackerStoreDelegate {
         collectionView.performBatchUpdates {
             collectionView.insertSections(update.insertedSections)
             collectionView.insertItems(at: update.insertedIndexes)
+            collectionView.deleteSections(update.deletedSections)
+            collectionView.deleteItems(at: update.deletedIndexPaths)
         }
     }
 }

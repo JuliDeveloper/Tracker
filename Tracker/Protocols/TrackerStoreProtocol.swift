@@ -7,6 +7,7 @@ protocol TrackerStoreProtocol {
     func headerTitleSection(_ section: Int) -> String?
     func getTracker(at indexPath: IndexPath) -> Tracker?
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws
+    func deleteTracker(at indexPath: IndexPath) throws
     func trackerFiltering(from currentDate: String?, or searchText: String?)
     func getRecords(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
 }

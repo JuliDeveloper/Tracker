@@ -11,7 +11,9 @@ enum TrackerStoreError: Error {
 
 struct TrackerStoreUpdate {
     let insertedSections: IndexSet
+    var deletedSections: IndexSet
     let insertedIndexes: [IndexPath]
+    var deletedIndexPaths: [IndexPath]
 }
 
 final class TrackerStore: NSObject {
@@ -22,7 +24,9 @@ final class TrackerStore: NSObject {
     private let trackerCategoryStore = TrackerCategoryStore()
     
     private var insertedSections = IndexSet()
+    private var deletedSections = IndexSet()
     private var insertedIndexPaths: [IndexPath] = []
+    private var deletedIndexPaths: [IndexPath] = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
@@ -165,6 +169,12 @@ extension TrackerStore: TrackerStoreProtocol {
         try context.save()
     }
     
+    func deleteTracker(at indexPath: IndexPath) throws {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        context.delete(trackerCoreData)
+        try context.save()
+    }
+    
     func trackerFiltering(from currentDate: String?, or searchText: String?) {
         if currentDate != nil {
             fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDate ?? "")
@@ -195,7 +205,9 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         delegate?.didUpdate(
             TrackerStoreUpdate(
                 insertedSections: insertedSections,
-                insertedIndexes: insertedIndexPaths
+                deletedSections: deletedSections,
+                insertedIndexes: insertedIndexPaths,
+                deletedIndexPaths: deletedIndexPaths
             )
         )
         updatedIndexes()
@@ -205,6 +217,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         switch type {
         case .insert:
             insertedSections.insert(sectionIndex)
+        case .delete:
+            deletedSections.insert(sectionIndex)
         default:
             break
         }
@@ -215,6 +229,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .insert:
             if let indexPath = newIndexPath {
                 insertedIndexPaths.append(indexPath)
+            }
+        case .delete:
+            if let indexPath = indexPath {
+                deletedIndexPaths.append(indexPath)
             }
         default:
             break
