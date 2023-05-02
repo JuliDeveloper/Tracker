@@ -59,6 +59,12 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
+    init(delegate: TrackerStoreDelegate) {
+        self.delegate = delegate
+        self.context = CoreDataManager.shared.persistentContainer.viewContext
+        super.init()
+    }
+    
     //MARK: - Helpers
     private func currentDayOfWeek() -> String {
         return Date().currentDayOfWeek()
@@ -116,11 +122,6 @@ final class TrackerStore: NSObject {
             schedule: schedule,
             countRecords: countRecords
         )
-    }
-    
-    func loadInitialData(date: String) {
-        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), date)
-        try? fetchedResultsController.performFetch()
     }
 }
 
@@ -196,6 +197,11 @@ extension TrackerStore: TrackerStoreProtocol {
         } catch {
             return Set<TrackerRecord>()
         }
+    }
+    
+    func loadInitialData(date: String) {
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), date)
+        try? fetchedResultsController.performFetch()
     }
 }
 

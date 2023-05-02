@@ -78,8 +78,8 @@ final class AddNewTrackerViewController: UIViewController {
     private let emojis = Constants.emojis
     private let colors = Constants.colors
     
-    private let trackerStore = TrackerStore()
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerStore: TrackerStoreProtocol = TrackerStore()
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     
     private var trackerTitle = ""
     private var categorySubtitle = ""

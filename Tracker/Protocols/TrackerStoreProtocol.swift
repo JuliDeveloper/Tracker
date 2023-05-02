@@ -10,4 +10,5 @@ protocol TrackerStoreProtocol {
     func deleteTracker(at indexPath: IndexPath) throws
     func trackerFiltering(from currentDate: String?, or searchText: String?)
     func getRecords(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
+    func loadInitialData(date: String)
 }

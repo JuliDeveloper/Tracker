@@ -13,15 +13,6 @@ final class TrackerCategoryStore: NSObject {
     //MARK: - Properties
     private let context: NSManagedObjectContext
     private let uiColorMarshalling = UIColorMarshalling()
-    
-    private(set) lazy var categories: [TrackerCategory] = {
-        do {
-            return try fetchCategories()
-        } catch {
-            print(TrackerCategoryStoreError.errorFetchingCategories)
-            return []
-        }
-    }()
 
     //MARK: - LifeCycle
     convenience override init() {
@@ -93,5 +84,16 @@ final class TrackerCategoryStore: NSObject {
             schedule: schedule,
             countRecords: countRecords
         )
+    }
+}
+
+extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
+    var categories: [TrackerCategory] {
+        do {
+            return try fetchCategories()
+        } catch {
+            print(TrackerCategoryStoreError.errorFetchingCategories)
+            return []
+        }
     }
 }
