@@ -29,4 +29,16 @@ extension UIColor {
     static var ypColorSection16: UIColor { UIColor(named: "ypColorSection16") ?? UIColor() }
     static var ypColorSection17: UIColor { UIColor(named: "ypColorSection17") ?? UIColor() }
     static var ypColorSection18: UIColor { UIColor(named: "ypColorSection18") ?? UIColor() }
+    
+    static func getColors() -> [UIColor] {
+        var colors = [UIColor]()
+        
+        for i in 1...18 {
+            if let color = UIColor(named: "ypColorSection\(i)") {
+                colors.append(color)
+            }
+        }
+        
+        return colors
+    }
 }
