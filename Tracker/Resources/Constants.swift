@@ -10,4 +10,12 @@ struct Constants {
     static let cellIdentifier = "cell"
     static let categoryCellIdentifier = "categoryCell"
     static let weekDayCellIdentifier = "weekDayCell"
+    
+    static let cellCollectionView = "cellCollectionView"
+
+    static let emojis = [
+        "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶",
+        "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
+    ]
+    static let colors: [UIColor] = UIColor.getColors()
 }

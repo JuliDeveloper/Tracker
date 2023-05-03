@@ -13,7 +13,7 @@ final class CreateTrackerViewController: UIViewController {
         return button
     }()
     private lazy var irregularEventButton: CustomButton = {
-        let button = CustomButton(title: "Нерегулярные событие")
+        let button = CustomButton(title: "Нерегулярное событие")
         button.addTarget(
             self,
             action: #selector(addIrregularEvent),
@@ -66,13 +66,19 @@ final class CreateTrackerViewController: UIViewController {
         ])
     }
     
-    @objc private func addHabits() {
+    private func showViewController(with array: [String], isIrregular: Bool) {
         let addTrackerVC = AddNewTrackerViewController()
         addTrackerVC.updateDelegate = updateDelegate
+        addTrackerVC.titlesCells = array
+        addTrackerVC.isIrregular = isIrregular
         navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
+    @objc private func addHabits() {
+        showViewController(with: ["Категория", "Расписание"], isIrregular: false)
+    }
+    
     @objc private func addIrregularEvent() {
-        
+        showViewController(with: ["Категория"], isIrregular: true)
     }
 }

@@ -3,7 +3,7 @@ import UIKit
 final class DefaultStackView: UIStackView {
     
     //MARK: - Properties
-    let imageView: UIImageView = {
+    private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "star")
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +25,7 @@ final class DefaultStackView: UIStackView {
     }()
     
     //MARK: - Lifecycle
-    init(title: String) {
+    init(title: String, image: String) {
         super.init(frame: .zero)
         
         axis = .vertical
@@ -38,10 +38,17 @@ final class DefaultStackView: UIStackView {
         addArrangedSubview(imageView)
         addArrangedSubview(label)
         
+        imageView.image = UIImage(named: image)
         label.text = title
     }
     
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Helpers
+    func setValue(textLabel: String, imageTitle: String) {
+        label.text = textLabel
+        imageView.image = UIImage(named: imageTitle)
     }
 }
