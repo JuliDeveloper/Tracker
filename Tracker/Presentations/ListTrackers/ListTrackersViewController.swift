@@ -341,8 +341,10 @@ final class ListTrackersViewController: UIViewController {
         if trackerStore.numberOfSections == 0 {
             collectionView.isHidden = true
             filterButton.isHidden = true
-            defaultStackView.label.text = "Ничего не найдено"
-            defaultStackView.imageView.image = UIImage(named: "errorSearch")
+            defaultStackView.setValue(
+                textLabel: "Ничего не найдено",
+                imageTitle: "errorSearch"
+            )
             defaultStackView.isHidden = false
         } else {
             collectionView.isHidden = false
