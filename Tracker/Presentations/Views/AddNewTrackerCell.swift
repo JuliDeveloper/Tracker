@@ -42,11 +42,50 @@ final class AddNewTrackerCell: UICollectionViewCell {
     //MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
+        addElements()
+        setConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Helpers
+    func configureCell(for section: Int, title: String?, color: UIColor?) {
+        self.section = section
         
+        switch section {
+        case 0:
+            currentEmoji = title ?? ""
+            button.setTitle(title, for: .normal)
+            button.titleLabel?.font = UIFont.ypFontBold32
+            button.addTarget(
+                self,
+                action: #selector(selectedEmoji),
+                for: .touchUpInside
+            )
+        case 1:
+            currentColor = color ?? UIColor()
+            button.backgroundColor = color
+            button.clipsToBounds = true
+            button.layer.cornerRadius = Constants.smallRadius
+            button.addTarget(
+                self,
+                action: #selector(selectedColor),
+                for: .touchUpInside
+            )
+        default:
+            break
+        }
+    }
+    
+    func addElements() {
         contentView.addSubview(button)
         contentView.insertSubview(selectedEmojiView, belowSubview: button)
         contentView.insertSubview(selectedColorBorderView, belowSubview: button)
-        
+    }
+    
+    func setConstraints() {
         button.translatesAutoresizingMaskIntoConstraints = false
         selectedEmojiView.translatesAutoresizingMaskIntoConstraints = false
         selectedColorBorderView.translatesAutoresizingMaskIntoConstraints = false
@@ -88,39 +127,6 @@ final class AddNewTrackerCell: UICollectionViewCell {
                 equalTo: contentView.bottomAnchor, constant: 3
             )
         ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    //MARK: - Helpers
-    func configureCell(for section: Int, title: String?, color: UIColor?) {
-        self.section = section
-        
-        switch section {
-        case 0:
-            currentEmoji = title ?? ""
-            button.setTitle(title, for: .normal)
-            button.titleLabel?.font = UIFont.ypFontBold32
-            button.addTarget(
-                self,
-                action: #selector(selectedEmoji),
-                for: .touchUpInside
-            )
-        case 1:
-            currentColor = color ?? UIColor()
-            button.backgroundColor = color
-            button.clipsToBounds = true
-            button.layer.cornerRadius = Constants.smallRadius
-            button.addTarget(
-                self,
-                action: #selector(selectedColor),
-                for: .touchUpInside
-            )
-        default:
-            break
-        }
     }
     
     func shrinkButton() {
