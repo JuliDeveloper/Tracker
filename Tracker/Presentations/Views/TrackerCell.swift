@@ -60,9 +60,7 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
-    private var currentDate: Date? {
-        return delegate?.updateButtonStateFromDate()
-    }
+    private var currentDate: Date? = nil
     private var isCompletedTrackerToday = Bool()
     private var tracker = Tracker(
         id: UUID(),
