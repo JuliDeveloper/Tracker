@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  Tracker
-//
-//  Created by Julia Romanenko on 27.03.2023.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -16,7 +9,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = TabBarController()
+        
+        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        
+        if launchedBefore {
+            window?.rootViewController = TabBarController()
+        } else {
+            window?.rootViewController = OnboardingViewController()
+            UserDefaults.standard.set(true, forKey: "launchedBefore")
+        }
+        
         window?.makeKeyAndVisible()
     }
 
