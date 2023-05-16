@@ -1,6 +1,8 @@
 import UIKit
 
 final class OnboardingViewController: UIPageViewController {
+    
+    //MARK: - Properties
     private lazy var pages: [UIViewController] = {
         let bluePage = CustomViewController(imageTitle: "pageBlue")
         let redPage = CustomViewController(imageTitle: "pageRed")
@@ -39,6 +41,7 @@ final class OnboardingViewController: UIPageViewController {
     
     private let openListTrackerButton = CustomButton(title: "Вот это технологии!")
     
+    //MARK: - Lifecycle
     init() {
         super.init(transitionStyle: .scroll,
                    navigationOrientation: .horizontal,
@@ -71,6 +74,7 @@ final class OnboardingViewController: UIPageViewController {
         )
     }
     
+    //MARK: - Helpers
     private func addElements() {
         view.addSubview(titleLabel)
         view.addSubview(onboardingStack)
@@ -110,6 +114,7 @@ final class OnboardingViewController: UIPageViewController {
     }
 }
 
+//MARK: - UIPageViewControllerDataSource
 extension OnboardingViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let vcIndex = pages.firstIndex(of: viewController) else { return nil }
@@ -138,6 +143,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
     }
 }
 
+//MARK: - UIPageViewControllerDelegate
 extension OnboardingViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         

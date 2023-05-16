@@ -1,12 +1,15 @@
 import UIKit
 
 final class CustomViewController: UIViewController {
+    
+    //MARK: - Properties
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
+    //MARK: - Lifecycle
     init(imageTitle: String) {
         super.init(nibName: nil, bundle: nil)
         imageView.image = UIImage(named: imageTitle)
