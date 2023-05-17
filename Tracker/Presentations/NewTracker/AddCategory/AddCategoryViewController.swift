@@ -10,9 +10,8 @@ final class AddCategoryViewController: UIViewController {
     private let tableView = UITableView()
     private let button = CustomButton(title: "Добавить категорию")
     
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private lazy var trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore(delegate: self)
     
-    private var categories = [TrackerCategory]()
     private var titleCategory = ""
     
     var selectedIndexPath: IndexPath?
@@ -30,7 +29,6 @@ final class AddCategoryViewController: UIViewController {
             .foregroundColor: UIColor.ypBlack
         ]
         
-        getData()
         configureTableView()
         addElements()
         showScenario()
@@ -43,10 +41,6 @@ final class AddCategoryViewController: UIViewController {
     }
     
     //MARK: - Helpers
-    private func getData() {
-        categories = trackerCategoryStore.categories
-    }
-    
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -126,7 +120,7 @@ final class AddCategoryViewController: UIViewController {
             setupConstraintForDefaultScreen()
         }
         
-        if categories.isEmpty {
+        if trackerCategoryStore.countCategories == 0 {
             defaultStack.isHidden = false
             tableView.isHidden = false
         } else {
@@ -137,7 +131,6 @@ final class AddCategoryViewController: UIViewController {
     
     @objc private func addCategory() {
         let newCategoryVC = AddNewCategoryViewController()
-        newCategoryVC.delegate = self
         let navVC = UINavigationController(rootViewController: newCategoryVC)
         present(navVC, animated: true)
     }
@@ -146,7 +139,7 @@ final class AddCategoryViewController: UIViewController {
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        trackerCategoryStore.numberOfRowsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -156,8 +149,12 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.categoryCellIdentifier, for: indexPath) as? CategoryCell else { return UITableViewCell() }
         
-        let title = categories[indexPath.row].title
-        let lastIndex = categories.count - 1
+        guard let title = trackerCategoryStore.getCategoryTitle(indexPath.section)[indexPath.row] else {
+            return UITableViewCell()
+            
+        }
+        
+        let lastIndex = trackerCategoryStore.numberOfRowsInSection(indexPath.section) - 1
       
         cell.configure(
             title,
@@ -181,14 +178,18 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         currentCell.accessoryType = .checkmark
         
-        titleCategory = categories[indexPath.row].title
+        guard let titleCategory = trackerCategoryStore.getCategoryTitle(indexPath.section)[indexPath.row] else {
+            return
+        }
         delegate?.updateCategorySubtitle(from: titleCategory, and: selectedIndexPath)
     }
 }
 
-extension AddCategoryViewController: AddCategoryViewControllerDelegate {
-    func updateListCategories(newCategory: TrackerCategory) {
-        categories.append(newCategory)
-        tableView.reloadData()
+extension AddCategoryViewController: TrackerCategoryStoreDelegate {
+    func didUpdate(_ update: TrackerCategoryStoreUpdate) {
+        tableView.performBatchUpdates {
+            tableView.insertRows(at: update.insertedIndexes, with: .automatic)
+            tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
+        }
     }
 }

@@ -124,6 +124,10 @@ final class TrackerCategoryStore: NSObject {
 }
 
 extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
+    var countCategories: Int {
+        fetchedResultsController.fetchedObjects?.count ?? 0
+    }
+
     func numberOfRowsInSection(_ section: Int) -> Int {
         fetchedResultsController.sections?[0].numberOfObjects ?? 0
     }
