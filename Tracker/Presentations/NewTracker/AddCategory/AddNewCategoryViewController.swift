@@ -6,7 +6,7 @@ final class AddNewCategoryViewController: UIViewController {
     private let textField = CustomTextField(text: "Введите название категории")
     private let button = CustomButton(title: "Готово")
     
-    weak var delegate: AddCategoryViewControllerDelegate?
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -109,8 +109,12 @@ final class AddNewCategoryViewController: UIViewController {
         let newTitleCategory = textField.text ?? ""
         let newCategory = TrackerCategory(title: newTitleCategory, trackers: [])
         
-        delegate?.updateListCategories(newCategory: newCategory)
-        
+        do {
+            try trackerCategoryStore.add(newCategory: newCategory)
+        } catch let error {
+            print(error)
+        }
+                
         dismiss(animated: true)
     }
 }

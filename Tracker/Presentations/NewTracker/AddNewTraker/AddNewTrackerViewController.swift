@@ -326,7 +326,8 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func saveTracker() {
-        guard let category = trackerCategoryStore.categories.randomElement() else { return }
+        guard let category = trackerCategoryStore.getCategory(at: currentIndexCategory ?? IndexPath()) else { return }
+        
         let newTracker = Tracker(
             id: UUID(),
             title: trackerTitle,
