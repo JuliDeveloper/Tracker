@@ -8,12 +8,38 @@ enum TrackerCategoryStoreError: Error {
     case errorFetchingCategories
 }
 
+struct TrackerCategoryStoreUpdate {
+    let insertedIndexes: [IndexPath]
+    var deletedIndexPaths: [IndexPath]
+}
+
 final class TrackerCategoryStore: NSObject {
     
     //MARK: - Properties
     private let context: NSManagedObjectContext
     private let uiColorMarshalling = UIColorMarshalling()
+ 
+    private var insertedIndexPaths: [IndexPath] = []
+    private var deletedIndexPaths: [IndexPath] = []
+    
+    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
+        let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.title, ascending: false),
+        ]
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        fetchedResultsController.delegate = self
+        try? fetchedResultsController.performFetch()
+        return fetchedResultsController
+    }()
 
+    weak var delegate: TrackerCategoryStoreDelegate?
+    
     //MARK: - LifeCycle
     convenience override init() {
         let context = CoreDataManager.shared.persistentContainer.viewContext
@@ -22,6 +48,12 @@ final class TrackerCategoryStore: NSObject {
     
     init(context: NSManagedObjectContext) throws {
         self.context = context
+        super.init()
+    }
+    
+    init(delegate: TrackerCategoryStoreDelegate) {
+        self.delegate = delegate
+        self.context = CoreDataManager.shared.persistentContainer.viewContext
         super.init()
     }
     
@@ -51,6 +83,10 @@ final class TrackerCategoryStore: NSObject {
 
         let categories = try result.map({ try getTrackerCategory(from: $0) })
         return categories
+    }
+    
+    private func updatedIndexes() {
+        insertedIndexPaths = []
     }
     
     private func getTrackerCategory(from trackerCategoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
@@ -88,12 +124,78 @@ final class TrackerCategoryStore: NSObject {
 }
 
 extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
+    func numberOfRowsInSection(_ section: Int) -> Int {
+        fetchedResultsController.sections?[0].numberOfObjects ?? 0
+    }
+    
+    func getCategoryTitle(_ section: Int) -> [String?] {
+        guard let categories = fetchedResultsController.fetchedObjects else {
+            return []
+        }
+        
+        let titles = categories.compactMap { $0.title }
+        return titles
+    }
+    
+    func getCategory(at indexPath: IndexPath) -> TrackerCategory? {
+        guard indexPath.row < fetchedResultsController.sections?[0].numberOfObjects ?? 0 else {
+            return nil
+        }
+        
+        let trackerCategoryCoreData = fetchedResultsController.object(at: indexPath)
+        
+        do {
+            let category = try getTrackerCategory(from: trackerCategoryCoreData)
+            return category
+        } catch {
+            return nil
+        }
+    }
+    
+    func add(newCategory: TrackerCategory) throws {
+        let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
+        trackerCategoryCoreData.title = newCategory.title
+        
+        try context.save()
+    }
+    
+    func deleteCategory(at indexPath: IndexPath) throws {
+        
+    }
+    
     var categories: [TrackerCategory] {
         do {
             return try fetchCategories()
         } catch {
             print(TrackerCategoryStoreError.errorFetchingCategories)
             return []
+        }
+    }
+}
+
+extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.didUpdate(
+            TrackerCategoryStoreUpdate(
+                insertedIndexes: insertedIndexPaths,
+                deletedIndexPaths: deletedIndexPaths
+            )
+        )
+        updatedIndexes()
+    }
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            if let indexPath = newIndexPath {
+                insertedIndexPaths.append(indexPath)
+            }
+        case .delete:
+            if let indexPath = indexPath {
+                deletedIndexPaths.append(indexPath)
+            }
+        default:
+            break
         }
     }
 }
