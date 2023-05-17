@@ -31,7 +31,7 @@ final class TrackerStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCoreData.category?.title, ascending: true),
+            NSSortDescriptor(keyPath: \TrackerCoreData.category?.title, ascending: false),
             NSSortDescriptor(keyPath: \TrackerCoreData.title, ascending: true)
         ]
         fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDayOfWeek())
