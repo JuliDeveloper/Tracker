@@ -52,7 +52,7 @@ final class AddCategoryViewController: UIViewController {
         tableView.dataSource = self
         
         tableView.register(
-            UITableViewCell.self,
+            CategoryCell.self,
             forCellReuseIdentifier: Constants.categoryCellIdentifier
         )
         
@@ -154,45 +154,17 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.categoryCellIdentifier, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.categoryCellIdentifier, for: indexPath) as? CategoryCell else { return UITableViewCell() }
         
         let title = categories[indexPath.row].title
         let lastIndex = categories.count - 1
-        
-        cell.backgroundColor = .ypBackground
-        cell.selectionStyle = .none
-        cell.separatorInset = UIEdgeInsets(
-            top: 0, left: 16, bottom: 0, right: 16
+      
+        cell.configure(
+            title,
+            indexPath,
+            lastIndex,
+            selectedIndexPath ?? IndexPath()
         )
-        
-        if indexPath.row == lastIndex {
-            cell.separatorInset = UIEdgeInsets(
-                top: 0, left: cell.bounds.size.width, bottom: 0, right: 0
-            )
-            
-            let maskLayer = CAShapeLayer()
-            maskLayer.path = UIBezierPath(
-                roundedRect: cell.bounds,
-                byRoundingCorners: [.bottomLeft, .bottomRight],
-                cornerRadii: CGSize(width: 16, height: 16)
-            ).cgPath
-            cell.layer.mask = maskLayer
-        }
-        
-        if indexPath == selectedIndexPath {
-            cell.accessoryType = .checkmark
-        }
-        
-        if #available(iOS 14.0, *) {
-            var content = cell.defaultContentConfiguration()
-            content.text = title
-            content.textProperties.font = UIFont.ypFontMedium17
-            content.textProperties.color = .ypBlack
-            cell.contentConfiguration = content
-            
-        } else {
-            cell.textLabel?.text = title
-        }
         
         return cell
     }
