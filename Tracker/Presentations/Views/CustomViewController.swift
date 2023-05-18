@@ -71,7 +71,9 @@ final class CustomViewController: UIViewController {
     
     @objc private func openTrackers() {
         let tabBarVC = TabBarController()
-        tabBarVC.modalPresentationStyle = .fullScreen
-        present(tabBarVC, animated: true)
+        
+        let window = UIApplication.shared.windows.first
+        window?.rootViewController = tabBarVC
+        window?.makeKeyAndVisible()
     }
 }
