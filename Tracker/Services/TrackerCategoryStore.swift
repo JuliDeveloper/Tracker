@@ -75,18 +75,6 @@ final class TrackerCategoryStore: NSObject {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         let result = try context.fetch(fetchRequest)
 
-//        if result.isEmpty {
-//            let _ = [
-//                TrackerCategory(title: "Радостные мелочи", trackers: [], id: UUID()),
-//            ].map { category in
-//                let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
-//                trackerCategoryCoreData.title = category.title
-//                trackerCategoryCoreData.trackers = []
-//            }
-//
-//            try context.save()
-//        }
-
         let categories = try result.map({ try getTrackerCategory(from: $0) })
         return categories
     }
