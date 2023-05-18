@@ -183,6 +183,23 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         }
         delegate?.updateCategorySubtitle(from: titleCategory, and: selectedIndexPath)
     }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard let currentCategory = trackerCategoryStore.getCategory(at: indexPath) else { return UIContextMenuConfiguration() }
+               
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [
+                UIAction(title: "Редактировать") { [weak self] _ in
+                    let addNewCategoryVC = AddNewCategoryViewController()
+                    addNewCategoryVC.text = currentCategory.title
+                    addNewCategoryVC.category = currentCategory
+                    addNewCategoryVC.delegate = self
+                    self?.present(addNewCategoryVC, animated: true)
+                }
+            ])
+        })
+    }
 }
 
 extension AddCategoryViewController: TrackerCategoryStoreDelegate {
@@ -191,5 +208,11 @@ extension AddCategoryViewController: TrackerCategoryStoreDelegate {
             tableView.insertRows(at: update.insertedIndexes, with: .automatic)
             tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
         }
+    }
+}
+
+extension AddCategoryViewController: AddCategoryViewControllerDelegate {
+    func updateTableView() {
+        tableView.reloadData()
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 
 struct TrackerCategory {
-    let title: String
+    var title: String
     let trackers: [Tracker]
+    let categoryId: UUID
 }

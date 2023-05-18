@@ -574,6 +574,8 @@ extension ListTrackersViewController: TrackerStoreDelegate {
             collectionView.insertItems(at: update.insertedIndexes)
             collectionView.deleteSections(update.deletedSections)
             collectionView.deleteItems(at: update.deletedIndexPaths)
+            collectionView.reloadSections(update.updateSections)
+            collectionView.reloadItems(at: update.updateIndexPaths)
         }
     }
 }

@@ -8,6 +8,10 @@ final class AddNewCategoryViewController: UIViewController {
     
     private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     
+    var text: String?
+    var category: TrackerCategory?
+    weak var delegate: AddCategoryViewControllerDelegate?
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +26,7 @@ final class AddNewCategoryViewController: UIViewController {
         
         textField.delegate = self
         textField.returnKeyType = .done
+        textField.text = text
         
         addElements()
         showScenario()
@@ -107,14 +112,23 @@ final class AddNewCategoryViewController: UIViewController {
     
     @objc private func saveNewCategory() {
         let newTitleCategory = textField.text ?? ""
-        let newCategory = TrackerCategory(title: newTitleCategory, trackers: [])
         
-        do {
-            try trackerCategoryStore.add(newCategory: newCategory)
-        } catch let error {
-            print(error)
+        if category == nil {
+            let newCategory = TrackerCategory(
+                title: newTitleCategory,
+                trackers: [],
+                categoryId: UUID()
+            )
+            try? trackerCategoryStore.add(newCategory: newCategory)
+        } else {
+            guard let category else { return }
+            try? trackerCategoryStore.editCategory(
+                trackerCategory: category,
+                newTitle: newTitleCategory
+            )
+            delegate?.updateTableView()
         }
-                
+        
         dismiss(animated: true)
     }
 }
