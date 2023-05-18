@@ -129,6 +129,37 @@ final class AddCategoryViewController: UIViewController {
         }
     }
     
+    
+    
+    private func deleteCategory(from indexPath: IndexPath) {
+        let deleteConfirmationAlert = UIAlertController(title: nil, message: "Уверены что хотите удалить категорию?", preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+
+            let currentCategory = self.trackerCategoryStore.getCategory(at: indexPath)
+            
+            if let trackers = currentCategory?.trackers, !trackers.isEmpty {
+                let trackersExistAlert  = UIAlertController(title: "Вы еще не завершили все трекеры этой категории", message: "Сначала закончите их", preferredStyle: .alert)
+                let action = UIAlertAction(title: "ОК", style: .default)
+                trackersExistAlert.addAction(action)
+                self.present(trackersExistAlert, animated: true)
+            } else {
+                do {
+                    if let currentCategory {
+                        try self.trackerCategoryStore.deleteCategory(category: currentCategory)
+                    }
+                } catch let error {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отменить", style: .default)
+        deleteConfirmationAlert.addAction(deleteAction)
+        deleteConfirmationAlert.addAction(cancelAction)
+        present(deleteConfirmationAlert, animated: true)
+    }
+    
     @objc private func addCategory() {
         let newCategoryVC = AddNewCategoryViewController()
         let navVC = UINavigationController(rootViewController: newCategoryVC)
@@ -188,14 +219,23 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         guard let currentCategory = trackerCategoryStore.getCategory(at: indexPath) else { return UIContextMenuConfiguration() }
                
-        return UIContextMenuConfiguration(actionProvider: { actions in
+        return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
+            guard let self else { return UIMenu() }
             return UIMenu(children: [
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(
+                    title: "Редактировать"
+                ) { _ in
                     let addNewCategoryVC = AddNewCategoryViewController()
                     addNewCategoryVC.text = currentCategory.title
                     addNewCategoryVC.category = currentCategory
                     addNewCategoryVC.delegate = self
-                    self?.present(addNewCategoryVC, animated: true)
+                    self.present(addNewCategoryVC, animated: true)
+                },
+                UIAction(
+                    title: "Удалить",
+                    attributes: .destructive
+                ) { _ in
+                    self.deleteCategory(from: indexPath)
                 }
             ])
         })

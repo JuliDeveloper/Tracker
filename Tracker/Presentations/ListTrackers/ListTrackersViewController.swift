@@ -464,9 +464,12 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
+        
+        let titleCategory = trackerStore.headerTitleSection(indexPath.section)
 
-        guard let titleCategory = trackerStore.headerTitleSection(indexPath.section) else { return UICollectionReusableView() }
-        view.configureHeader(title: titleCategory)
+        if titleCategory != nil {
+            view.configureHeader(title: titleCategory ?? "")
+        }
         
         return view
     }

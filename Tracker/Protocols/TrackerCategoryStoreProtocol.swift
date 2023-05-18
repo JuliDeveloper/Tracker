@@ -7,6 +7,6 @@ protocol TrackerCategoryStoreProtocol {
     func getCategoryTitle(_ section: Int) -> [String?]
     func getCategory(at indexPath: IndexPath) -> TrackerCategory?
     func add(newCategory: TrackerCategory) throws
-    func deleteCategory(at indexPath: IndexPath) throws
+    func deleteCategory(category: TrackerCategory) throws
     func editCategory(trackerCategory: TrackerCategory, newTitle: String) throws
 }

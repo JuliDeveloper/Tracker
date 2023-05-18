@@ -172,8 +172,10 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         try context.save()
     }
     
-    func deleteCategory(at indexPath: IndexPath) throws {
-        
+    func deleteCategory(category: TrackerCategory) throws {
+        let category = try getTrackerCategoryCoreData(from: category)
+        context.delete(category)
+        try context.save()
     }
     
     func editCategory(trackerCategory: TrackerCategory, newTitle: String) throws {
