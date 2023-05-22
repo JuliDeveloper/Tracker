@@ -27,6 +27,18 @@ final class OnboardingViewController: UIPageViewController {
     }()
     
     //MARK: - Lifecycle
+    init() {
+        super.init(
+            transitionStyle: .scroll,
+            navigationOrientation: .horizontal,
+            options: nil
+        )
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
