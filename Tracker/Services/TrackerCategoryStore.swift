@@ -71,16 +71,9 @@ final class TrackerCategoryStore: NSObject {
         return existingCategory
     }
     
-    func fetchCategories() throws -> [TrackerCategory] {
-        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
-        let result = try context.fetch(fetchRequest)
-
-        let categories = try result.map({ try getTrackerCategory(from: $0) })
-        return categories
-    }
-    
     private func updatedIndexes() {
         insertedIndexPaths = []
+        deletedIndexPaths = []
     }
     
     private func getTrackerCategoryCoreData(from trackerCategory: TrackerCategory) throws -> TrackerCategoryCoreData {
@@ -131,21 +124,17 @@ final class TrackerCategoryStore: NSObject {
 }
 
 extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
-    var countCategories: Int {
-        fetchedResultsController.fetchedObjects?.count ?? 0
-    }
-
-    func numberOfRowsInSection(_ section: Int) -> Int {
-        fetchedResultsController.sections?[0].numberOfObjects ?? 0
-    }
-    
-    func getCategoryTitle(_ section: Int) -> [String?] {
-        guard let categories = fetchedResultsController.fetchedObjects else {
+    var categories: [TrackerCategory] {
+        guard
+            let objects = self.fetchedResultsController.fetchedObjects,
+            let categories = try? objects.map({
+                try getTrackerCategory(from: $0)
+            })
+        else {
             return []
         }
         
-        let titles = categories.compactMap { $0.title }
-        return titles
+        return categories
     }
     
     func getCategory(at indexPath: IndexPath) -> TrackerCategory? {
@@ -184,13 +173,8 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         try context.save()
     }
     
-    var categories: [TrackerCategory] {
-        do {
-            return try fetchCategories()
-        } catch {
-            print(TrackerCategoryStoreError.errorFetchingCategories)
-            return []
-        }
+    func setDelegate(_ delegate: TrackerCategoryStoreDelegate) {
+        self.delegate = delegate
     }
 }
 
