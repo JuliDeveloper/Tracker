@@ -30,6 +30,8 @@ final class Observable<Value> {
 }
 
 final class AddCategoryViewModel {
+    
+    //MARK: - Properties
     @Observable private(set) var categories: [TrackerCategory] = []
     @Observable private(set) var selectedIndexPath: IndexPath? = nil
     
@@ -37,12 +39,14 @@ final class AddCategoryViewModel {
     
     var onDidUpdate: ((TrackerCategoryStoreUpdate) -> Void)?
     
+    //MARK: - LifeCycle
     init(trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()) {
         self.trackerCategoryStore = trackerCategoryStore
         self.trackerCategoryStore.setDelegate(self)
         categories = fetchCategories()
     }
     
+    //MARK: - Helpers
     private func fetchCategories() -> [TrackerCategory] {
         trackerCategoryStore.categories
     }
