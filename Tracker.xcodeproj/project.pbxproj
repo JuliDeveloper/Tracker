@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		253FAC1D2A1901E700F68DF2 /* AddCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */; };
 		25411F3929EEC20F00B69950 /* AddNewTrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */; };
 		25411F8C29FA788B00B69950 /* Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 25411F8A29FA788B00B69950 /* Tracker.xcdatamodeld */; };
 		25411F8E29FA7A3A00B69950 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25411F8D29FA7A3A00B69950 /* TrackerStore.swift */; };
@@ -55,6 +56,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewModel.swift; sourceTree = "<group>"; };
 		25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerCellDelegate.swift; sourceTree = "<group>"; };
 		25411F8B29FA788B00B69950 /* Tracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Tracker.xcdatamodel; sourceTree = "<group>"; };
 		25411F8D29FA7A3A00B69950 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
@@ -115,6 +117,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		253FAC1B2A1901C400F68DF2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		25411FCE2A1249DB00B69950 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +180,7 @@
 			children = (
 				255B095129D1E4DE00A599E3 /* Presentations */,
 				256E016A29D9F83900E2A413 /* Models */,
+				253FAC1B2A1901C400F68DF2 /* ViewModels */,
 				256E017329DA118500E2A413 /* Services */,
 				256E015F29D77E9700E2A413 /* Protocols */,
 				255B095529D3305A00A599E3 /* Extensions */,
@@ -418,6 +429,7 @@
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
 				255B097829D5BC7C00A599E3 /* CreateTrackerViewController.swift in Sources */,
 				25411FD22A12515400B69950 /* CustomViewController.swift in Sources */,
+				253FAC1D2A1901E700F68DF2 /* AddCategoryViewModel.swift in Sources */,
 				25411F3929EEC20F00B69950 /* AddNewTrackerCellDelegate.swift in Sources */,
 				256E017229D9FA4900E2A413 /* TrackerRecord.swift in Sources */,
 				256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */,
