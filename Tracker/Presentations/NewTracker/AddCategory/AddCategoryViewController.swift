@@ -164,17 +164,21 @@ final class AddCategoryViewController: UIViewController {
             guard let self else { return }
 
             guard let currentCategory = viewModel.getCategory(at: indexPath) else { return }
-            
+
             if !currentCategory.trackers.isEmpty {
-                let trackersExistAlert  = UIAlertController(title: "Вы еще не завершили все трекеры этой категории", message: "Сначала закончите их", preferredStyle: .alert)
-                let action = UIAlertAction(title: "ОК", style: .default)
+                let trackersExistAlert  = UIAlertController(title: "В этой категории есть незавершенные трекеры", message: "Если вы удалите категорию, все трекеры тоже исчезнут", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Удалить", style: .destructive) { _ in
+                    self.viewModel.delete(category: currentCategory)
+                }
+                let cancelAction = UIAlertAction(title: "Отменить", style: .default)
                 trackersExistAlert.addAction(action)
+                trackersExistAlert.addAction(cancelAction)
                 self.present(trackersExistAlert, animated: true)
             } else {
                 viewModel.delete(category: currentCategory)
             }
         }
-        
+
         let cancelAction = UIAlertAction(title: "Отменить", style: .default)
         deleteConfirmationAlert.addAction(deleteAction)
         deleteConfirmationAlert.addAction(cancelAction)

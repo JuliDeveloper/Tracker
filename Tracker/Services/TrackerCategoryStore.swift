@@ -162,8 +162,14 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     }
     
     func deleteCategory(category: TrackerCategory) throws {
-        let category = try getTrackerCategoryCoreData(from: category)
-        context.delete(category)
+        let categoryCoreData = try getTrackerCategoryCoreData(from: category)
+        let trackersCoreData = categoryCoreData.trackers?.allObjects as? [TrackerCoreData] ?? []
+        
+        trackersCoreData.forEach { trackerCoreData in
+            context.delete(trackerCoreData)
+        }
+        
+        context.delete(categoryCoreData)
         try context.save()
     }
     
