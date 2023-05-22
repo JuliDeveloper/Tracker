@@ -9,15 +9,23 @@ final class AddCategoryViewController: UIViewController {
     
     private let tableView = UITableView()
     private let button = CustomButton(title: "Добавить категорию")
-    
-    private lazy var trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore(delegate: self)
-    
+        
     private var titleCategory = ""
     
-    var selectedIndexPath: IndexPath?
+    private var viewModel: AddCategoryViewModel
+    
     weak var delegate: UpdateSubtitleDelegate?
     
     //MARK: - Lifecycle
+    init(viewModel: AddCategoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -29,6 +37,14 @@ final class AddCategoryViewController: UIViewController {
             .foregroundColor: UIColor.ypBlack
         ]
         
+        viewModel.$categories.bind { [weak self] _ in
+            self?.bindViewModel()
+        }
+        
+        viewModel.$selectedIndexPath.bind { [weak self] _ in
+            self?.tableView.reloadData()
+        }
+        
         configureTableView()
         addElements()
         showScenario()
@@ -38,9 +54,20 @@ final class AddCategoryViewController: UIViewController {
             action: #selector(addCategory),
             for: .touchUpInside
         )
+        
+        bindViewModel()
     }
     
     //MARK: - Helpers
+    private func bindViewModel() {
+        viewModel.onDidUpdate = { [weak self] update in
+            self?.tableView.performBatchUpdates {
+                self?.tableView.insertRows(at: update.insertedIndexes, with: .automatic)
+                self?.tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
+            }
+        }
+    }
+    
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -120,7 +147,7 @@ final class AddCategoryViewController: UIViewController {
             setupConstraintForDefaultScreen()
         }
         
-        if trackerCategoryStore.countCategories == 0 {
+        if viewModel.categories.count == 0 {
             defaultStack.isHidden = false
             tableView.isHidden = false
         } else {
@@ -134,23 +161,17 @@ final class AddCategoryViewController: UIViewController {
     private func deleteCategory(from indexPath: IndexPath) {
         let deleteConfirmationAlert = UIAlertController(title: nil, message: "Уверены что хотите удалить категорию?", preferredStyle: .actionSheet)
         let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
 
-            let currentCategory = self.trackerCategoryStore.getCategory(at: indexPath)
+            guard let currentCategory = viewModel.getCategory(at: indexPath) else { return }
             
-            if let trackers = currentCategory?.trackers, !trackers.isEmpty {
+            if !currentCategory.trackers.isEmpty {
                 let trackersExistAlert  = UIAlertController(title: "Вы еще не завершили все трекеры этой категории", message: "Сначала закончите их", preferredStyle: .alert)
                 let action = UIAlertAction(title: "ОК", style: .default)
                 trackersExistAlert.addAction(action)
                 self.present(trackersExistAlert, animated: true)
             } else {
-                do {
-                    if let currentCategory {
-                        try self.trackerCategoryStore.deleteCategory(category: currentCategory)
-                    }
-                } catch let error {
-                    print(error.localizedDescription)
-                }
+                viewModel.delete(category: currentCategory)
             }
         }
         
@@ -161,7 +182,7 @@ final class AddCategoryViewController: UIViewController {
     }
     
     @objc private func addCategory() {
-        let newCategoryVC = AddNewCategoryViewController()
+        let newCategoryVC = AddNewCategoryViewController(viewModel: viewModel)
         let navVC = UINavigationController(rootViewController: newCategoryVC)
         present(navVC, animated: true)
     }
@@ -170,7 +191,7 @@ final class AddCategoryViewController: UIViewController {
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        trackerCategoryStore.numberOfRowsInSection(section)
+        viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -180,44 +201,39 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.categoryCellIdentifier, for: indexPath) as? CategoryCell else { return UITableViewCell() }
         
-        guard let title = trackerCategoryStore.getCategoryTitle(indexPath.section)[indexPath.row] else {
-            return UITableViewCell()
-            
-        }
+        let title = viewModel.categories[indexPath.row].title
         
-        let lastIndex = trackerCategoryStore.numberOfRowsInSection(indexPath.section) - 1
+        let lastIndex = viewModel.categories.count - 1
       
         cell.configure(
             title,
             indexPath,
             lastIndex,
-            selectedIndexPath ?? IndexPath()
+            viewModel.selectedIndexPath ?? IndexPath()
         )
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if selectedIndexPath != nil {
-            guard let selectedCell = tableView.cellForRow(at: selectedIndexPath ?? IndexPath()) else { return }
+        if viewModel.selectedIndexPath != nil {
+            guard let selectedCell = tableView.cellForRow(at: viewModel.selectedIndexPath ?? IndexPath()) else { return }
             
             selectedCell.accessoryType = .none
         }
         
-        selectedIndexPath = indexPath
-        guard let currentCell = tableView.cellForRow(at: selectedIndexPath ?? IndexPath()) else { return }
+        viewModel.getSelectedCategory(from: indexPath)
+        guard let currentCell = tableView.cellForRow(at: viewModel.selectedIndexPath ?? IndexPath()) else { return }
         
         currentCell.accessoryType = .checkmark
         
-        guard let titleCategory = trackerCategoryStore.getCategoryTitle(indexPath.section)[indexPath.row] else {
-            return
-        }
-        delegate?.updateCategorySubtitle(from: titleCategory, and: selectedIndexPath)
+        let titleCategory = viewModel.categories[indexPath.row].title
+        delegate?.updateCategorySubtitle(from: titleCategory, and: viewModel.selectedIndexPath)
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        guard let currentCategory = trackerCategoryStore.getCategory(at: indexPath) else { return UIContextMenuConfiguration() }
+        let currentCategory = viewModel.categories[indexPath.row]
                
         return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
             guard let self else { return UIMenu() }
@@ -225,7 +241,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
                 UIAction(
                     title: "Редактировать"
                 ) { _ in
-                    let addNewCategoryVC = AddNewCategoryViewController()
+                    let addNewCategoryVC = AddNewCategoryViewController(viewModel: self.viewModel)
                     addNewCategoryVC.text = currentCategory.title
                     addNewCategoryVC.category = currentCategory
                     addNewCategoryVC.delegate = self
@@ -239,15 +255,6 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
                 }
             ])
         })
-    }
-}
-
-extension AddCategoryViewController: TrackerCategoryStoreDelegate {
-    func didUpdate(_ update: TrackerCategoryStoreUpdate) {
-        tableView.performBatchUpdates {
-            tableView.insertRows(at: update.insertedIndexes, with: .automatic)
-            tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
-        }
     }
 }
 

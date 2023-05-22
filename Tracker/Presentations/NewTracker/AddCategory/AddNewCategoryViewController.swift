@@ -6,13 +6,22 @@ final class AddNewCategoryViewController: UIViewController {
     private let textField = CustomTextField(text: "Введите название категории")
     private let button = CustomButton(title: "Готово")
     
-    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
+    private var viewModel: AddCategoryViewModel
     
     var text: String?
     var category: TrackerCategory?
     weak var delegate: AddCategoryViewControllerDelegate?
     
     //MARK: - Lifecycle
+    init(viewModel: AddCategoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -119,13 +128,10 @@ final class AddNewCategoryViewController: UIViewController {
                 trackers: [],
                 categoryId: UUID()
             )
-            try? trackerCategoryStore.add(newCategory: newCategory)
+            viewModel.add(category: newCategory)
         } else {
             guard let category else { return }
-            try? trackerCategoryStore.editCategory(
-                trackerCategory: category,
-                newTitle: newTitleCategory
-            )
+            viewModel.edit(category: category, newTitle: newTitleCategory)
             delegate?.updateTableView()
         }
         

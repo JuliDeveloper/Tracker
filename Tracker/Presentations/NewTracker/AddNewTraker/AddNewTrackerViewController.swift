@@ -79,7 +79,7 @@ final class AddNewTrackerViewController: UIViewController {
     private let colors = Constants.colors
     
     private let trackerStore: TrackerStoreProtocol = TrackerStore()
-    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
+    private var viewModel: AddCategoryViewModel
     
     private var trackerTitle = ""
     private var categorySubtitle = ""
@@ -95,6 +95,15 @@ final class AddNewTrackerViewController: UIViewController {
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
+    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -326,7 +335,7 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func saveTracker() {
-        guard let category = trackerCategoryStore.getCategory(at: currentIndexCategory ?? IndexPath()) else { return }
+        guard let category = viewModel.getCategory(at: currentIndexCategory ?? IndexPath()) else { return }
         
         let newTracker = Tracker(
             id: UUID(),
@@ -480,9 +489,9 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let vc = AddCategoryViewController()
+            let vc = AddCategoryViewController(viewModel: viewModel)
             vc.delegate = self
-            vc.selectedIndexPath = currentIndexCategory
+            viewModel.getSelectedCategory(from: currentIndexCategory)
             showViewController(vc)
         } else {
             let vc = AddScheduleViewController()
