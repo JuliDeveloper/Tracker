@@ -576,6 +576,10 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         
         collectionView.reloadItems(at: [indexPath])
     }
+    
+    func updateCollectionView() {
+        collectionView.reloadData()
+    }
 }
 
 // MARK: - TrackerStoreDelegate

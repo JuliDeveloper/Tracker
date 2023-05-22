@@ -129,6 +129,11 @@ final class AddNewTrackerViewController: UIViewController {
         updateHeight(for: collectionView)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        updateDelegate?.updateCollectionView()
+    }
+    
     //MARK: - Helpers
     private func addElements() {
         view.addSubview(scrollView)
