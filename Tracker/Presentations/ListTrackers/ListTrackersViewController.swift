@@ -382,13 +382,23 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func deleteTracker(from indexPath: IndexPath) {
-        let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
-        let action = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
-            try? self?.trackerStore.deleteTracker(at: indexPath)
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            
+            do {
+                try self.trackerStore.deleteTracker(at: indexPath)
+            } catch let error {
+                print(error.localizedDescription)
+            }
         }
+        let cancelAction = UIAlertAction(title: "Отменить", style: .default)
         
-        alert.addAction(action)
-        present(alert, animated: true)
+        showAlert(
+            title: "Уверены что хотите удалить трекер?",
+            message: nil,
+            preferredStyle: .actionSheet,
+            actions: [deleteAction, cancelAction]
+        )
     }
 
     private func saveTrackerRecord(for trackerId: UUID) {
