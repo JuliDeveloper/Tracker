@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2521AE962A1F7B41004B50D7 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2521AE952A1F7B41004B50D7 /* StorageManager.swift */; };
+		2521AEA02A1F9575004B50D7 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 2521AE9F2A1F9575004B50D7 /* Localizable.stringsdict */; };
 		253FAC1D2A1901E700F68DF2 /* AddCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */; };
 		253FAC1F2A1BA5C000F68DF2 /* Extension + UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253FAC1E2A1BA5C000F68DF2 /* Extension + UIViewController.swift */; };
 		25411F3929EEC20F00B69950 /* AddNewTrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */; };
@@ -59,6 +60,7 @@
 
 /* Begin PBXFileReference section */
 		2521AE952A1F7B41004B50D7 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		2521AE9F2A1F9575004B50D7 /* Localizable.stringsdict */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; path = Localizable.stringsdict; sourceTree = "<group>"; };
 		253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewModel.swift; sourceTree = "<group>"; };
 		253FAC1E2A1BA5C000F68DF2 /* Extension + UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIViewController.swift"; sourceTree = "<group>"; };
 		25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerCellDelegate.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				255B096929D4472C00A599E3 /* Constants.swift */,
 				255B096F29D59F1500A599E3 /* GeometricParams.swift */,
 				255B094529D1E00F00A599E3 /* Assets.xcassets */,
+				2521AE9F2A1F9575004B50D7 /* Localizable.stringsdict */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -389,6 +392,7 @@
 			files = (
 				255B094929D1E00F00A599E3 /* LaunchScreen.storyboard in Resources */,
 				255B094629D1E00F00A599E3 /* Assets.xcassets in Resources */,
+				2521AEA02A1F9575004B50D7 /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +470,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -526,6 +531,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
