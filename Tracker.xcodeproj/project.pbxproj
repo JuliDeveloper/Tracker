@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2521AE962A1F7B41004B50D7 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2521AE952A1F7B41004B50D7 /* StorageManager.swift */; };
 		253FAC1D2A1901E700F68DF2 /* AddCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */; };
 		253FAC1F2A1BA5C000F68DF2 /* Extension + UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253FAC1E2A1BA5C000F68DF2 /* Extension + UIViewController.swift */; };
 		25411F3929EEC20F00B69950 /* AddNewTrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2521AE952A1F7B41004B50D7 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		253FAC1C2A1901E700F68DF2 /* AddCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewModel.swift; sourceTree = "<group>"; };
 		253FAC1E2A1BA5C000F68DF2 /* Extension + UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIViewController.swift"; sourceTree = "<group>"; };
 		25411F3829EEC20F00B69950 /* AddNewTrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerCellDelegate.swift; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				25411F8A29FA788B00B69950 /* Tracker.xcdatamodeld */,
+				2521AE952A1F7B41004B50D7 /* StorageManager.swift */,
 				25411F9729FACF0F00B69950 /* CoreDataManager.swift */,
 				25411F8D29FA7A3A00B69950 /* TrackerStore.swift */,
 				25411F8F29FA7AE300B69950 /* TrackerCategoryStore.swift */,
@@ -403,6 +406,7 @@
 				255B093D29D1E00E00A599E3 /* AppDelegate.swift in Sources */,
 				255B095E29D3391A00A599E3 /* TabBarController.swift in Sources */,
 				25411F8E29FA7A3A00B69950 /* TrackerStore.swift in Sources */,
+				2521AE962A1F7B41004B50D7 /* StorageManager.swift in Sources */,
 				25F97EBF29E84FDF005D82C0 /* AddNewTrackerCell.swift in Sources */,
 				255B096229D33B4900A599E3 /* StatisticsViewController.swift in Sources */,
 				25411FA02A01899600B69950 /* Extension + Date.swift in Sources */,

@@ -3,20 +3,21 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    
+    private let userDefaults = StorageManager.shared
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: scene)
         
-        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        let launchedBefore = userDefaults.checkLaunchedBefore()
         
         if launchedBefore {
             window?.rootViewController = TabBarController()
         } else {
             window?.rootViewController = OnboardingSinglePageController()
-            UserDefaults.standard.set(true, forKey: "launchedBefore")
+            userDefaults.setLaunchedBefore(value: true)
         }
         
         window?.makeKeyAndVisible()
