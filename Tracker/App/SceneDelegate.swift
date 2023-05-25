@@ -1,22 +1,25 @@
-//
-//  SceneDelegate.swift
-//  Tracker
-//
-//  Created by Julia Romanenko on 27.03.2023.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    
+    private let userDefaults = StorageManager.shared
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = TabBarController()
+        
+        let launchedBefore = userDefaults.checkLaunchedBefore()
+        
+        if launchedBefore {
+            window?.rootViewController = TabBarController()
+        } else {
+            window?.rootViewController = OnboardingSinglePageController()
+            userDefaults.setLaunchedBefore(value: true)
+        }
+        
         window?.makeKeyAndVisible()
     }
 

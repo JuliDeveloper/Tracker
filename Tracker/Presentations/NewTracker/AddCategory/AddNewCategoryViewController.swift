@@ -6,9 +6,22 @@ final class AddNewCategoryViewController: UIViewController {
     private let textField = CustomTextField(text: "Введите название категории")
     private let button = CustomButton(title: "Готово")
     
+    private var viewModel: AddCategoryViewModel
+    
+    var text: String?
+    var category: TrackerCategory?
     weak var delegate: AddCategoryViewControllerDelegate?
     
     //MARK: - Lifecycle
+    init(viewModel: AddCategoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -22,6 +35,7 @@ final class AddNewCategoryViewController: UIViewController {
         
         textField.delegate = self
         textField.returnKeyType = .done
+        textField.text = text
         
         addElements()
         showScenario()
@@ -107,9 +121,19 @@ final class AddNewCategoryViewController: UIViewController {
     
     @objc private func saveNewCategory() {
         let newTitleCategory = textField.text ?? ""
-        let newCategory = TrackerCategory(title: newTitleCategory, trackers: [])
         
-        delegate?.updateListCategories(newCategory: newCategory)
+        if category == nil {
+            let newCategory = TrackerCategory(
+                title: newTitleCategory,
+                trackers: [],
+                categoryId: UUID()
+            )
+            viewModel.add(category: newCategory)
+        } else {
+            guard let category else { return }
+            viewModel.edit(category: category, newTitle: newTitleCategory)
+            delegate?.updateTableView()
+        }
         
         dismiss(animated: true)
     }

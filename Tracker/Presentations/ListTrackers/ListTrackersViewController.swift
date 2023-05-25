@@ -382,13 +382,23 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func deleteTracker(from indexPath: IndexPath) {
-        let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
-        let action = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
-            try? self?.trackerStore.deleteTracker(at: indexPath)
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            
+            do {
+                try self.trackerStore.deleteTracker(at: indexPath)
+            } catch let error {
+                print(error.localizedDescription)
+            }
         }
+        let cancelAction = UIAlertAction(title: "Отменить", style: .default)
         
-        alert.addAction(action)
-        present(alert, animated: true)
+        showAlert(
+            title: "Уверены что хотите удалить трекер?",
+            message: nil,
+            preferredStyle: .actionSheet,
+            actions: [deleteAction, cancelAction]
+        )
     }
 
     private func saveTrackerRecord(for trackerId: UUID) {
@@ -464,15 +474,18 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerCellIdentifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
+        
+        let titleCategory = trackerStore.headerTitleSection(indexPath.section)
 
-        guard let titleCategory = trackerStore.headerTitleSection(indexPath.section) else { return UICollectionReusableView() }
-        view.configureHeader(title: titleCategory)
+        if titleCategory != nil {
+            view.configureHeader(title: titleCategory ?? "")
+        }
         
         return view
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        trackerStore.countTrackers
+        trackerStore.numberOfRowsInSection(section)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -563,6 +576,10 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         
         collectionView.reloadItems(at: [indexPath])
     }
+    
+    func updateCollectionView() {
+        collectionView.reloadData()
+    }
 }
 
 // MARK: - TrackerStoreDelegate
@@ -574,6 +591,8 @@ extension ListTrackersViewController: TrackerStoreDelegate {
             collectionView.insertItems(at: update.insertedIndexes)
             collectionView.deleteSections(update.deletedSections)
             collectionView.deleteItems(at: update.deletedIndexPaths)
+            collectionView.reloadSections(update.updateSections)
+            collectionView.reloadItems(at: update.updateIndexPaths)
         }
     }
 }

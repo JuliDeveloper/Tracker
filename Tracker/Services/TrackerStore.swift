@@ -12,8 +12,10 @@ enum TrackerStoreError: Error {
 struct TrackerStoreUpdate {
     let insertedSections: IndexSet
     var deletedSections: IndexSet
+    var updateSections: IndexSet
     let insertedIndexes: [IndexPath]
     var deletedIndexPaths: [IndexPath]
+    var updateIndexPaths: [IndexPath]
 }
 
 final class TrackerStore: NSObject {
@@ -25,13 +27,15 @@ final class TrackerStore: NSObject {
     
     private var insertedSections = IndexSet()
     private var deletedSections = IndexSet()
+    private var updateSections = IndexSet()
     private var insertedIndexPaths: [IndexPath] = []
     private var deletedIndexPaths: [IndexPath] = []
+    private var updateIndexPaths: [IndexPath] = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCoreData.category?.title, ascending: true),
+            NSSortDescriptor(keyPath: \TrackerCoreData.category?.title, ascending: false),
             NSSortDescriptor(keyPath: \TrackerCoreData.title, ascending: true)
         ]
         fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDayOfWeek())
@@ -73,6 +77,8 @@ final class TrackerStore: NSObject {
     private func updatedIndexes() {
         insertedIndexPaths = []
         insertedSections = IndexSet()
+        updateIndexPaths = []
+        updateSections = IndexSet()
     }
     
     private func getRecord(from recordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
@@ -156,7 +162,7 @@ extension TrackerStore: TrackerStoreProtocol {
     }
     
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws {
-        let categoryCoreData = try trackerCategoryStore.categoryCoreData(with: category.title)
+        let categoryCoreData = try trackerCategoryStore.categoryCoreData(with: category.categoryId)
         
         let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.trackerId = tracker.id
@@ -212,8 +218,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             TrackerStoreUpdate(
                 insertedSections: insertedSections,
                 deletedSections: deletedSections,
+                updateSections: updateSections,
                 insertedIndexes: insertedIndexPaths,
-                deletedIndexPaths: deletedIndexPaths
+                deletedIndexPaths: deletedIndexPaths,
+                updateIndexPaths: updateIndexPaths
             )
         )
         updatedIndexes()
@@ -225,6 +233,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             insertedSections.insert(sectionIndex)
         case .delete:
             deletedSections.insert(sectionIndex)
+//        case .update:
+//            updateSections.update(with: sectionIndex)
         default:
             break
         }
@@ -239,6 +249,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .delete:
             if let indexPath = indexPath {
                 deletedIndexPaths.append(indexPath)
+            }
+        case .update:
+            if let indexPath = indexPath {
+                updateIndexPaths.append(indexPath)
             }
         default:
             break

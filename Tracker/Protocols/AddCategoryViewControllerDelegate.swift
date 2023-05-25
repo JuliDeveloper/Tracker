@@ -1,5 +1,5 @@
-import Foundation
+import UIKit
 
 protocol AddCategoryViewControllerDelegate: AnyObject {
-    func updateListCategories(newCategory: TrackerCategory)
+    func updateTableView()
 }
