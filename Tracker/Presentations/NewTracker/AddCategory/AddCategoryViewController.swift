@@ -239,6 +239,10 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         let titleCategory = viewModel.categories[indexPath.row].title
         delegate?.updateCategorySubtitle(from: titleCategory, and: viewModel.selectedIndexPath)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.dismiss(animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
