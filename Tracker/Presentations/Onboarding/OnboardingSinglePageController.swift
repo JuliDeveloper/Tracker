@@ -16,6 +16,25 @@ final class OnboardingSinglePageController: UIPageViewController {
         return [bluePage, redPage]
     }()
     
+    private let onboardingStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .fill
+        stack.spacing = 24
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private lazy var openListTrackerButton: UIButton = {
+        let button = CustomButton(title: "Вот это технологии!")
+        button.addTarget(
+            self,
+            action: #selector(openTrackers),
+            for: .touchUpInside
+        )
+        return button
+    }()
+    
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
@@ -49,20 +68,38 @@ final class OnboardingSinglePageController: UIPageViewController {
             setViewControllers([firstVC], direction: .forward, animated: true)
         }
         
-        view.addSubview(pageControl)
+        addElements()
         setConstraints()
     }
     
     //MARK: - Helpers
+    private func addElements() {
+        view.addSubview(onboardingStackView)
+        
+        onboardingStackView.addArrangedSubview(pageControl)
+        onboardingStackView.addArrangedSubview(openListTrackerButton)
+    }
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            pageControl.centerXAnchor.constraint(
-                equalTo: view.centerXAnchor
+            onboardingStackView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor, constant: 20
             ),
-            pageControl.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -155
+            onboardingStackView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor, constant: -20
+            ),
+            onboardingStackView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -71
             )
         ])
+    }
+    
+    @objc private func openTrackers() {
+        let tabBarVC = TabBarController()
+        
+        let window = UIApplication.shared.windows.first
+        window?.rootViewController = tabBarVC
+        window?.makeKeyAndVisible()
     }
 }
 
