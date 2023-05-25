@@ -1,6 +1,6 @@
 import UIKit
 
-final class OnboardingViewController: UIPageViewController {
+final class OnboardingSinglePageController: UIPageViewController {
     
     //MARK: - Properties
     private lazy var pages: [UIViewController] = {
@@ -67,7 +67,7 @@ final class OnboardingViewController: UIPageViewController {
 }
 
 //MARK: - UIPageViewControllerDataSource
-extension OnboardingViewController: UIPageViewControllerDataSource {
+extension OnboardingSinglePageController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let vcIndex = pages.firstIndex(of: viewController) else { return nil }
         
@@ -96,7 +96,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
 }
 
 //MARK: - UIPageViewControllerDelegate
-extension OnboardingViewController: UIPageViewControllerDelegate {
+extension OnboardingSinglePageController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         
         if let currentVC = pageViewController.viewControllers?.first,

@@ -213,12 +213,13 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         let title = viewModel.categories[indexPath.row].title
         
         let lastIndex = viewModel.categories.count - 1
+        guard let selectedIndexPath = viewModel.selectedIndexPath else { return UITableViewCell() }
       
         cell.configure(
             title,
             indexPath,
             lastIndex,
-            viewModel.selectedIndexPath ?? IndexPath()
+            selectedIndexPath
         )
         
         return cell

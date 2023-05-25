@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if launchedBefore {
             window?.rootViewController = TabBarController()
         } else {
-            window?.rootViewController = OnboardingViewController()
+            window?.rootViewController = OnboardingSinglePageController()
             UserDefaults.standard.set(true, forKey: "launchedBefore")
         }
         
