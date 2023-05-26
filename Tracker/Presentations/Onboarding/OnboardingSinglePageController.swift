@@ -4,13 +4,16 @@ final class OnboardingSinglePageController: UIPageViewController {
     
     //MARK: - Properties
     private lazy var pages: [UIViewController] = {
+        let blueTitle = NSLocalizedString("onboarding.firstTitle", comment: "")
+        let redTitle = NSLocalizedString("onboarding.secondTitle", comment: "")
+        
         let bluePage = CustomViewController(
             imageTitle: "pageBlue",
-            textLabel: "Отслеживайте только то, что хотите"
+            textLabel: blueTitle
         )
         let redPage = CustomViewController(
             imageTitle: "pageRed",
-            textLabel: "Даже если это не литры воды и йога"
+            textLabel: redTitle
         )
         
         return [bluePage, redPage]
@@ -26,7 +29,8 @@ final class OnboardingSinglePageController: UIPageViewController {
     }()
     
     private lazy var openListTrackerButton: UIButton = {
-        let button = CustomButton(title: "Вот это технологии!")
+        let title = NSLocalizedString("onboarding.button.title", comment: "")
+        let button = CustomButton(title: title)
         button.addTarget(
             self,
             action: #selector(openTrackers),

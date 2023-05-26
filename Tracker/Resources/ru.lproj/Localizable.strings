@@ -1,0 +1,73 @@
+"onboarding.firstTitle" = "Отслеживайте только то, что хотите";
+"onboarding.secondTitle" = "Даже если это не литры воды и йога";
+"onboarding.button.title" = "Вот это технологии!";
+
+"trackers.title" = "Трекеры";
+"statistic.title" = "Статистика";
+
+"textField.search.placeholder" = "Поиск";
+"textField.newHabit.placeholder" = "Введите название трекера";
+
+"stackView.startTracking.title" = "Что будем отслеживать?";
+"stackView.addCategory.title" = "Привычки и события можно объединить по смыслу";
+"stackView.notFoundTrackers.title" = "Ничего не найдено";
+"stackView.notStatistic.title" = "Анализировать пока нечего";
+
+"filter.title" = "Фильтры";
+"filter.allTrackers" = "Все трекеры";
+"filter.trackersForToday" = "Трекеры на сегодня";
+"filter.completed" = "Завершенные";
+"filter.notCompleted" = "Не завершенные";
+
+"navBar.createTracker.title" = "Создание трекера";
+"navBar.newHabit.title" = "Новая привычка";
+"navBar.newIrregularEvent.title" = "Новое нерегулярное событие";
+"navBar.editHabit.title" = "Редактирование привычки";
+"navBar.editIrregularEvent.title" = "Редактирование нерегулярного события";
+"navBar.addNewCategory.title" = "Новая категория";
+"navBar.addNewCategory.title" = "Введите название категории";
+
+"button.habit.title" = "Привычка";
+"button.IrregularEvent.title" = "Нерегулярное событие";
+"button.addNewCategory.title" = "Добавить категорию";
+
+"warningMessage.title" = "Ограничение 38 символов";
+
+"alert.deleteTracker.title" = "Уверены что хотите удалить трекер?";
+"alert.deleteCategory.message" = "Уверены что хотите удалить категорию?";
+"alert.deleteNonEmptyCategory.title" = "В этой категории есть незавершенные трекеры";
+"alert.deleteNonEmptyCategory.message" = "Если вы удалите категорию, все трекеры тоже исчезнут";
+
+"category.title" = "Категория";
+"schedule.title" = "Расписание";
+"emoji.title" = "Emoji";
+"color.title" = "Цвет";
+
+"statistic.bestPeriod" = "Лучший период";
+"statistic.perfectDays" = "Идеальные дни";
+"statistic.completedTrackers" = "Трекеров завершено";
+"statistic.averageValue" = "Среднее значение";
+
+"cancel" = "Отменить";
+"create" = "Создать";
+"done" = "Готово";
+"edit" = "Редактировать";
+"delete" = "Удалить";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+
+"monday" = "Понедельник";
+"tuesday" = "Вторник";
+"wednesday" = "Среда";
+"thursday" = "Четверг";
+"friday" = "Пятница";
+"saturday" = "Суббота";
+"sunday" = "Воскресенье";
+
+"mon" = "Пн";
+"tue" = "Вт";
+"wed" = "Ср";
+"thu" = "Чт";
+"fri" = "Пт";
+"sat" = "Сб";
+"sun" = "Вс";

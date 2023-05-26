@@ -16,7 +16,8 @@ final class AddNewTrackerViewController: UIViewController {
     }()
     
     private lazy var cancelButton: CustomButton = {
-        let button = CustomButton(title: "Отменить")
+        let title = NSLocalizedString("cancel", comment: "")
+        let button = CustomButton(title: title)
         button.backgroundColor = .ypWhite
         button.setTitleColor(.ypRed, for: .normal)
         button.clipsToBounds = true
@@ -27,7 +28,8 @@ final class AddNewTrackerViewController: UIViewController {
     }()
     
     private lazy var createButton: CustomButton = {
-        let button = CustomButton(title: "Создать")
+        let title = NSLocalizedString("create", comment: "")
+        let button = CustomButton(title: title)
         button.setTitleColor(.ypDefaultWhite, for: .normal)
         button.backgroundColor = .ypGray
         button.isEnabled = false
@@ -44,13 +46,18 @@ final class AddNewTrackerViewController: UIViewController {
         return stack
     }()
     
-    private let trackerTitleTextField = CustomTextField(
-        text: "Введите название трекера"
-    )
+    private let trackerTitleTextField: CustomTextField = {
+        let placeholder = NSLocalizedString("textField.newHabit.placeholder", comment: "")
+        let textField = CustomTextField(
+            text: placeholder
+        )
+        return textField
+    }()
     
     private let warningLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение 38 символов"
+        let text = NSLocalizedString("warningMessage.title", comment: "")
+        label.text = text
         label.font = UIFont.ypFontMedium17
         label.textColor = .ypRed
         label.textAlignment = .center
@@ -152,7 +159,8 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func configureNavBar() {
-        title = "Новая привычка"
+        let navTitle = isIrregular ? NSLocalizedString("navBar.newIrregularEvent.title", comment: "") : NSLocalizedString("navBar.newHabit.title", comment: "")
+        title = navTitle
         
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
@@ -533,9 +541,9 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
         var title = ""
         switch indexPath.section {
         case 0:
-            title = "Emoji"
+            title = NSLocalizedString("emoji.title", comment: "")
         case 1:
-            title = "Цвет"
+            title = NSLocalizedString("color.title", comment: "")
         default:
             break
         }

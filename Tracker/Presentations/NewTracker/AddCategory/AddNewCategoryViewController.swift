@@ -3,8 +3,17 @@ import UIKit
 final class AddNewCategoryViewController: UIViewController {
     
     //MARK: - Properties
-    private let textField = CustomTextField(text: "Введите название категории")
-    private let button = CustomButton(title: "Готово")
+    private let textField: CustomTextField = {
+        let placeholder = NSLocalizedString("textField.newHabit.placeholder", comment: "")
+        let textField = CustomTextField(text: placeholder)
+        return textField
+    }()
+    
+    private let button: CustomButton = {
+        let title = NSLocalizedString("done", comment: "")
+        let button = CustomButton(title: title)
+        return button
+    }()
     
     private var viewModel: AddCategoryViewModel
     
@@ -26,7 +35,7 @@ final class AddNewCategoryViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
         
-        title = "Новая категория"
+        title = NSLocalizedString("navBar.addNewCategory.title", comment: "")
         
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,

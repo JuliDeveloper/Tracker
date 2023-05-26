@@ -1,0 +1,73 @@
+"onboarding.firstTitle" = "Track only what you want";
+"onboarding.secondTitle" = "Even if it's not liters of water and yoga";
+"onboarding.button.title" = "These are technologies!";
+
+"trackers.title" = "Trackers";
+"statistic.title" = "Statistic";
+
+"textField.search.placeholder" = "Search";
+"textField.newHabit.placeholder" = "Enter the name of the tracker";
+
+"stackView.startTracking.title" = "What will we track?";
+"stackView.addCategory.title" = "Habits and events can be combined in meaning";
+"stackView.notFoundTrackers.title" = "Nothing found";
+"stackView.notStatistic.title" = "There is nothing to analyze yet";
+
+"filter.title" = "Filters";
+"filter.allTrackers" = "All trackers";
+"filter.trackersForToday" = "Trackers for today";
+"filter.completed" = "Completed";
+"filter.notCompleted" = "Not completed";
+
+"navBar.createTracker.title" = "Creating a tracker";
+"navBar.newHabit.title" = "A new habit";
+"navBar.newIrregularEvent.title" = "New irregular event";
+"navBar.editHabit.title" = "Editing Habits";
+"navBar.editIrregularEvent.title" = "Editing an irregular event";
+"navBar.addNewCategory.title" = "New category";
+"navBar.addNewCategory.title" = "Enter the category name";
+
+"button.habit.title" = "Habit";
+"button.IrregularEvent.title" = "Irregular event";
+"button.addNewCategory.title" = "Add a category";
+
+"warningMessage.title" = "Limit of 38 characters";
+
+"alert.deleteTracker.title" = "Are you sure you want to delete the tracker?";
+"alert.deleteCategory.message" = "Are you sure you want to delete a category?";
+"alert.deleteNonEmptyCategory.title" = "There are unfinished trackers in this category";
+"alert.deleteNonEmptyCategory.message" = "If you delete a category, all trackers will disappear too";
+
+"category.title" = "Category";
+"schedule.title" = "Schedule";
+"emoji.title" = "Emoji";
+"color.title" = "Color";
+
+"statistic.bestPeriod" = "The best period";
+"statistic.perfectDays" = "Perfect days";
+"statistic.completedTrackers" = "Trackers completed";
+"statistic.averageValue" = "Average value";
+
+"cancel" = "Cancel";
+"create" = "Create";
+"done" = "Done";
+"edit" = "Edit";
+"delete" = "Delete";
+"pin" = "Pin";
+"unpin" = "Unpin";
+
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
+
+"mon" = "Mon";
+"tue" = "Tue";
+"wed" = "Wed";
+"thu" = "Thu";
+"fri" = "Fri";
+"sat" = "Sat";
+"sun" = "Sun";

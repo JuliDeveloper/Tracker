@@ -3,12 +3,21 @@ import UIKit
 final class AddCategoryViewController: UIViewController {
     
     //MARK: - Properties
-    private let defaultStack = DefaultStackView(
-        title: "Привычки и события можно объединить по смыслу", image: "star"
-    )
+    private let defaultStack: DefaultStackView = {
+        let title = NSLocalizedString("stackView.addCategory.title", comment: "")
+        let stack = DefaultStackView(
+            title: title, image: "star"
+        )
+        return stack
+    }()
     
     private let tableView = UITableView()
-    private let button = CustomButton(title: "Добавить категорию")
+    
+    private let button: CustomButton = {
+        let title = NSLocalizedString("button.addNewCategory.title", comment: "")
+        let button = CustomButton(title: title)
+        return button
+    }()
         
     private var titleCategory = ""
     
@@ -30,7 +39,7 @@ final class AddCategoryViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
         
-        title = "Категория"
+        title = NSLocalizedString("category.title", comment: "")
         
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
@@ -159,19 +168,34 @@ final class AddCategoryViewController: UIViewController {
     
     
     private func deleteCategory(from indexPath: IndexPath) {
-        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        let deleteTitle = NSLocalizedString("delete", comment: "")
+        let cancelTitle = NSLocalizedString("cancel", comment: "")
+        let actionSheetMessage = NSLocalizedString(
+            "alert.deleteCategory.message",
+            comment: ""
+        )
+        let alertTitle = NSLocalizedString(
+            "alert.deleteNonEmptyCategory.title",
+            comment: ""
+        )
+        let alertMessage = NSLocalizedString(
+            "alert.deleteNonEmptyCategory.message",
+            comment: ""
+        )
+        
+        let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
             guard let self else { return }
             guard let currentCategory = viewModel.getCategory(at: indexPath) else { return }
             
             if !currentCategory.trackers.isEmpty {
-                let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { _ in
+                let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { _ in
                     self.viewModel.delete(category: currentCategory)
                 }
-                let cancelAction = UIAlertAction(title: "Отменить", style: .default)
+                let cancelAction = UIAlertAction(title: cancelTitle, style: .default)
                 
                 self.showAlert(
-                    title: "В этой категории есть незавершенные трекеры",
-                    message: "Если вы удалите категорию, все трекеры тоже исчезнут",
+                    title: alertTitle,
+                    message: alertMessage,
                     preferredStyle: .alert,
                     actions: [deleteAction, cancelAction]
                 )
@@ -180,11 +204,11 @@ final class AddCategoryViewController: UIViewController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Отменить", style: .default)
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .default)
         
         showAlert(
             title: nil,
-            message: "Уверены что хотите удалить категорию?",
+            message: actionSheetMessage,
             preferredStyle: .actionSheet,
             actions: [deleteAction, cancelAction]
         )
@@ -248,12 +272,15 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         let currentCategory = viewModel.categories[indexPath.row]
+        
+        let editTitle = NSLocalizedString("edit", comment: "")
+        let deleteTitle = NSLocalizedString("delete", comment: "")
                
         return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
             guard let self else { return UIMenu() }
             return UIMenu(children: [
                 UIAction(
-                    title: "Редактировать"
+                    title: editTitle
                 ) { _ in
                     let addNewCategoryVC = AddNewCategoryViewController(viewModel: self.viewModel)
                     addNewCategoryVC.text = currentCategory.title
@@ -262,7 +289,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
                     self.present(addNewCategoryVC, animated: true)
                 },
                 UIAction(
-                    title: "Удалить",
+                    title: deleteTitle,
                     attributes: .destructive
                 ) { _ in
                     self.deleteCategory(from: indexPath)

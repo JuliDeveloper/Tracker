@@ -18,8 +18,9 @@ final class ListTrackersViewController: UIViewController {
     }()
     
     private let titleHeader: UILabel = {
+        let title = NSLocalizedString("trackers.title", comment: "")
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = title
         label.textColor = .ypBlack
         label.font = UIFont.ypFontBold34
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -78,8 +79,13 @@ final class ListTrackersViewController: UIViewController {
         let attributes = [
             NSAttributedString.Key.foregroundColor: UIColor.ypGray
         ]
+        
+        let placeholderTitle = NSLocalizedString(
+            "textField.search.placeholder",
+            comment: ""
+        )
         let attributedPlaceholder = NSAttributedString(
-            string: "Поиск",
+            string: placeholderTitle,
             attributes: attributes
         )
         textField.attributedPlaceholder = attributedPlaceholder
@@ -94,7 +100,8 @@ final class ListTrackersViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        let title = NSLocalizedString("cancel", comment: "")
+        button.setTitle(title, for: .normal)
         button.addTarget(
             self,
             action: #selector(cancelSearch),
@@ -106,16 +113,25 @@ final class ListTrackersViewController: UIViewController {
         return button
     }()
     
-    private var defaultStackView = DefaultStackView(
-        title: "Что будем отслеживать?", image: "star"
-    )
+    private var defaultStackView: DefaultStackView = {
+        let title = NSLocalizedString(
+            "stackView.startTracking.title",
+            comment: ""
+        )
+        let stack =  DefaultStackView(
+            title: title, image: "star"
+        )
+        return stack
+    }()
+    
     private let collectionView = UICollectionView(
         frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()
     )
     
     private lazy var filterButton: UIButton = {
+        let title = NSLocalizedString("filter.title", comment: "")
         let button = UIButton(type: .system)
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(title, for: .normal)
         button.backgroundColor = .ypBlue
         button.titleLabel?.font = UIFont.ypFontMedium17
         button.tintColor = .ypDefaultWhite
@@ -338,11 +354,16 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func changeScenario() {
+        let newTitle = NSLocalizedString(
+            "stackView.notFoundTrackers.title",
+            comment: ""
+        )
+        
         if trackerStore.numberOfSections == 0 {
             collectionView.isHidden = true
             filterButton.isHidden = true
             defaultStackView.setValue(
-                textLabel: "Ничего не найдено",
+                textLabel: newTitle,
                 imageTitle: "errorSearch"
             )
             defaultStackView.isHidden = false
@@ -382,7 +403,11 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func deleteTracker(from indexPath: IndexPath) {
-        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        let deleteTitle = NSLocalizedString("delete", comment: "")
+        let cancelTitle = NSLocalizedString("cancel", comment: "")
+        let alertTitle = NSLocalizedString("alert.deleteTracker.title", comment: "")
+        
+        let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
             guard let self else { return }
             
             do {
@@ -391,10 +416,10 @@ final class ListTrackersViewController: UIViewController {
                 print(error.localizedDescription)
             }
         }
-        let cancelAction = UIAlertAction(title: "Отменить", style: .default)
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .default)
         
         showAlert(
-            title: "Уверены что хотите удалить трекер?",
+            title: alertTitle,
             message: nil,
             preferredStyle: .actionSheet,
             actions: [deleteAction, cancelAction]
@@ -510,9 +535,11 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         
         let indexPath = indexPaths[0]
         
+        let deleteTitle = NSLocalizedString("delete", comment: "")
+        
         return UIContextMenuConfiguration(actionProvider: { actions in
             return UIMenu(children: [
-                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
                     self?.deleteTracker(from: indexPath)
                 }
             ])

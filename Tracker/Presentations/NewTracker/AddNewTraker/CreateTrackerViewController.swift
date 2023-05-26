@@ -4,7 +4,8 @@ final class CreateTrackerViewController: UIViewController {
     
     //MARK: - Properties
     private lazy var habitButton: CustomButton = {
-        let button = CustomButton(title: "Привычка")
+        let title = NSLocalizedString("button.habit.title", comment: "")
+        let button = CustomButton(title: title)
         button.addTarget(
             self,
             action: #selector(addHabits),
@@ -13,7 +14,8 @@ final class CreateTrackerViewController: UIViewController {
         return button
     }()
     private lazy var irregularEventButton: CustomButton = {
-        let button = CustomButton(title: "Нерегулярное событие")
+        let title = NSLocalizedString("button.IrregularEvent.title", comment: "")
+        let button = CustomButton(title: title)
         button.addTarget(
             self,
             action: #selector(addIrregularEvent),
@@ -36,7 +38,7 @@ final class CreateTrackerViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Создание трекера"
+        title = NSLocalizedString("navBar.createTracker.title", comment: "")
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
             .foregroundColor: UIColor.ypBlack
@@ -75,10 +77,15 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @objc private func addHabits() {
-        showViewController(with: ["Категория", "Расписание"], isIrregular: false)
+        let categoryTitle = NSLocalizedString("category.title", comment: "")
+        let scheduleTitle = NSLocalizedString("schedule.title", comment: "")
+        
+        showViewController(with: [categoryTitle, scheduleTitle], isIrregular: false)
     }
     
     @objc private func addIrregularEvent() {
-        showViewController(with: ["Категория"], isIrregular: true)
+        let categoryTitle = NSLocalizedString("category.title", comment: "")
+        
+        showViewController(with: [categoryTitle], isIrregular: true)
     }
 }
