@@ -44,7 +44,7 @@ final class ListTrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
-        picker.locale = Locale(identifier: "ru_Ru")
+        picker.locale = Locale.current
         picker.calendar.firstWeekday = 2
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.clipsToBounds = true
@@ -376,7 +376,16 @@ final class ListTrackersViewController: UIViewController {
     
     private func formattedDate(from date: Date) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
+        let locale = Locale.current.identifier
+        
+        if locale.hasPrefix("ru") {
+            dateFormatter.dateFormat = "dd.MM.yy"
+        } else if locale.hasPrefix("zh") {
+            dateFormatter.dateFormat = "yy/M/d"
+        } else {
+            dateFormatter.dateFormat = "MM/dd/yy"
+        }
+        
         return dateFormatter.string(from: date)
     }
     
@@ -450,7 +459,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc func datePickerValueChanged() {
-        updateDateLabelTitle(with: currentDate)
+        //updateDateLabelTitle(with: currentDate)
                         
         let calendar = Calendar.current
         let currentWeekDay = calendar.component(.weekday, from: currentDate)
