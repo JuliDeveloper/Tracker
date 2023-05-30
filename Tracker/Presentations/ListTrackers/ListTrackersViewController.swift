@@ -532,27 +532,9 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         
         cell.configure(for: cell, tracker: tracker, trackerRecords, isCompleted: isCompleted)
         cell.delegate = self
+        cell.interactionDelegate = self
         
         return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-        
-        guard indexPaths.count > 0 else {
-            return nil
-        }
-        
-        let indexPath = indexPaths[0]
-        
-        let deleteTitle = NSLocalizedString("delete", comment: "")
-        
-        return UIContextMenuConfiguration(actionProvider: { actions in
-            return UIMenu(children: [
-                UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
-                    self?.deleteTracker(from: indexPath)
-                }
-            ])
-        })
     }
 }
 
@@ -630,5 +612,40 @@ extension ListTrackersViewController: TrackerStoreDelegate {
             collectionView.reloadSections(update.updateSections)
             collectionView.reloadItems(at: update.updateIndexPaths)
         }
+    }
+}
+
+//MARK: - TrackerCellDelegate
+extension ListTrackersViewController: TrackerCellDelegate {
+    func contextMenuNeeded(forCell cell: TrackerCell) -> UIContextMenuConfiguration? {
+        guard let indexPath = collectionView.indexPath(for: cell) else {
+            return nil
+        }
+        
+        let pinTitle = NSLocalizedString("pin", comment: "")
+        let unpinTitle = NSLocalizedString("unpin", comment: "")
+        let editTitle = NSLocalizedString("edit", comment: "")
+        let deleteTitle = NSLocalizedString("delete", comment: "")
+        
+        let pinAction = UIAction(title: pinTitle) { _ in
+            print("! pin !")
+        }
+        
+        let unpinAction = UIAction(title: unpinTitle) { _ in
+            print("!! unpin !!")
+        }
+        
+        let editAction = UIAction(title: editTitle) { _ in
+            print("!!! edit !!!")
+        }
+        
+        let deleteAction = UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
+            guard let self else { return }
+            self.deleteTracker(from: indexPath)
+        }
+        
+        return UIContextMenuConfiguration(actionProvider: { _ in
+            return UIMenu(children: [pinAction, editAction, deleteAction])
+        })
     }
 }

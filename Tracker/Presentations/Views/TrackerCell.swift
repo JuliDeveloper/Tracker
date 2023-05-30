@@ -72,6 +72,7 @@ final class TrackerCell: UICollectionViewCell {
     )
     
     weak var delegate: ListTrackersViewControllerDelegate?
+    weak var interactionDelegate: TrackerCellDelegate?
     
     //MARK: - Helpers
     func configure(for cell: TrackerCell, tracker: Tracker, _ trackerRecords: Set<TrackerRecord>, isCompleted: Bool) {
@@ -93,6 +94,9 @@ final class TrackerCell: UICollectionViewCell {
         
         checkDate()
         updateTrackerState(isCompleted: isCompletedTrackerToday)
+        
+        let contextMenuInteraction = UIContextMenuInteraction(delegate: self)
+        mainView.addInteraction(contextMenuInteraction)
     }
     
     func updateTrackerState(isCompleted: Bool) {
@@ -214,5 +218,12 @@ final class TrackerCell: UICollectionViewCell {
         isCompletedTrackerToday.toggle()
         setupButton(isCompleted: isCompletedTrackerToday)
         delegate?.updateCompletedTrackers(cell: self, tracker)
+    }
+}
+
+//MARK: - UIContextMenuInteractionDelegate
+extension TrackerCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        interactionDelegate?.contextMenuNeeded(forCell: self)
     }
 }

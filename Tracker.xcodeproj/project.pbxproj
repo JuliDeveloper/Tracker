@@ -56,6 +56,7 @@
 		256E017D29DEED7A00E2A413 /* AddNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */; };
 		256E017F29DF613500E2A413 /* UpdateSubtitleDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */; };
 		256E018129DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */; };
+		25CC28EB2A260B69000E459B /* TrackerCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CC28EA2A260B69000E459B /* TrackerCellDelegate.swift */; };
 		25F97EBF29E84FDF005D82C0 /* AddNewTrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -115,6 +116,7 @@
 		256E017C29DEED7A00E2A413 /* AddNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerViewController.swift; sourceTree = "<group>"; };
 		256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSubtitleDelegate.swift; sourceTree = "<group>"; };
 		256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTrackersViewControllerDelegate.swift; sourceTree = "<group>"; };
+		25CC28EA2A260B69000E459B /* TrackerCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCellDelegate.swift; sourceTree = "<group>"; };
 		25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -305,6 +307,7 @@
 				25411FFB2A16418E00B69950 /* AddCategoryViewControllerDelegate.swift */,
 				256E017E29DF613500E2A413 /* UpdateSubtitleDelegate.swift */,
 				256E018029DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift */,
+				25CC28EA2A260B69000E459B /* TrackerCellDelegate.swift */,
 				25411F9529FACE7700B69950 /* TrackerStoreProtocol.swift */,
 				25411FA12A01AD0000B69950 /* TrackerCategoryStoreProtocol.swift */,
 				25411F9D2A012AC400B69950 /* TrackerRecordsStoreProtocol.swift */,
@@ -456,6 +459,7 @@
 				256E017229D9FA4900E2A413 /* TrackerRecord.swift in Sources */,
 				256E016929D9BDB500E2A413 /* AddScheduleViewController.swift in Sources */,
 				256E016529D7844100E2A413 /* AddNewCategoryViewController.swift in Sources */,
+				25CC28EB2A260B69000E459B /* TrackerCellDelegate.swift in Sources */,
 				25411FA22A01AD0000B69950 /* TrackerCategoryStoreProtocol.swift in Sources */,
 				25411F9829FACF0F00B69950 /* CoreDataManager.swift in Sources */,
 				255B097029D59F1500A599E3 /* GeometricParams.swift in Sources */,
