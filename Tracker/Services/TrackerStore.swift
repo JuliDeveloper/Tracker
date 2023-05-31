@@ -237,6 +237,19 @@ extension TrackerStore: TrackerStoreProtocol {
         }
     }
     
+    func getRecords(from tracker: Tracker) -> Set<TrackerRecord> {
+        guard let trackerCoreData = try? getTrackerCoreData(from: tracker) else { return Set<TrackerRecord>() }
+        
+        guard let trackerRecordsCoreData = trackerCoreData.records as? Set<TrackerRecordCoreData> else { return Set<TrackerRecord>() }
+        
+        do {
+            let trackerRecords = try trackerRecordsCoreData.map { try getRecord(from: $0) }
+            return Set(trackerRecords)
+        } catch {
+            return Set<TrackerRecord>()
+        }
+    }
+    
     func loadInitialData(date: String) {
         fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), date)
         try? fetchedResultsController.performFetch()

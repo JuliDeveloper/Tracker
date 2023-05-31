@@ -65,6 +65,35 @@ final class AddNewTrackerViewController: UIViewController {
         return label
     }()
     
+    private let counterStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.distribution = .fill
+        stack.spacing = 24
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    private let counterLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.ypFontBold32
+        label.textColor = .ypBlack
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var minusButton: CustomCounterButton = {
+        let button = CustomCounterButton(imageTitle: "minus")
+        button.addTarget(self, action: #selector(subtractDay), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var plusButton: CustomCounterButton = {
+        let button = CustomCounterButton(imageTitle: "plus")
+        button.addTarget(self, action: #selector(addDay), for: .touchUpInside)
+        return button
+    }()
+        
     private let tableView = UITableView()
     
     private let collectionView = UICollectionView(
@@ -98,12 +127,14 @@ final class AddNewTrackerViewController: UIViewController {
     private var selectedIndexPathsInSection: [Int: IndexPath] = [:]
     private var currentEmoji = String()
     private var currentColor: UIColor? = nil
+    private var counterDays = 0
     
     var tracker: Tracker?
     var category: TrackerCategory?
     var titlesCells: [String] = []
     var isIrregular = Bool()
     var isEditTracker = Bool()
+    var isCompletedTrackerToday = Bool()
     
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
@@ -134,6 +165,7 @@ final class AddNewTrackerViewController: UIViewController {
         }
         
         checkTracker()
+        checkDate()
         updateCreateButton()
         
         tableView.reloadData()
@@ -155,6 +187,14 @@ final class AddNewTrackerViewController: UIViewController {
         view.addSubview(scrollView)
         
         scrollView.addSubview(contentView)
+        
+        if isEditTracker {
+            contentView.addSubview(counterStackView)
+            
+            counterStackView.addArrangedSubview(minusButton)
+            counterStackView.addArrangedSubview(counterLabel)
+            counterStackView.addArrangedSubview(plusButton)
+        }
         
         contentView.addSubview(titleStackView)
         contentView.addSubview(tableView)
@@ -238,6 +278,27 @@ final class AddNewTrackerViewController: UIViewController {
     private func setupConstraints() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
+        if isEditTracker {
+            NSLayoutConstraint.activate([
+                counterStackView.topAnchor.constraint(
+                    equalTo: contentView.topAnchor, constant: 24
+                ),
+                counterStackView.centerXAnchor.constraint(
+                    equalTo: contentView.centerXAnchor
+                ),
+                
+                titleStackView.topAnchor.constraint(
+                    equalTo: counterStackView.bottomAnchor, constant: 40
+                )
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                titleStackView.topAnchor.constraint(
+                    equalTo: contentView.topAnchor, constant: 24
+                )
+            ])
+        }
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor
@@ -265,9 +326,6 @@ final class AddNewTrackerViewController: UIViewController {
                 equalTo: scrollView.frameLayoutGuide.widthAnchor
             ),
             
-            titleStackView.topAnchor.constraint(
-                equalTo: contentView.topAnchor, constant: 24
-            ),
             titleStackView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor, constant: 16
             ),
@@ -353,6 +411,14 @@ final class AddNewTrackerViewController: UIViewController {
         present(navVC, animated: true)
     }
     
+    private func pluralizeDays(_ countOfDays: Int) -> String {
+        let daysString = String.localizedStringWithFormat(
+            NSLocalizedString("amountOfDay", comment: ""), countOfDays
+        )
+        
+        return daysString
+    }
+    
     private func checkTracker() {
         if tracker != nil {
             trackerTitleTextField.text = tracker?.title
@@ -360,6 +426,8 @@ final class AddNewTrackerViewController: UIViewController {
             categorySubtitle = category?.title ?? ""
             currentEmoji = tracker?.emoji ?? ""
             currentColor = tracker?.color
+            counterDays = tracker?.countRecords ?? 0
+            counterLabel.text = pluralizeDays(counterDays)
         }
     }
     
@@ -385,6 +453,10 @@ final class AddNewTrackerViewController: UIViewController {
     private func updateTracker() {
         guard let tracker else { return }
         let newCategory = currentIndexCategory == nil ? self.category : viewModel.getCategory(at: currentIndexCategory ?? IndexPath())
+        
+        if isEditTracker {
+            setCounterDaysTracker()
+        }
         
         do {
             try trackerStore.editTracker(
@@ -443,6 +515,37 @@ final class AddNewTrackerViewController: UIViewController {
         }
     }
     
+    private func checkDate() {
+        let currentDate = updateDelegate?.getDate()
+        let selectedDate = updateDelegate?.updateButtonStateFromDate() ?? Date()
+
+        if selectedDate > currentDate ?? Date() {
+            setupCounterButtons(isCompleted: isCompletedTrackerToday)
+        } else if selectedDate <= currentDate ?? Date() {
+            setupCounterButtons(isCompleted: isCompletedTrackerToday)
+        }
+    }
+    
+    private func setupCounterButtons(isCompleted: Bool) {
+        if isCompleted {
+            plusButton.layer.opacity = 0.3
+            minusButton.layer.opacity = 1
+            plusButton.isEnabled = false
+            minusButton.isEnabled = true
+        } else {
+            plusButton.layer.opacity = 1
+            minusButton.layer.opacity = 0.3
+            plusButton.isEnabled = true
+            minusButton.isEnabled = false
+        }
+    }
+    
+    private func setCounterDaysTracker() {
+        guard let tracker else { return }
+        updateDelegate?.updateCompletedTrackers(tracker)
+        updateDelegate?.updateCollectionView()
+    }
+    
     @objc func hideKeyboard() {
         scrollView.endEditing(true)
     }
@@ -451,6 +554,20 @@ final class AddNewTrackerViewController: UIViewController {
         if let text = trackerTitleTextField.text {
             trackerTitle = text
         }
+    }
+    
+    @objc private func subtractDay() {
+        isCompletedTrackerToday.toggle()
+        counterDays -= 1
+        counterLabel.text = pluralizeDays(counterDays)
+        setupCounterButtons(isCompleted: isCompletedTrackerToday)
+    }
+    
+    @objc private func addDay() {
+        isCompletedTrackerToday.toggle()
+        counterDays += 1
+        counterLabel.text = pluralizeDays(counterDays)
+        setupCounterButtons(isCompleted: isCompletedTrackerToday)
     }
     
     @objc private func cancel() {

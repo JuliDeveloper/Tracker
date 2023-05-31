@@ -404,15 +404,7 @@ final class ListTrackersViewController: UIViewController {
         changeScenario()
     }
     
-    private func getDate() -> Date {
-        let calendar = Calendar.current
-        let selectedDate = datePicker.date
-        let dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
-        guard let currentDate = calendar.date(from: dateComponents) else { return Date()}
-        return currentDate
-    }
-    
-    private func showViewController(with array: [String], isIrregular: Bool, _ tracker: Tracker, _ category: TrackerCategory?, navBarTitle: String, isEditTracker: Bool) {
+    private func showViewController(with array: [String], isIrregular: Bool, _ tracker: Tracker, _ category: TrackerCategory?, navBarTitle: String, isEditTracker: Bool, isCompletedTracker: Bool) {
         let editTrackerVC = AddNewTrackerViewController()
         editTrackerVC.titlesCells = array
         editTrackerVC.isIrregular = isIrregular
@@ -420,6 +412,8 @@ final class ListTrackersViewController: UIViewController {
         editTrackerVC.category = category
         editTrackerVC.title = navBarTitle
         editTrackerVC.isEditTracker = isEditTracker
+        editTrackerVC.isCompletedTrackerToday = isCompletedTracker
+        editTrackerVC.updateDelegate = self
         let navBar = UINavigationController(rootViewController: editTrackerVC)
         present(navBar, animated: true)
     }
@@ -432,6 +426,7 @@ final class ListTrackersViewController: UIViewController {
         }
         
         let currentCategory = self.categories[indexPath.section]
+        let isCompletedTracker = getCompletedTracker(currentTracker, from: indexPath)
         
         let categoryTitle = NSLocalizedString("category.title", comment: "")
         let scheduleTitle = NSLocalizedString("schedule.title", comment: "")
@@ -445,7 +440,8 @@ final class ListTrackersViewController: UIViewController {
                 currentTracker,
                 currentCategory,
                 navBarTitle: editIrregularEventTitle,
-                isEditTracker: true
+                isEditTracker: true,
+                isCompletedTracker: isCompletedTracker
             )
         } else {
             showViewController(
@@ -454,7 +450,8 @@ final class ListTrackersViewController: UIViewController {
                 currentTracker,
                 currentCategory,
                 navBarTitle: editHabitTitle,
-                isEditTracker: true
+                isEditTracker: true,
+                isCompletedTracker: isCompletedTracker
             )
         }
     }
@@ -497,6 +494,16 @@ final class ListTrackersViewController: UIViewController {
             date: currentDate
         )
         try? trackerRecordStore.deleteRecord(trackerRecord)
+    }
+    
+    private func getCompletedTracker(_ tracker: Tracker, from indexPath: IndexPath) -> Bool {
+        let trackerRecords = trackerStore.getRecords(for: indexPath)
+        
+        if completedTracker(tracker.id, trackerRecords) {
+            return true
+        }
+        
+        return false
     }
     
     @objc private func addTask() {
@@ -612,7 +619,15 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension ListTrackersViewController: ListTrackersViewControllerDelegate {    
+extension ListTrackersViewController: ListTrackersViewControllerDelegate {
+    func getDate() -> Date {
+        let calendar = Calendar.current
+        let selectedDate = datePicker.date
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        guard let currentDate = calendar.date(from: dateComponents) else { return Date()}
+        return currentDate
+    }
+    
     func updateButtonStateFromDate() -> Date {
         return datePicker.date
     }
@@ -622,6 +637,18 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         return trackerRecords.contains(where: { record in
             record.trackerId == trackerId && Calendar.current.isDate(record.date, inSameDayAs: selectedDate)
         })
+    }
+    
+    func updateCompletedTrackers(_ tracker: Tracker) {
+        let trackerRecords = trackerStore.getRecords(from: tracker)
+        
+        if completedTracker(tracker.id, trackerRecords) {
+            deleteTrackerRecord(for: tracker.id)
+        } else {
+            saveTrackerRecord(for: tracker.id)
+        }
+        
+        let _ = trackerStore.getRecords(from: tracker)
     }
     
     func updateCompletedTrackers(cell: TrackerCell, _ tracker: Tracker) {
