@@ -88,6 +88,8 @@ final class AddNewTrackerViewController: UIViewController {
     private let trackerStore: TrackerStoreProtocol = TrackerStore()
     private var viewModel: AddCategoryViewModel
     
+    private let uiColorMarshalling = UIColorMarshalling()
+    
     private var trackerTitle = ""
     private var categorySubtitle = ""
     private var currentIndexCategory: IndexPath?
@@ -97,8 +99,12 @@ final class AddNewTrackerViewController: UIViewController {
     private var currentEmoji = String()
     private var currentColor: UIColor? = nil
     
+    var tracker: Tracker?
+    var category: TrackerCategory?
     var titlesCells: [String] = []
     var isIrregular = Bool()
+    var isEditTracker = Bool()
+    
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
@@ -126,6 +132,9 @@ final class AddNewTrackerViewController: UIViewController {
             setSchedule = []
             WeekDay.allCases.forEach { setSchedule.append($0) }
         }
+        
+        checkTracker()
+        updateCreateButton()
         
         tableView.reloadData()
         collectionView.reloadData()
@@ -159,9 +168,6 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func configureNavBar() {
-        let navTitle = isIrregular ? NSLocalizedString("navBar.newIrregularEvent.title", comment: "") : NSLocalizedString("navBar.newHabit.title", comment: "")
-        title = navTitle
-        
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
             .foregroundColor: UIColor.ypBlack
@@ -347,8 +353,18 @@ final class AddNewTrackerViewController: UIViewController {
         present(navVC, animated: true)
     }
     
-    private func saveTracker() {
-        guard let category = viewModel.getCategory(at: currentIndexCategory ?? IndexPath()) else { return }
+    private func checkTracker() {
+        if tracker != nil {
+            trackerTitleTextField.text = tracker?.title
+            setSchedule = tracker?.schedule ?? [WeekDay]()
+            categorySubtitle = category?.title ?? ""
+            currentEmoji = tracker?.emoji ?? ""
+            currentColor = tracker?.color
+        }
+    }
+    
+    private func saveNewTracker() {
+        guard let newCategory = viewModel.getCategory(at: currentIndexCategory ?? IndexPath()) else { return }
         
         let newTracker = Tracker(
             id: UUID(),
@@ -360,9 +376,36 @@ final class AddNewTrackerViewController: UIViewController {
         )
         
         do {
-            try trackerStore.addNewTracker(from: newTracker, and: category)
+            try trackerStore.addNewTracker(from: newTracker, and: newCategory)
         } catch let error {
             print(error.localizedDescription)
+        }
+    }
+    
+    private func updateTracker() {
+        guard let tracker else { return }
+        let newCategory = currentIndexCategory == nil ? self.category : viewModel.getCategory(at: currentIndexCategory ?? IndexPath())
+        
+        do {
+            try trackerStore.editTracker(
+                tracker,
+                trackerTitleTextField.text,
+                newCategory,
+                setSchedule,
+                currentEmoji,
+                currentColor
+            )
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    private func saveOrUpdateTracker() {
+        if tracker == nil {
+            saveNewTracker()
+        } else {
+            updateTracker()
         }
     }
     
@@ -385,12 +428,18 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func updateCreateButton() {
-        if !trackerTitle.isEmpty && !categorySubtitle.isEmpty && currentColor != nil && !currentEmoji.isEmpty {
+        if tracker != nil {
+            createButton.setTitle("Cохранить", for: .normal)
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
         } else {
-            createButton.isEnabled = false
-            createButton.backgroundColor = .ypGray
+            if !trackerTitle.isEmpty && !categorySubtitle.isEmpty && currentColor != nil && !currentEmoji.isEmpty {
+                createButton.isEnabled = true
+                createButton.backgroundColor = .ypBlack
+            } else {
+                createButton.isEnabled = false
+                createButton.backgroundColor = .ypGray
+            }
         }
     }
     
@@ -409,7 +458,7 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     @objc private func create() {
-        saveTracker()
+        saveOrUpdateTracker()
         dismiss(animated: true)
         presentingViewController?.dismiss(animated: true)
     }
@@ -568,6 +617,25 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
         }
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? AddNewTrackerCell else { return }
+
+        let emoji = emojis[indexPath.item]
+        let color = colors[indexPath.item]
+
+        guard let currentColor else { return }
+
+        if tracker != nil {
+            switch indexPath.section {
+            case 0:
+                cell.isSelected = emoji == currentEmoji
+            case 1:
+                cell.isSelected = uiColorMarshalling.toHexString(color:color) == uiColorMarshalling.toHexString(color: currentColor)
+            default: break
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

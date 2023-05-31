@@ -170,6 +170,7 @@ final class ListTrackersViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         categories = trackerCategoryStore.categories
+        print(categories)
         getStartData()
         configureView()
         addElements()
@@ -411,6 +412,53 @@ final class ListTrackersViewController: UIViewController {
         return currentDate
     }
     
+    private func showViewController(with array: [String], isIrregular: Bool, _ tracker: Tracker, _ category: TrackerCategory?, navBarTitle: String, isEditTracker: Bool) {
+        let editTrackerVC = AddNewTrackerViewController()
+        editTrackerVC.titlesCells = array
+        editTrackerVC.isIrregular = isIrregular
+        editTrackerVC.tracker = tracker
+        editTrackerVC.category = category
+        editTrackerVC.title = navBarTitle
+        editTrackerVC.isEditTracker = isEditTracker
+        let navBar = UINavigationController(rootViewController: editTrackerVC)
+        present(navBar, animated: true)
+    }
+    
+    private func editTracker(from indexPath: IndexPath) {
+        guard
+            let currentTracker = self.trackerStore.getTracker(at: indexPath)
+        else {
+            return
+        }
+        
+        let currentCategory = self.categories[indexPath.section]
+        
+        let categoryTitle = NSLocalizedString("category.title", comment: "")
+        let scheduleTitle = NSLocalizedString("schedule.title", comment: "")
+        let editHabitTitle = NSLocalizedString("navBar.editHabit.title", comment: "")
+        let editIrregularEventTitle = NSLocalizedString("navBar.editIrregularEvent.title", comment: "")
+
+        if currentTracker.schedule == WeekDay.allCases {
+            showViewController(
+                with: [categoryTitle],
+                isIrregular: true,
+                currentTracker,
+                currentCategory,
+                navBarTitle: editIrregularEventTitle,
+                isEditTracker: true
+            )
+        } else {
+            showViewController(
+                with: [categoryTitle, scheduleTitle],
+                isIrregular: true,
+                currentTracker,
+                currentCategory,
+                navBarTitle: editHabitTitle,
+                isEditTracker: true
+            )
+        }
+    }
+    
     private func deleteTracker(from indexPath: IndexPath) {
         let deleteTitle = NSLocalizedString("delete", comment: "")
         let cancelTitle = NSLocalizedString("cancel", comment: "")
@@ -635,8 +683,9 @@ extension ListTrackersViewController: TrackerCellDelegate {
             print("!! unpin !!")
         }
         
-        let editAction = UIAction(title: editTitle) { _ in
-            print("!!! edit !!!")
+        let editAction = UIAction(title: editTitle) { [weak self] _ in
+            guard let self else { return }
+            self.editTracker(from: indexPath)
         }
         
         let deleteAction = UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in

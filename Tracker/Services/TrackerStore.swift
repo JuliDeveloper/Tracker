@@ -77,6 +77,8 @@ final class TrackerStore: NSObject {
     private func updatedIndexes() {
         insertedIndexPaths = []
         insertedSections = IndexSet()
+        deletedIndexPaths = []
+        deletedSections = IndexSet()
         updateIndexPaths = []
         updateSections = IndexSet()
     }
@@ -91,8 +93,7 @@ final class TrackerStore: NSObject {
         return TrackerRecord(trackerId: trackerId, date: date)
     }
     
-    //MARK: - Methods
-    func getTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
+    private func getTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.trackerId else {
             throw TrackerStoreError.decodingErrorInvalidId
         }
@@ -128,6 +129,14 @@ final class TrackerStore: NSObject {
             schedule: schedule,
             countRecords: countRecords
         )
+    }
+    
+    private func getTrackerCoreData(from tracker: Tracker) throws -> TrackerCoreData {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "trackerId == %@", tracker.id as CVarArg)
+
+        let trackers = try context.fetch(fetchRequest)
+        return trackers.first ?? TrackerCoreData()
     }
 }
 
@@ -176,6 +185,29 @@ extension TrackerStore: TrackerStoreProtocol {
         try context.save()
     }
     
+    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ category: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?) throws {
+        
+        guard let category else { return }
+        
+        let trackerCoreData = try getTrackerCoreData(from: tracker)
+        trackerCoreData.title = newTitle
+        trackerCoreData.schedule = WeekDay.weekdaysToString(weekdays: newSchedule)
+        trackerCoreData.emoji = newEmoji
+        trackerCoreData.colorHex = uiColorMarshalling.toHexString(color: newColor ?? UIColor())
+        
+        let oldCategory = trackerCoreData.category
+        let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: category)
+        
+        if oldCategory != newCategory {
+            oldCategory?.removeFromTrackers(trackerCoreData)
+            
+            let newCategoryCoreData = try trackerCategoryStore.getTrackerCategoryCoreData(from: category)
+            newCategoryCoreData.addToTrackers(trackerCoreData)
+        }
+        
+        try context.save()
+    }
+    
     func deleteTracker(at indexPath: IndexPath) throws {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         context.delete(trackerCoreData)
@@ -213,6 +245,10 @@ extension TrackerStore: TrackerStoreProtocol {
 
 //MARK: - NSFetchedResultsControllerDelegate
 extension TrackerStore: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        updatedIndexes()
+    }
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
             TrackerStoreUpdate(
@@ -233,8 +269,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             insertedSections.insert(sectionIndex)
         case .delete:
             deletedSections.insert(sectionIndex)
-//        case .update:
-//            updateSections.update(with: sectionIndex)
+        case .update:
+            updateSections.update(with: sectionIndex)
         default:
             break
         }
@@ -253,6 +289,11 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .update:
             if let indexPath = indexPath {
                 updateIndexPaths.append(indexPath)
+            }
+        case .move:
+            if let indexPath = indexPath, let newIndexPath = newIndexPath {
+                deletedIndexPaths.append(indexPath)
+                insertedIndexPaths.append(newIndexPath)
             }
         default:
             break

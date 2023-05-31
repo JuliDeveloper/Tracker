@@ -68,11 +68,15 @@ final class CreateTrackerViewController: UIViewController {
         ])
     }
     
-    private func showViewController(with array: [String], isIrregular: Bool) {
+    private func showViewController(with array: [String], isIrregular: Bool, isEditTracker: Bool) {
         let addTrackerVC = AddNewTrackerViewController()
         addTrackerVC.updateDelegate = updateDelegate
         addTrackerVC.titlesCells = array
         addTrackerVC.isIrregular = isIrregular
+        
+        let navTitle = isIrregular ? NSLocalizedString("navBar.newIrregularEvent.title", comment: "") : NSLocalizedString("navBar.newHabit.title", comment: "")
+        addTrackerVC.title = navTitle
+        
         navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
@@ -80,12 +84,20 @@ final class CreateTrackerViewController: UIViewController {
         let categoryTitle = NSLocalizedString("category.title", comment: "")
         let scheduleTitle = NSLocalizedString("schedule.title", comment: "")
         
-        showViewController(with: [categoryTitle, scheduleTitle], isIrregular: false)
+        showViewController(
+            with: [categoryTitle, scheduleTitle],
+            isIrregular: false,
+            isEditTracker: false
+        )
     }
     
     @objc private func addIrregularEvent() {
         let categoryTitle = NSLocalizedString("category.title", comment: "")
         
-        showViewController(with: [categoryTitle], isIrregular: true)
+        showViewController(
+            with: [categoryTitle],
+            isIrregular: true,
+            isEditTracker: false
+        )
     }
 }
