@@ -75,34 +75,6 @@ final class TrackerCategoryStore: NSObject {
         insertedIndexPaths = []
         deletedIndexPaths = []
     }
-    
-    private func getTrackerCategoryCoreData(from trackerCategory: TrackerCategory) throws -> TrackerCategoryCoreData {
-        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "categoryId == %@", trackerCategory.categoryId as CVarArg)
-
-        let categories = try context.fetch(fetchRequest)
-        return categories.first ?? TrackerCategoryCoreData()
-    }
-    
-    private func getTrackerCategory(from trackerCategoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
-        guard let title = trackerCategoryCoreData.title else {
-            throw TrackerCategoryStoreError.decodingErrorInvalidTitle
-        }
-        
-        guard let trackers = trackerCategoryCoreData.trackers else {
-            throw TrackerCategoryStoreError.decodingErrorInvalidTrackers
-        }
-        
-        guard let id = trackerCategoryCoreData.categoryId else {
-            throw TrackerCategoryStoreError.decodingErrorInvalidTrackers // id
-        }
-        
-        return TrackerCategory(
-            title: title,
-            trackers: trackers.allObjects.map { self.convert(from: $0 as? TrackerCoreData) },
-            categoryId: id
-        )
-    }
             
     private func convert(from trackerCoreData: TrackerCoreData?) -> Tracker {
         let id = trackerCoreData?.trackerId ?? UUID()
@@ -152,6 +124,14 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         }
     }
     
+    func getTrackerCategoryCoreData(from trackerCategory: TrackerCategory) throws -> TrackerCategoryCoreData {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "categoryId == %@", trackerCategory.categoryId as CVarArg)
+
+        let categories = try context.fetch(fetchRequest)
+        return categories.first ?? TrackerCategoryCoreData()
+    }
+    
     func add(newCategory: TrackerCategory) throws {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
         trackerCategoryCoreData.categoryId = UUID()
@@ -159,6 +139,26 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         trackerCategoryCoreData.trackers = []
         
         try context.save()
+    }
+    
+    func getTrackerCategory(from trackerCategoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
+        guard let title = trackerCategoryCoreData.title else {
+            throw TrackerCategoryStoreError.decodingErrorInvalidTitle
+        }
+        
+        guard let trackers = trackerCategoryCoreData.trackers else {
+            throw TrackerCategoryStoreError.decodingErrorInvalidTrackers
+        }
+        
+        guard let id = trackerCategoryCoreData.categoryId else {
+            throw TrackerCategoryStoreError.decodingErrorInvalidTrackers // id
+        }
+        
+        return TrackerCategory(
+            title: title,
+            trackers: trackers.allObjects.map { self.convert(from: $0 as? TrackerCoreData) },
+            categoryId: id
+        )
     }
     
     func deleteCategory(category: TrackerCategory) throws {
