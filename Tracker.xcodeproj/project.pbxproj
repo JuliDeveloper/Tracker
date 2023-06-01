@@ -234,6 +234,7 @@
 			children = (
 				255B096929D4472C00A599E3 /* Constants.swift */,
 				255B096F29D59F1500A599E3 /* GeometricParams.swift */,
+				25411F9129FA7B4B00B69950 /* UIColorMarshalling.swift */,
 				255B094529D1E00F00A599E3 /* Assets.xcassets */,
 				2521AEC02A1FE144004B50D7 /* Localizable.strings */,
 				2521AEC52A20DAC7004B50D7 /* Localizable.stringsdict */,
@@ -340,7 +341,6 @@
 				25411F8D29FA7A3A00B69950 /* TrackerStore.swift */,
 				25411F8F29FA7AE300B69950 /* TrackerCategoryStore.swift */,
 				25411F9B2A0128D100B69950 /* TrackerRecordStore.swift */,
-				25411F9129FA7B4B00B69950 /* UIColorMarshalling.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";

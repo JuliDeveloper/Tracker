@@ -31,6 +31,8 @@ final class OnboardingSinglePageController: UIPageViewController {
     private lazy var openListTrackerButton: UIButton = {
         let title = NSLocalizedString("onboarding.button.title", comment: "")
         let button = CustomButton(title: title)
+        button.backgroundColor = .ypDefaultBlack
+        button.setTitleColor(.ypDefaultWhite, for: .normal)
         button.addTarget(
             self,
             action: #selector(openTrackers),

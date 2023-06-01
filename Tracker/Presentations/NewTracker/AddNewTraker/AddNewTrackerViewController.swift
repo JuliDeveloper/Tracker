@@ -30,7 +30,7 @@ final class AddNewTrackerViewController: UIViewController {
     private lazy var createButton: CustomButton = {
         let title = NSLocalizedString("create", comment: "")
         let button = CustomButton(title: title)
-        button.setTitleColor(.ypDefaultWhite, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypGray
         button.isEnabled = false
         button.addTarget(self, action: #selector(create), for: .touchUpInside)
@@ -505,7 +505,8 @@ final class AddNewTrackerViewController: UIViewController {
     
     private func updateCreateButton() {
         if tracker != nil {
-            createButton.setTitle("Cохранить", for: .normal)
+            let title = NSLocalizedString("save", comment: "")
+            createButton.setTitle(title, for: .normal)
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
         } else {

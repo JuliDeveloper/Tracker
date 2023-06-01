@@ -48,14 +48,8 @@ final class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var plusButton: UIButton = {
-        let button = UIButton(type: .system)
-        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
-        let image = UIImage(systemName: "plus", withConfiguration: pointSize)
-        button.tintColor = .ypWhite
-        button.setImage(image, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 34 / 2
+    private lazy var plusButton: CustomCounterButton = {
+        let button = CustomCounterButton(imageTitle: "plus")
         button.addTarget(self, action: #selector(addDay), for: .touchUpInside)
         return button
     }()

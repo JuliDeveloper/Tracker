@@ -13,7 +13,7 @@ final class ListTrackersViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "plusListTracker"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(addTask), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addTracker), for: .touchUpInside)
         return button
     }()
     
@@ -170,7 +170,6 @@ final class ListTrackersViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         categories = trackerCategoryStore.categories
-        print(categories)
         getStartData()
         configureView()
         addElements()
@@ -529,7 +528,7 @@ final class ListTrackersViewController: UIViewController {
         return false
     }
     
-    @objc private func addTask() {
+    @objc private func addTracker() {
         let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.updateDelegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
@@ -537,7 +536,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc func datePickerValueChanged() {
-        //updateDateLabelTitle(with: currentDate)
+        updateDateLabelTitle(with: currentDate)
                         
         let calendar = Calendar.current
         let currentWeekDay = calendar.component(.weekday, from: currentDate)
@@ -707,12 +706,10 @@ extension ListTrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         changeScenario()
         collectionView.performBatchUpdates {
-            // Обрабатывайте добавление и удаление секций сначала
             collectionView.insertSections(update.insertedSections)
             collectionView.deleteSections(update.deletedSections)
             collectionView.reloadSections(update.updateSections)
             
-            // Теперь обработайте изменения элементов
             collectionView.insertItems(at: update.insertedIndexes)
             collectionView.deleteItems(at: update.deletedIndexPaths)
             collectionView.reloadItems(at: update.updateIndexPaths)

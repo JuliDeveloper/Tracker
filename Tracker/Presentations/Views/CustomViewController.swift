@@ -12,6 +12,7 @@ final class CustomViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.ypFontBold32
+        label.textColor = .ypDefaultBlack
         label.numberOfLines = 0
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
