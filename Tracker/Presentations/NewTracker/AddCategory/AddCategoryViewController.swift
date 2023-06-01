@@ -22,6 +22,9 @@ final class AddCategoryViewController: UIViewController {
     private var titleCategory = ""
     
     private var viewModel: AddCategoryViewModel
+    private var filteredCategories: [TrackerCategory] {
+        return viewModel.categories.filter { $0.title != "Закрепленные" }
+    }
     
     weak var delegate: UpdateSubtitleDelegate?
     
@@ -224,7 +227,7 @@ final class AddCategoryViewController: UIViewController {
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.categories.count
+        filteredCategories.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -234,9 +237,9 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.categoryCellIdentifier, for: indexPath) as? CategoryCell else { return UITableViewCell() }
         
-        let title = viewModel.categories[indexPath.row].title
+        let title = filteredCategories[indexPath.row].title
         
-        let lastIndex = viewModel.categories.count - 1
+        let lastIndex = filteredCategories.count - 1
         guard let selectedIndexPath = viewModel.selectedIndexPath else { return UITableViewCell() }
       
         cell.configure(
@@ -261,7 +264,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         
         currentCell.accessoryType = .checkmark
         
-        let titleCategory = viewModel.categories[indexPath.row].title
+        let titleCategory = filteredCategories[indexPath.row].title
         delegate?.updateCategorySubtitle(from: titleCategory, and: viewModel.selectedIndexPath)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -271,7 +274,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        let currentCategory = viewModel.categories[indexPath.row]
+        let currentCategory = filteredCategories[indexPath.row]
         
         let editTitle = NSLocalizedString("edit", comment: "")
         let deleteTitle = NSLocalizedString("delete", comment: "")
