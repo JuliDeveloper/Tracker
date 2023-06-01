@@ -59,18 +59,6 @@ final class TrackerCategoryStore: NSObject {
     }
     
     //MARK: - Methods
-    func categoryCoreData(with categoryId: UUID) throws -> TrackerCategoryCoreData {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-        request.predicate = NSPredicate(format: "categoryId == %@", categoryId as CVarArg)
-        let categories = try context.fetch(request)
-        
-        guard let existingCategory = categories.first else {
-            throw TrackerCategoryStoreError.categoryNotFound
-            }
-        
-        return existingCategory
-    }
-    
     private func updatedIndexes() {
         insertedIndexPaths = []
         deletedIndexPaths = []
@@ -109,6 +97,18 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         return categories
     }
     
+    func getCategoryFromCoreData(with categoryId: UUID) throws -> TrackerCategoryCoreData {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "categoryId == %@", categoryId as CVarArg)
+        let categories = try context.fetch(request)
+        
+        guard let existingCategory = categories.first else {
+            throw TrackerCategoryStoreError.categoryNotFound
+        }
+        
+        return existingCategory
+    }
+    
     func getCategory(at indexPath: IndexPath) -> TrackerCategory? {
         guard indexPath.row < fetchedResultsController.sections?[0].numberOfObjects ?? 0 else {
             return nil
@@ -134,9 +134,9 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     
     func add(newCategory: TrackerCategory) throws {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
-        trackerCategoryCoreData.categoryId = UUID()
+        trackerCategoryCoreData.categoryId = newCategory.categoryId
         trackerCategoryCoreData.title = newCategory.title
-        trackerCategoryCoreData.trackers = []
+        trackerCategoryCoreData.trackers = NSSet()
         
         try context.save()
     }
@@ -177,6 +177,17 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         let trackerCategoryCoreData = try getTrackerCategoryCoreData(from: trackerCategory)
         trackerCategoryCoreData.title = newTitle
         try context.save()
+    }
+    
+    func createPinnedCategory() throws -> TrackerCategory {
+        let pinnedCategoryTitle = "Закрепленные"
+        if let existingPinnedCategory = categories.first(where: { $0.title == pinnedCategoryTitle }) {
+            return existingPinnedCategory
+        } else {
+            let pinnedCategory = TrackerCategory(title: pinnedCategoryTitle, trackers: [], categoryId: UUID())
+            try add(newCategory: pinnedCategory)
+            return pinnedCategory
+        }
     }
     
     func setDelegate(_ delegate: TrackerCategoryStoreDelegate) {

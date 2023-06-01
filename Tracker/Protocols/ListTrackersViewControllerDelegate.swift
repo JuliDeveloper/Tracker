@@ -7,4 +7,5 @@ protocol ListTrackersViewControllerDelegate: AnyObject {
     func updateCompletedTrackers(_ tracker: Tracker)
     func updateCompletedTrackers(cell: TrackerCell,  _ tracker: Tracker)
     func updateCollectionView()
+    func getPinnedTracker(_ tracker: Tracker) -> Bool
 }

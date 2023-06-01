@@ -454,6 +454,29 @@ final class ListTrackersViewController: UIViewController {
                 isCompletedTracker: isCompletedTracker
             )
         }
+        
+    }
+    
+    func pinTracker(from indexPath: IndexPath) {
+        guard let tracker = trackerStore.getTracker(at: indexPath) else { return }
+        
+        do {
+            try trackerStore.pinTracker(tracker)
+            updateCollectionView()
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func unpinTracker(from indexPath: IndexPath) {
+        guard let tracker = trackerStore.getTracker(at: indexPath) else { return }
+        
+        do {
+            try trackerStore.unpinTracker(tracker)
+            updateCollectionView()
+        } catch let error {
+            print(error.localizedDescription)
+        }
     }
     
     private func deleteTracker(from indexPath: IndexPath) {
@@ -585,9 +608,9 @@ extension ListTrackersViewController: UICollectionViewDelegate, UICollectionView
         let trackerRecords = trackerStore.getRecords(for: indexPath)
         let isCompleted = completedTracker(tracker.id, trackerRecords)
         
-        cell.configure(for: cell, tracker: tracker, trackerRecords, isCompleted: isCompleted)
         cell.delegate = self
         cell.interactionDelegate = self
+        cell.configure(for: cell, tracker: tracker, trackerRecords, isCompleted: isCompleted)
         
         return cell
     }
@@ -673,6 +696,10 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     func updateCollectionView() {
         collectionView.reloadData()
     }
+    
+    func getPinnedTracker(_ tracker: Tracker) -> Bool {
+        return trackerStore.isPinned(tracker)
+    }
 }
 
 // MARK: - TrackerStoreDelegate
@@ -680,12 +707,19 @@ extension ListTrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         changeScenario()
         collectionView.performBatchUpdates {
+            // Обрабатывайте добавление и удаление секций сначала
             collectionView.insertSections(update.insertedSections)
-            collectionView.insertItems(at: update.insertedIndexes)
             collectionView.deleteSections(update.deletedSections)
-            collectionView.deleteItems(at: update.deletedIndexPaths)
             collectionView.reloadSections(update.updateSections)
+            
+            // Теперь обработайте изменения элементов
+            collectionView.insertItems(at: update.insertedIndexes)
+            collectionView.deleteItems(at: update.deletedIndexPaths)
             collectionView.reloadItems(at: update.updateIndexPaths)
+            
+            for move in update.movedIndexPaths {
+                collectionView.moveItem(at: move.from, to: move.to)
+            }
         }
     }
 }
@@ -693,7 +727,8 @@ extension ListTrackersViewController: TrackerStoreDelegate {
 //MARK: - TrackerCellDelegate
 extension ListTrackersViewController: TrackerCellDelegate {
     func contextMenuNeeded(forCell cell: TrackerCell) -> UIContextMenuConfiguration? {
-        guard let indexPath = collectionView.indexPath(for: cell) else {
+        guard let indexPath = collectionView.indexPath(for: cell),
+              let currentTracker = trackerStore.getTracker(at: indexPath) else {
             return nil
         }
         
@@ -702,12 +737,14 @@ extension ListTrackersViewController: TrackerCellDelegate {
         let editTitle = NSLocalizedString("edit", comment: "")
         let deleteTitle = NSLocalizedString("delete", comment: "")
         
-        let pinAction = UIAction(title: pinTitle) { _ in
-            print("! pin !")
+        let pinAction = UIAction(title: pinTitle) { [weak self] _ in
+            guard let self else { return }
+            self.pinTracker(from: indexPath)            
         }
         
-        let unpinAction = UIAction(title: unpinTitle) { _ in
-            print("!! unpin !!")
+        let unpinAction = UIAction(title: unpinTitle) { [weak self]  _ in
+            guard let self else { return }
+            self.unpinTracker(from: indexPath)
         }
         
         let editAction = UIAction(title: editTitle) { [weak self] _ in
@@ -720,8 +757,14 @@ extension ListTrackersViewController: TrackerCellDelegate {
             self.deleteTracker(from: indexPath)
         }
         
-        return UIContextMenuConfiguration(actionProvider: { _ in
-            return UIMenu(children: [pinAction, editAction, deleteAction])
-        })
+        if trackerStore.isPinned(currentTracker) {
+            return UIContextMenuConfiguration(actionProvider: { _ in
+                return UIMenu(children: [unpinAction, editAction, deleteAction])
+            })
+        } else {
+            return UIContextMenuConfiguration(actionProvider: { _ in
+                return UIMenu(children: [pinAction, editAction, deleteAction])
+            })
+        }
     }
 }

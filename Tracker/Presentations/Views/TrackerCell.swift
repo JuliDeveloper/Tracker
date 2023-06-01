@@ -60,6 +60,16 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+    private let pinImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pin.fill")
+        imageView.tintColor = .ypDefaultWhite
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        return imageView
+    }()
+    
     private var currentDate: Date? = nil
     private var isCompletedTrackerToday = Bool()
     private var tracker = Tracker(
@@ -93,6 +103,7 @@ final class TrackerCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         
         checkDate()
+        checkPin(for: tracker)
         updateTrackerState(isCompleted: isCompletedTrackerToday)
         
         let contextMenuInteraction = UIContextMenuInteraction(delegate: self)
@@ -113,6 +124,7 @@ final class TrackerCell: UICollectionViewCell {
         
         mainView.addSubview(emojiLabel)
         mainView.addSubview(taskTitleLabel)
+        mainView.addSubview(pinImage)
         
         stackView.addArrangedSubview(counterDayLabel)
         stackView.addArrangedSubview(plusButton)
@@ -156,6 +168,13 @@ final class TrackerCell: UICollectionViewCell {
                 constant: -12
             ),
             
+            pinImage.topAnchor.constraint(
+                equalTo: mainView.topAnchor, constant: 18
+            ),
+            pinImage.trailingAnchor.constraint(
+                equalTo: mainView.trailingAnchor, constant: -12
+            ),
+            
             plusButton.widthAnchor.constraint(equalToConstant: 34),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             
@@ -191,6 +210,16 @@ final class TrackerCell: UICollectionViewCell {
         } else if selectedDate <= currentDate ?? Date() {
             setupButton(isCompleted: isCompletedTrackerToday)
             plusButton.isEnabled = true
+        }
+    }
+    
+    private func checkPin(for tracker: Tracker) {
+        let isPinned = delegate?.getPinnedTracker(tracker) ?? false
+        
+        if isPinned {
+            pinImage.layer.opacity = 1
+        } else {
+            pinImage.layer.opacity = 0
         }
     }
     

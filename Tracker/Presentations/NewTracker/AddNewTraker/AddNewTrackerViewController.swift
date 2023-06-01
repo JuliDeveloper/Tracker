@@ -453,7 +453,7 @@ final class AddNewTrackerViewController: UIViewController {
     private func updateTracker() {
         guard let tracker else { return }
         let newCategory = currentIndexCategory == nil ? self.category : viewModel.getCategory(at: currentIndexCategory ?? IndexPath())
-        
+        print(isEditTracker)
         if isEditTracker {
             setCounterDaysTracker()
         }
@@ -470,6 +470,8 @@ final class AddNewTrackerViewController: UIViewController {
         } catch let error {
             print(error.localizedDescription)
         }
+        
+        print(tracker.title)
     }
     
     
@@ -479,6 +481,8 @@ final class AddNewTrackerViewController: UIViewController {
         } else {
             updateTracker()
         }
+        
+        updateDelegate?.updateCollectionView()
     }
     
     private func showWarningLabel(state: Bool) {

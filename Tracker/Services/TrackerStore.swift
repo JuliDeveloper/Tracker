@@ -16,6 +16,7 @@ struct TrackerStoreUpdate {
     let insertedIndexes: [IndexPath]
     var deletedIndexPaths: [IndexPath]
     var updateIndexPaths: [IndexPath]
+    let movedIndexPaths: [(from: IndexPath, to: IndexPath)]
 }
 
 final class TrackerStore: NSObject {
@@ -31,6 +32,7 @@ final class TrackerStore: NSObject {
     private var insertedIndexPaths: [IndexPath] = []
     private var deletedIndexPaths: [IndexPath] = []
     private var updateIndexPaths: [IndexPath] = []
+    private var movedIndexPaths = [(from: IndexPath, to: IndexPath)]()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
@@ -81,6 +83,7 @@ final class TrackerStore: NSObject {
         deletedSections = IndexSet()
         updateIndexPaths = []
         updateSections = IndexSet()
+        movedIndexPaths = []
     }
     
     private func getRecord(from recordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
@@ -171,7 +174,7 @@ extension TrackerStore: TrackerStoreProtocol {
     }
     
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws {
-        let categoryCoreData = try trackerCategoryStore.categoryCoreData(with: category.categoryId)
+        let categoryCoreData = try trackerCategoryStore.getCategoryFromCoreData(with: category.categoryId)
         
         let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.trackerId = tracker.id
@@ -203,6 +206,57 @@ extension TrackerStore: TrackerStoreProtocol {
             
             let newCategoryCoreData = try trackerCategoryStore.getTrackerCategoryCoreData(from: category)
             newCategoryCoreData.addToTrackers(trackerCoreData)
+        }
+        
+        try context.save()
+    }
+    
+    func isPinned(_ tracker: Tracker) -> Bool {
+        if let pinnedCategory = trackerCategoryStore.categories.first(where: { $0.title == "Закрепленные" }) {
+            return pinnedCategory.trackers.contains(where: { $0.id == tracker.id })
+        }
+        return false
+    }
+
+    func pinTracker(_ tracker: Tracker) throws {
+        let trackerCoreData = try getTrackerCoreData(from: tracker)
+        let pinnedCategory = try trackerCategoryStore.createPinnedCategory()
+
+        let oldCategory = trackerCoreData.category
+        let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: pinnedCategory)
+
+        if oldCategory?.categoryId != newCategory.categoryId {
+            UserDefaults.standard.set(oldCategory?.categoryId?.uuidString, forKey: tracker.id.uuidString)
+            oldCategory?.removeFromTrackers(trackerCoreData)
+            newCategory.addToTrackers(trackerCoreData)
+            trackerCoreData.category = newCategory
+        }
+        
+        try context.save()
+    }
+    
+    func unpinTracker(_ tracker: Tracker) throws {
+        let trackerCoreData = try getTrackerCoreData(from: tracker)
+        
+        if let originalCategoryIdString = UserDefaults.standard.string(forKey: tracker.id.uuidString),
+           let originalCategoryId = UUID(uuidString: originalCategoryIdString) {
+            
+            let originalCategoryCoreData = try trackerCategoryStore.getCategoryFromCoreData(with: originalCategoryId)
+            let originalCategory = try trackerCategoryStore.getTrackerCategory(from: originalCategoryCoreData)
+            
+            let oldCategory = trackerCoreData.category
+            let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: originalCategory)
+                        
+            if oldCategory?.categoryId != newCategory.categoryId {
+                oldCategory?.removeFromTrackers(trackerCoreData)
+                newCategory.addToTrackers(trackerCoreData)
+                trackerCoreData.category = newCategory
+                
+                if oldCategory?.trackers?.count == 0 {
+                    let pinCategory = try trackerCategoryStore.getTrackerCategory(from: oldCategory ?? TrackerCategoryCoreData())
+                    try trackerCategoryStore.deleteCategory(category: pinCategory)
+                }
+            }
         }
         
         try context.save()
@@ -270,7 +324,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
                 updateSections: updateSections,
                 insertedIndexes: insertedIndexPaths,
                 deletedIndexPaths: deletedIndexPaths,
-                updateIndexPaths: updateIndexPaths
+                updateIndexPaths: updateIndexPaths,
+                movedIndexPaths: movedIndexPaths
             )
         )
         updatedIndexes()
@@ -305,8 +360,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             }
         case .move:
             if let indexPath = indexPath, let newIndexPath = newIndexPath {
-                deletedIndexPaths.append(indexPath)
-                insertedIndexPaths.append(newIndexPath)
+                movedIndexPaths.append((from: indexPath, to: newIndexPath))
             }
         default:
             break
