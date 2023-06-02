@@ -161,7 +161,6 @@ final class ListTrackersViewController: UIViewController {
     private lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     private let trackerRecordStore: TrackerRecordsStoreProtocol = TrackerRecordsStore()
     
-   // private var viewModel: AddCategoryViewModel
     let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     private var categories: [TrackerCategory] = []
     private var currentDate: Date {
@@ -170,18 +169,8 @@ final class ListTrackersViewController: UIViewController {
        
     //MARK: - Lifecycle
     
-//    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
-//        self.viewModel = viewModel
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
     override func viewDidLoad() {
         categories = trackerCategoryStore.categories
-        print(categories)
         getStartData()
         configureView()
         addElements()
@@ -674,16 +663,16 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         })
     }
     
-    func updateCompletedTrackers(_ tracker: Tracker) {
+    func updateCompletedTrackers(_ tracker: Tracker, _ countDays: Int) {
         let trackerRecords = trackerStore.getRecords(from: tracker)
-        
-        if completedTracker(tracker.id, trackerRecords) {
-            deleteTrackerRecord(for: tracker.id)
-        } else {
-            saveTrackerRecord(for: tracker.id)
-        }
-        
-        let _ = trackerStore.getRecords(from: tracker)
+
+        if tracker.countRecords != countDays  {
+            if completedTracker(tracker.id, trackerRecords) {
+                deleteTrackerRecord(for: tracker.id)
+            } else {
+                saveTrackerRecord(for: tracker.id)
+            }
+        }        
     }
     
     func updateCompletedTrackers(cell: TrackerCell, _ tracker: Tracker) {

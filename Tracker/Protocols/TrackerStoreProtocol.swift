@@ -7,7 +7,7 @@ protocol TrackerStoreProtocol {
     func headerTitleSection(_ section: Int) -> String?
     func getTracker(at indexPath: IndexPath) -> Tracker?
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws
-    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ newCategory: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?) throws
+    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ newCategory: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, countDays: Int) throws
     func isPinned(_ tracker: Tracker) -> Bool
     func pinTracker(_ tracker: Tracker) throws
     func unpinTracker(_ tracker: Tracker) throws

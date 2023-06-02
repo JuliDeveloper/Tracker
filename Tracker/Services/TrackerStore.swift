@@ -188,7 +188,7 @@ extension TrackerStore: TrackerStoreProtocol {
         try context.save()
     }
     
-    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ category: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?) throws {
+    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ category: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, countDays: Int) throws {
         
         guard let category else { return }
         
@@ -211,6 +211,11 @@ extension TrackerStore: TrackerStoreProtocol {
                 let pinnedCategory = try trackerCategoryStore.getTrackerCategory(from: oldCategory ?? TrackerCategoryCoreData())
                 try trackerCategoryStore.deleteCategory(category: pinnedCategory)
             }
+        }
+        
+        if trackerCoreData.records?.count != countDays {
+            let records = getRecords(from: tracker)
+            trackerCoreData.records = NSSet(set: records)
         }
         
         try context.save()

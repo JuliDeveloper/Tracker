@@ -455,7 +455,7 @@ final class AddNewTrackerViewController: UIViewController {
         let newCategory = currentIndexCategory == nil ? self.category : viewModel.getCategory(at: currentIndexCategory ?? IndexPath())
         
         if isEditTracker {
-            //setCounterDaysTracker()
+            updateDelegate?.updateCompletedTrackers(tracker, counterDays)
         }
         
         do {
@@ -465,7 +465,8 @@ final class AddNewTrackerViewController: UIViewController {
                 newCategory,
                 setSchedule,
                 currentEmoji,
-                currentColor
+                currentColor,
+                countDays: counterDays
             )
         } catch let error {
             print(error.localizedDescription)
@@ -517,13 +518,22 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     private func checkDate() {
-        let currentDate = updateDelegate?.getDate()
-        let selectedDate = updateDelegate?.updateButtonStateFromDate() ?? Date()
+        let calendar = Calendar.current
+        let currentDate = calendar.startOfDay(
+            for: Date()
+        )
+        let selectedDate = calendar.startOfDay(
+            for: updateDelegate?.updateButtonStateFromDate() ?? Date()
+        )
 
-        if selectedDate > currentDate ?? Date() {
+        if selectedDate > currentDate {
             setupCounterButtons(isCompleted: isCompletedTrackerToday)
-        } else if selectedDate <= currentDate ?? Date() {
+            plusButton.isEnabled = false
+            minusButton.isEnabled = false
+        } else if selectedDate <= currentDate {
             setupCounterButtons(isCompleted: isCompletedTrackerToday)
+            plusButton.isEnabled = true
+            minusButton.isEnabled = true
         }
     }
     
@@ -541,9 +551,10 @@ final class AddNewTrackerViewController: UIViewController {
         }
     }
     
-    private func setCounterDaysTracker() {
-        guard let tracker else { return }
-        updateDelegate?.updateCompletedTrackers(tracker)
+    private func setCounterDaysTracker(_ countDays: Int) {
+        isCompletedTrackerToday.toggle()
+        counterLabel.text = pluralizeDays(countDays)
+        setupCounterButtons(isCompleted: isCompletedTrackerToday)
     }
     
     @objc func hideKeyboard() {
@@ -557,17 +568,14 @@ final class AddNewTrackerViewController: UIViewController {
     }
     
     @objc private func subtractDay() {
-        isCompletedTrackerToday.toggle()
         counterDays -= 1
-        counterLabel.text = pluralizeDays(counterDays)
-        setupCounterButtons(isCompleted: isCompletedTrackerToday)
+        setCounterDaysTracker(counterDays)
+        
     }
     
     @objc private func addDay() {
-        isCompletedTrackerToday.toggle()
         counterDays += 1
-        counterLabel.text = pluralizeDays(counterDays)
-        setupCounterButtons(isCompleted: isCompletedTrackerToday)
+        setCounterDaysTracker(counterDays)
     }
     
     @objc private func cancel() {
