@@ -69,9 +69,11 @@ final class AddCategoryViewController: UIViewController {
     //MARK: - Helpers
     private func bindViewModel() {
         viewModel.onDidUpdate = { [weak self] update in
-            self?.tableView.performBatchUpdates {
-                self?.tableView.insertRows(at: update.insertedIndexes, with: .automatic)
-                self?.tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
+            guard let self else { return }
+            self.showScenario()
+            self.tableView.performBatchUpdates {
+                self.tableView.insertRows(at: update.insertedIndexes, with: .automatic)
+                self.tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
             }
         }
     }
@@ -238,7 +240,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         let title = viewModel.categories[indexPath.row].title
         
         let lastIndex = viewModel.categories.count - 1
-        guard let selectedIndexPath = viewModel.selectedIndexPath else { return UITableViewCell() }
+        let selectedIndexPath = viewModel.selectedIndexPath ?? IndexPath()
       
         cell.configure(
             title,
@@ -286,7 +288,6 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
                     let addNewCategoryVC = AddNewCategoryViewController(viewModel: self.viewModel)
                     addNewCategoryVC.text = currentCategory.title
                     addNewCategoryVC.category = currentCategory
-                    addNewCategoryVC.delegate = self
                     self.present(addNewCategoryVC, animated: true)
                 },
                 UIAction(
@@ -297,11 +298,5 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
                 }
             ])
         })
-    }
-}
-
-extension AddCategoryViewController: AddCategoryViewControllerDelegate {
-    func updateTableView() {
-        tableView.reloadData()
     }
 }

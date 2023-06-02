@@ -161,26 +161,27 @@ final class ListTrackersViewController: UIViewController {
     private lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     private let trackerRecordStore: TrackerRecordsStoreProtocol = TrackerRecordsStore()
     
-    private var viewModel: AddCategoryViewModel
-    
-   // private var categories: [TrackerCategory] = []
+   // private var viewModel: AddCategoryViewModel
+    let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
+    private var categories: [TrackerCategory] = []
     private var currentDate: Date {
         getDate()
     }
        
     //MARK: - Lifecycle
     
-    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
+//        self.viewModel = viewModel
+//        super.init(nibName: nil, bundle: nil)
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
     override func viewDidLoad() {
-        let _ = viewModel.categories
+        categories = trackerCategoryStore.categories
+        print(categories)
         getStartData()
         configureView()
         addElements()
@@ -415,7 +416,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func showViewController(with array: [String], isIrregular: Bool, _ tracker: Tracker, _ category: TrackerCategory?, navBarTitle: String, isEditTracker: Bool, isCompletedTracker: Bool) {
-        let editTrackerVC = AddNewTrackerViewController(viewModel: viewModel)
+        let editTrackerVC = AddNewTrackerViewController()
         editTrackerVC.titlesCells = array
         editTrackerVC.isIrregular = isIrregular
         editTrackerVC.tracker = tracker
@@ -435,7 +436,7 @@ final class ListTrackersViewController: UIViewController {
             return
         }
         
-        let currentCategory = self.viewModel.categories[indexPath.section]
+        let currentCategory = self.categories[indexPath.section]
         let isCompletedTracker = getCompletedTracker(currentTracker, from: indexPath)
         
         let categoryTitle = NSLocalizedString("category.title", comment: "")
@@ -541,7 +542,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc private func addTracker() {
-        let createTrackerVC = CreateTrackerViewController(viewModel: viewModel)
+        let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.updateDelegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
@@ -592,7 +593,7 @@ extension ListTrackersViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        viewModel.categories.count
+        trackerStore.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -705,7 +706,8 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     }
     
     func updateCollectionView() {
-        let _ = viewModel.categories
+        categories = trackerCategoryStore.categories
+        print(categories)
         collectionView.reloadData()
     }
     

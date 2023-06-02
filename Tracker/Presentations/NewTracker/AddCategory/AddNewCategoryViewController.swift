@@ -19,7 +19,6 @@ final class AddNewCategoryViewController: UIViewController {
     
     var text: String?
     var category: TrackerCategory?
-    weak var delegate: AddCategoryViewControllerDelegate?
     
     //MARK: - Lifecycle
     init(viewModel: AddCategoryViewModel) {
@@ -141,7 +140,6 @@ final class AddNewCategoryViewController: UIViewController {
         } else {
             guard let category else { return }
             viewModel.edit(category: category, newTitle: newTitleCategory)
-            delegate?.updateTableView()
         }
         
         dismiss(animated: true)

@@ -139,7 +139,7 @@ final class AddNewTrackerViewController: UIViewController {
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
-    init(viewModel: AddCategoryViewModel) {
+    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -448,9 +448,9 @@ final class AddNewTrackerViewController: UIViewController {
     private func updateTracker() {
         guard let tracker else { return }
         let newCategory = currentIndexCategory == nil ? self.category : viewModel.getCategory(at: currentIndexCategory ?? IndexPath())
-        print(isEditTracker)
+        
         if isEditTracker {
-            setCounterDaysTracker()
+            //setCounterDaysTracker()
         }
         
         do {
@@ -465,8 +465,6 @@ final class AddNewTrackerViewController: UIViewController {
         } catch let error {
             print(error.localizedDescription)
         }
-        
-        print(tracker.title)
     }
     
     
@@ -476,8 +474,6 @@ final class AddNewTrackerViewController: UIViewController {
         } else {
             updateTracker()
         }
-        
-        updateDelegate?.updateCollectionView()
     }
     
     private func showWarningLabel(state: Bool) {
@@ -543,7 +539,6 @@ final class AddNewTrackerViewController: UIViewController {
     private func setCounterDaysTracker() {
         guard let tracker else { return }
         updateDelegate?.updateCompletedTrackers(tracker)
-        updateDelegate?.updateCollectionView()
     }
     
     @objc func hideKeyboard() {

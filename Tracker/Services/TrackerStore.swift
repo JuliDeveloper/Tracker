@@ -203,9 +203,9 @@ extension TrackerStore: TrackerStoreProtocol {
         
         if oldCategory != newCategory {
             oldCategory?.removeFromTrackers(trackerCoreData)
+            newCategory.addToTrackers(trackerCoreData)
             
-            let newCategoryCoreData = try trackerCategoryStore.getTrackerCategoryCoreData(from: category)
-            newCategoryCoreData.addToTrackers(trackerCoreData)
+            trackerCoreData.category = newCategory
         }
         
         try context.save()

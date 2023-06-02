@@ -20,7 +20,7 @@ final class DefaultStackView: UIStackView {
         label.numberOfLines = 2
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.widthAnchor.constraint(equalToConstant: 160).isActive = true
+        label.widthAnchor.constraint(equalToConstant: 240).isActive = true
         return label
     }()
     
