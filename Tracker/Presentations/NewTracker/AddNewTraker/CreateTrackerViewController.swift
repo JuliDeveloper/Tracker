@@ -33,9 +33,19 @@ final class CreateTrackerViewController: UIViewController {
         return stack
     }()
     
+    private var viewModel: AddCategoryViewModel
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
+    init(viewModel: AddCategoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = NSLocalizedString("navBar.createTracker.title", comment: "")
@@ -69,7 +79,7 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     private func showViewController(with array: [String], isIrregular: Bool, isEditTracker: Bool) {
-        let addTrackerVC = AddNewTrackerViewController()
+        let addTrackerVC = AddNewTrackerViewController(viewModel: viewModel)
         addTrackerVC.updateDelegate = updateDelegate
         addTrackerVC.titlesCells = array
         addTrackerVC.isIrregular = isIrregular

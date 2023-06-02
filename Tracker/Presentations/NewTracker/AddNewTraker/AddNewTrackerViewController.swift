@@ -139,7 +139,7 @@ final class AddNewTrackerViewController: UIViewController {
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
-    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
+    init(viewModel: AddCategoryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -175,11 +175,6 @@ final class AddNewTrackerViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateHeight(for: collectionView)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        updateDelegate?.updateCollectionView()
     }
     
     //MARK: - Helpers

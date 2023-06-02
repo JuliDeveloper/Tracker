@@ -159,17 +159,28 @@ final class ListTrackersViewController: UIViewController {
     )
     
     private lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
-    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     private let trackerRecordStore: TrackerRecordsStoreProtocol = TrackerRecordsStore()
     
-    private var categories: [TrackerCategory] = []
+    private var viewModel: AddCategoryViewModel
+    
+   // private var categories: [TrackerCategory] = []
     private var currentDate: Date {
         getDate()
     }
        
     //MARK: - Lifecycle
+    
+    init(viewModel: AddCategoryViewModel = AddCategoryViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
-        categories = trackerCategoryStore.categories
+        let _ = viewModel.categories
         getStartData()
         configureView()
         addElements()
@@ -404,7 +415,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func showViewController(with array: [String], isIrregular: Bool, _ tracker: Tracker, _ category: TrackerCategory?, navBarTitle: String, isEditTracker: Bool, isCompletedTracker: Bool) {
-        let editTrackerVC = AddNewTrackerViewController()
+        let editTrackerVC = AddNewTrackerViewController(viewModel: viewModel)
         editTrackerVC.titlesCells = array
         editTrackerVC.isIrregular = isIrregular
         editTrackerVC.tracker = tracker
@@ -424,7 +435,7 @@ final class ListTrackersViewController: UIViewController {
             return
         }
         
-        let currentCategory = self.categories[indexPath.section]
+        let currentCategory = self.viewModel.categories[indexPath.section]
         let isCompletedTracker = getCompletedTracker(currentTracker, from: indexPath)
         
         let categoryTitle = NSLocalizedString("category.title", comment: "")
@@ -486,6 +497,7 @@ final class ListTrackersViewController: UIViewController {
         let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
             guard let self else { return }
             
+            print(indexPath)
             do {
                 try self.trackerStore.deleteTracker(at: indexPath)
             } catch let error {
@@ -529,7 +541,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc private func addTracker() {
-        let createTrackerVC = CreateTrackerViewController()
+        let createTrackerVC = CreateTrackerViewController(viewModel: viewModel)
         createTrackerVC.updateDelegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
@@ -580,7 +592,7 @@ extension ListTrackersViewController: UITextFieldDelegate {
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ListTrackersViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        trackerStore.numberOfSections
+        viewModel.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -693,6 +705,7 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     }
     
     func updateCollectionView() {
+        let _ = viewModel.categories
         collectionView.reloadData()
     }
     
@@ -736,7 +749,7 @@ extension ListTrackersViewController: TrackerCellDelegate {
         
         let pinAction = UIAction(title: pinTitle) { [weak self] _ in
             guard let self else { return }
-            self.pinTracker(from: indexPath)            
+            self.pinTracker(from: indexPath)
         }
         
         let unpinAction = UIAction(title: unpinTitle) { [weak self]  _ in
