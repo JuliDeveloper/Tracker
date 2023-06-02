@@ -206,6 +206,11 @@ extension TrackerStore: TrackerStoreProtocol {
             newCategory.addToTrackers(trackerCoreData)
             
             trackerCoreData.category = newCategory
+            
+            if oldCategory?.title == "Закрепленные" && oldCategory?.trackers?.count == 0 {
+                let pinnedCategory = try trackerCategoryStore.getTrackerCategory(from: oldCategory ?? TrackerCategoryCoreData())
+                try trackerCategoryStore.deleteCategory(category: pinnedCategory)
+            }
         }
         
         try context.save()
