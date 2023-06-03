@@ -15,10 +15,13 @@ final class AddScheduleViewController: UIViewController {
         return button
     }()
     
-    private let weekDay = WeekDay.allCases
+    private let weekDays = WeekDay.allCases
     
     var schedule = [WeekDay]()
-    var switchStates = [Int: Bool]()
+    lazy var switchStates: [Bool] = {
+        weekDays.map { schedule.contains($0) }
+    }()
+    
     weak var delegate: UpdateSubtitleDelegate?
     
     //MARK: - Lifecycle
@@ -126,58 +129,78 @@ final class AddScheduleViewController: UIViewController {
         }
     }
     
+    private func configureCellContent(_ cell: UITableViewCell, with text: String) {
+        if #available(iOS 14.0, *) {
+            var content = cell.defaultContentConfiguration()
+            content.text = text
+            content.textProperties.font = UIFont.ypFontMedium17
+            content.textProperties.color = .ypBlack
+            content.secondaryTextProperties.font = UIFont.ypFontMedium17
+            content.secondaryTextProperties.color = .ypGray
+            cell.contentConfiguration = content
+        } else {
+            cell.textLabel?.text = title
+        }
+    }
+    
+    private func createSwitcher(for indexPath: IndexPath) -> UISwitch {
+        let switcher = UISwitch()
+        switcher.onTintColor = .ypBlue
+        switcher.tag = indexPath.row
+        switcher.addTarget(
+            self,
+            action: #selector(switchToggled(_:)),
+            for: .valueChanged
+        )
+        return switcher
+    }
+
+    private func configureSeparator(for cell: UITableViewCell, at indexPath: IndexPath) {
+        let lastIndex = weekDays.count - 1
+        let isLastCell = indexPath.row == lastIndex
+        let leftInset = isLastCell ? cell.bounds.size.width : 16
+        cell.separatorInset = UIEdgeInsets(
+            top: 0,
+            left: leftInset,
+            bottom: 0,
+            right: 16
+        )
+    }
+    
+    private func configureCell(_ cell: UITableViewCell, for indexPath: IndexPath) {
+        let day = weekDays[indexPath.row].localizedName
+
+        cell.backgroundColor = .ypBackground
+        cell.selectionStyle = .none
+
+        let switcher = createSwitcher(for: indexPath)
+        cell.accessoryView = switcher
+
+        switcher.isOn = switchStates[indexPath.row]
+
+        configureSeparator(for: cell, at: indexPath)
+
+        configureCellContent(cell, with: day)
+    }
+    
     private func removeWeekDay(_ weekDay: WeekDay) {
         if let index = schedule.firstIndex(of: weekDay) {
             schedule.remove(at: index)
         }
     }
     
-    @objc func switchToggled(_ sender: UISwitch) {
+    @objc private func switchToggled(_ sender: UISwitch) {
+        let dayChanged = WeekDay.allCases[sender.tag]
+        switchStates[sender.tag] = sender.isOn
         if sender.isOn {
-            switchStates[sender.tag] = true
-            switch sender.tag {
-            case 0:
-                schedule.append(WeekDay.monday)
-            case 1:
-                schedule.append(WeekDay.tuesday)
-            case 2:
-                schedule.append(WeekDay.wednesday)
-            case 3:
-                schedule.append(WeekDay.thursday)
-            case 4:
-                schedule.append(WeekDay.friday)
-            case 5:
-                schedule.append(WeekDay.saturday)
-            case 6:
-                schedule.append(WeekDay.sunday)
-            default:
-                break
-            }
+            schedule.append(dayChanged)
         } else {
-            switchStates[sender.tag] = false
-            switch sender.tag {
-            case 0:
-                removeWeekDay(WeekDay.monday)
-            case 1:
-                removeWeekDay(WeekDay.tuesday)
-            case 2:
-                removeWeekDay(WeekDay.wednesday)
-            case 3:
-                removeWeekDay(WeekDay.thursday)
-            case 4:
-                removeWeekDay(WeekDay.friday)
-            case 5:
-                removeWeekDay(WeekDay.saturday)
-            case 6:
-                removeWeekDay(WeekDay.sunday)
-            default:
-                break
-            }
+            removeWeekDay(dayChanged)
         }
     }
     
     @objc private func saveSchedule() {
-        delegate?.updateScheduleSubtitle(from: schedule, and: switchStates)
+        delegate?.updateScheduleSubtitle(from: schedule)
         dismiss(animated: true)
     }
 }
@@ -185,7 +208,7 @@ final class AddScheduleViewController: UIViewController {
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        weekDay.count
+        weekDays.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -195,52 +218,7 @@ extension AddScheduleViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.weekDayCellIdentifier, for: indexPath)
         
-        let day = weekDay[indexPath.row].localizedName
-        let lastIndex = weekDay.count - 1
-        
-        cell.backgroundColor = .ypBackground
-        cell.selectionStyle = .none
-        
-        let switcher = UISwitch()
-        switcher.onTintColor = .ypBlue
-        switcher.tag = indexPath.row
-        switcher.addTarget(
-            self,
-            action: #selector(switchToggled(_:)),
-            for: .valueChanged
-        )
-        cell.accessoryView = switcher
-        
-        if let switchState = switchStates[indexPath.row] {
-            switcher.setOn(switchState, animated: false)
-        } else {
-            switcher.setOn(false, animated: false)
-        }
-        
-        cell.separatorInset = UIEdgeInsets(
-            top: 0, left: 16, bottom: 0, right: 16
-        )
-        
-        if indexPath.row == lastIndex {
-            cell.separatorInset = UIEdgeInsets(
-                top: 0, left: cell.bounds.size.width, bottom: 0, right: 0
-            )
-        }
-        
-        if #available(iOS 14.0, *) {
-            var content = cell.defaultContentConfiguration()
-            
-            content.text = day
-            
-            content.textProperties.font = UIFont.ypFontMedium17
-            content.textProperties.color = .ypBlack
-            content.secondaryTextProperties.font = UIFont.ypFontMedium17
-            content.secondaryTextProperties.color = .ypGray
-            
-            cell.contentConfiguration = content
-        } else {
-            cell.textLabel?.text = title
-        }
+        configureCell(cell, for: indexPath)
         
         return cell
     }

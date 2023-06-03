@@ -164,6 +164,8 @@ final class AddNewTrackerViewController: UIViewController {
             WeekDay.allCases.forEach { setSchedule.append($0) }
         }
         
+        //setSchedule = tracker?.schedule ?? []
+
         checkTracker()
         checkDate()
         updateCreateButton()
@@ -645,7 +647,11 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
             if indexPath.row == 0 {
                 content.secondaryText = categorySubtitle
             } else {
-                content.secondaryText = getSchedule(from: setSchedule)
+                if setSchedule.count == 7 {
+                    content.secondaryText = "Каждый день"
+                } else {
+                    content.secondaryText = getSchedule(from: setSchedule)
+                }
             }
             
             content.textProperties.font = UIFont.ypFontMedium17
@@ -660,7 +666,11 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
             if indexPath.row == 0 {
                 cell.detailTextLabel?.text = categorySubtitle
             } else {
-                cell.detailTextLabel?.text = getSchedule(from: setSchedule)
+                if setSchedule == WeekDay.allCases {
+                    cell.detailTextLabel?.text = "Каждый день"
+                } else {
+                    cell.detailTextLabel?.text = getSchedule(from: setSchedule)
+                }
             }
         }
         return cell
@@ -684,7 +694,6 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
             let vc = AddScheduleViewController()
             vc.delegate = self
             vc.schedule = setSchedule
-            vc.switchStates = currentSwitchStates
             showViewController(vc)
         }
     }
@@ -823,9 +832,8 @@ extension AddNewTrackerViewController: UpdateSubtitleDelegate {
         updateCreateButton()
     }
     
-    func updateScheduleSubtitle(from weekDays: [WeekDay]?, and switchStates: [Int: Bool]) {
+    func updateScheduleSubtitle(from weekDays: [WeekDay]?) {
         setSchedule = weekDays ?? []
-        currentSwitchStates = switchStates
         
         let indexPath = IndexPath(row: 1, section: 0)
         tableView.reloadRows(at: [indexPath], with: .none)

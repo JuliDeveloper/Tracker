@@ -446,7 +446,7 @@ final class ListTrackersViewController: UIViewController {
         } else {
             showViewController(
                 with: [categoryTitle, scheduleTitle],
-                isIrregular: true,
+                isIrregular: false,
                 currentTracker,
                 currentCategory,
                 navBarTitle: editHabitTitle,
