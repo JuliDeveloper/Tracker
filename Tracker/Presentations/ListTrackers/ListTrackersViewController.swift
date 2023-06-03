@@ -487,7 +487,6 @@ final class ListTrackersViewController: UIViewController {
         let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
             guard let self else { return }
             
-            print(indexPath)
             do {
                 try self.trackerStore.deleteTracker(at: indexPath)
             } catch let error {
@@ -696,7 +695,6 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     
     func updateCollectionView() {
         categories = trackerCategoryStore.categories
-        print(categories)
         collectionView.reloadData()
     }
     
