@@ -52,6 +52,8 @@ final class TrackerStore: NSObject {
         return fetchedResultsController
     }()
     
+    private let userDefaults = StorageManager.shared
+    
     weak var delegate: TrackerStoreDelegate?
         
     // MARK: - Lifecycle
@@ -236,7 +238,7 @@ extension TrackerStore: TrackerStoreProtocol {
         let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: pinnedCategory)
 
         if oldCategory?.categoryId != newCategory.categoryId {
-            UserDefaults.standard.set(oldCategory?.categoryId?.uuidString, forKey: tracker.id.uuidString)
+            userDefaults.setOldCategory(for: tracker, oldCategory)
             oldCategory?.removeFromTrackers(trackerCoreData)
             newCategory.addToTrackers(trackerCoreData)
             trackerCoreData.category = newCategory
@@ -248,7 +250,7 @@ extension TrackerStore: TrackerStoreProtocol {
     func unpinTracker(_ tracker: Tracker) throws {
         let trackerCoreData = try getTrackerCoreData(from: tracker)
         
-        if let originalCategoryIdString = UserDefaults.standard.string(forKey: tracker.id.uuidString),
+        if let originalCategoryIdString = userDefaults.getCategoryIdString(for: tracker),
            let originalCategoryId = UUID(uuidString: originalCategoryIdString) {
             
             let originalCategoryCoreData = try trackerCategoryStore.getCategoryFromCoreData(with: originalCategoryId)
