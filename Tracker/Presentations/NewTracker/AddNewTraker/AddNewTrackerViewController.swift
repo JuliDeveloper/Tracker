@@ -123,7 +123,6 @@ final class AddNewTrackerViewController: UIViewController {
     private var categorySubtitle = ""
     private var currentIndexCategory: IndexPath?
     private var setSchedule = [WeekDay]()
-    private var currentSwitchStates = [Int: Bool]()
     private var selectedIndexPathsInSection: [Int: IndexPath] = [:]
     private var currentEmoji = String()
     private var currentColor: UIColor? = nil
@@ -823,6 +822,8 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
 //MARK: - UpdateSubtitleDelegate
 extension AddNewTrackerViewController: UpdateSubtitleDelegate {
     func updateCategorySubtitle(from string: String?, and indexPath: IndexPath?) {
+        category = viewModel.getCategory(at: indexPath)
+        
         categorySubtitle = string ?? ""
         currentIndexCategory = indexPath
         
