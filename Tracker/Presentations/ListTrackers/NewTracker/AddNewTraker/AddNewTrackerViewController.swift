@@ -638,6 +638,8 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         cell.selectionStyle = .none
         cell.accessoryType = .disclosureIndicator
         
+        let everyDayTitle = NSLocalizedString("everyDay", comment: "")
+        
         if #available(iOS 14.0, *) {
             var content = cell.defaultContentConfiguration()
             
@@ -647,7 +649,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
                 content.secondaryText = categorySubtitle
             } else {
                 if setSchedule.count == 7 {
-                    content.secondaryText = "Каждый день"
+                    content.secondaryText = everyDayTitle
                 } else {
                     content.secondaryText = getSchedule(from: setSchedule)
                 }
@@ -666,7 +668,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
                 cell.detailTextLabel?.text = categorySubtitle
             } else {
                 if setSchedule == WeekDay.allCases {
-                    cell.detailTextLabel?.text = "Каждый день"
+                    cell.detailTextLabel?.text = everyDayTitle
                 } else {
                     cell.detailTextLabel?.text = getSchedule(from: setSchedule)
                 }
