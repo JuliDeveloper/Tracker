@@ -159,9 +159,9 @@ final class ListTrackersViewController: UIViewController {
     )
     
     private lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     private let trackerRecordStore: TrackerRecordsStoreProtocol = TrackerRecordsStore()
     
-    let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
     private var categories: [TrackerCategory] = []
     private var currentDate: Date {
         getDate()
