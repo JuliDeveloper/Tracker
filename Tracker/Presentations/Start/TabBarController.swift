@@ -16,7 +16,7 @@ final class TabBarController: UITabBarController {
             selectedImage: nil
         )
         
-        let statistic = StatisticsViewController()
+        let statistic = UINavigationController(rootViewController: StatisticsViewController())
         statistic.tabBarItem = UITabBarItem(
             title: statisticTitle,
             image: UIImage(named: "hare.fill"),

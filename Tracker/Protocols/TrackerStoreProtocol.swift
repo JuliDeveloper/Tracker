@@ -13,6 +13,7 @@ protocol TrackerStoreProtocol {
     func unpinTracker(_ tracker: Tracker) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func trackerFiltering(from currentDate: String?, or searchText: String?)
+    func fetchAllRecords() throws -> [TrackerRecordCoreData]
     func getRecords(from tracker: Tracker) -> Set<TrackerRecord>
     func getRecords(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
     func loadInitialData(date: String)

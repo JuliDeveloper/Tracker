@@ -290,6 +290,18 @@ extension TrackerStore: TrackerStoreProtocol {
         try? fetchedResultsController.performFetch()
     }
     
+    func fetchAllRecords() throws -> [TrackerRecordCoreData] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let recordsCoreData = try context.fetch(request)
+            return recordsCoreData
+        } catch {
+            throw error
+        }
+    }
+    
     func getRecords(for indexPath: IndexPath) -> Set<TrackerRecord> {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         
