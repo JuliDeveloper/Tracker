@@ -190,7 +190,7 @@ extension TrackerStore: TrackerStoreProtocol {
         try context.save()
     }
     
-    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ category: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, countDays: Int) throws {
+    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ category: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, _ countDays: Int) throws {
         
         guard let category else { return }
         

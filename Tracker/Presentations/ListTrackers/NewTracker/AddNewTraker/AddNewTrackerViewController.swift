@@ -163,8 +163,6 @@ final class AddNewTrackerViewController: UIViewController {
             WeekDay.allCases.forEach { setSchedule.append($0) }
         }
         
-        //setSchedule = tracker?.schedule ?? []
-
         checkTracker()
         checkDate()
         updateCreateButton()
@@ -467,7 +465,7 @@ final class AddNewTrackerViewController: UIViewController {
                 setSchedule,
                 currentEmoji,
                 currentColor,
-                countDays: counterDays
+                counterDays
             )
         } catch let error {
             print(error.localizedDescription)
