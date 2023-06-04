@@ -64,6 +64,8 @@ final class TrackerCell: UICollectionViewCell {
         return imageView
     }()
     
+    private let analyticsService = AnalyticsService()
+    
     private var currentDate: Date? = nil
     private var isCompletedTrackerToday = Bool()
     private var tracker = Tracker(
@@ -238,6 +240,11 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     @objc private func addDay() {
+        analyticsService.report(event: "click", params: [
+            "screen": "Main",
+            "item": "track"
+        ])
+        
         isCompletedTrackerToday.toggle()
         setupButton(isCompleted: isCompletedTrackerToday)
         delegate?.updateCompletedTrackers(cell: self, tracker)

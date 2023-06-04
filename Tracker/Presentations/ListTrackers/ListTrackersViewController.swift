@@ -161,6 +161,7 @@ final class ListTrackersViewController: UIViewController {
     private let trackerStore: TrackerStoreProtocol
     private let trackerCategoryStore: TrackerCategoryStoreProtocol
     private let trackerRecordStore: TrackerRecordsStoreProtocol
+    private let analyticsService = AnalyticsService()
     
     private var categories: [TrackerCategory] = []
     private var currentDate: Date {
@@ -189,6 +190,16 @@ final class ListTrackersViewController: UIViewController {
         configureCollectionView()
         showScenario()
         updateDateLabelTitle(with: currentDate)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analyticsService.report(event: "open", params: ["screen": "Main"])
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analyticsService.report(event: "close", params: ["screen": "Main"])
     }
     
     //MARK: - Helpers
@@ -541,6 +552,11 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc private func addTracker() {
+        analyticsService.report(event: "click", params: [
+            "screen": "Main",
+            "item": "add_track"
+        ])
+        
         let createTrackerVC = CreateTrackerViewController()
         createTrackerVC.updateDelegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
@@ -569,6 +585,11 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc private func selectFilter() {
+        analyticsService.report(event: "click", params: [
+            "screen": "Main",
+            "item": "filter"
+        ])
+        
         let filteringVC = TrackerFilteringViewController()
         filteringVC.delegate = self
         let navVC = UINavigationController(rootViewController: filteringVC)
@@ -773,11 +794,23 @@ extension ListTrackersViewController: TrackerCellDelegate {
         
         let editAction = UIAction(title: editTitle) { [weak self] _ in
             guard let self else { return }
+            
+            analyticsService.report(event: "click", params: [
+                "screen": "Main",
+                "item": "edit"
+            ])
+            
             self.editTracker(from: indexPath)
         }
         
         let deleteAction = UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
             guard let self else { return }
+            
+            analyticsService.report(event: "click", params: [
+                "screen": "Main",
+                "item": "delete"
+            ])
+            
             self.deleteTracker(from: indexPath)
         }
         
