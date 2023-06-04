@@ -196,7 +196,7 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func checkDate() {
-        let selectedDate = delegate?.updateButtonStateFromDate() ?? Date()
+        let selectedDate = delegate?.updateStateFromDate() ?? Date()
 
         if selectedDate > currentDate ?? Date() {
             setupButton(isCompleted: isCompletedTrackerToday)

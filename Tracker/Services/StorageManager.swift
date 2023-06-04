@@ -24,4 +24,23 @@ final class StorageManager {
         let originalCategoryIdString = UserDefaults.standard.string(forKey: tracker.id.uuidString)
         return originalCategoryIdString
     }
+    
+    func setIndexPathForFilteringCell (from selectedIndexPath: IndexPath?) {
+        UserDefaults.standard.set(
+            selectedIndexPath?.row, forKey: Constants.filteringCellIdentifier
+        )
+    }
+    
+    func getCurrentFilteringCellFromIndex() -> Int {
+        let selectedFilter = UserDefaults.standard.integer(forKey: Constants.filteringCellIdentifier)
+        return selectedFilter
+    }
+    
+    func removeValueForFilteringCell() {
+        UserDefaults.standard.removeObject(forKey: Constants.filteringCellIdentifier)
+    }
+    
+    func setDateLastActive() {
+        UserDefaults.standard.set(Date(), forKey: "lastActiveDate")
+    }
 }

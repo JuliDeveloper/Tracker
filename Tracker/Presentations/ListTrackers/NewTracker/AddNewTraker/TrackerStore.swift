@@ -320,6 +320,10 @@ extension TrackerStore: TrackerStoreProtocol {
         fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), date)
         try? fetchedResultsController.performFetch()
     }
+    
+    func setDelegate(_ vc: ListTrackersViewController) {
+        delegate = vc
+    }
 }
 
 //MARK: - NSFetchedResultsControllerDelegate

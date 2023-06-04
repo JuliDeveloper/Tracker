@@ -180,6 +180,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        trackerStore.setDelegate(self)
         categories = trackerCategoryStore.categories
         getStartData()
         configureView()
@@ -568,7 +569,10 @@ final class ListTrackersViewController: UIViewController {
     }
     
     @objc private func selectFilter() {
-        print("Tapped filter")
+        let filteringVC = TrackerFilteringViewController()
+        filteringVC.delegate = self
+        let navVC = UINavigationController(rootViewController: filteringVC)
+        present(navVC, animated: true)
     }
 }
 
@@ -661,8 +665,18 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         return currentDate
     }
     
-    func updateButtonStateFromDate() -> Date {
+    func updateStateFromDate() -> Date {
         return datePicker.date
+    }
+    
+    func tappedDatePicker() {
+        datePickerValueChanged()
+    }
+    
+    func resetDatePicker(_ date: Date) {
+        datePicker.setDate(date, animated: true)
+        datePickerValueChanged()
+        updateDateLabelTitle(with: currentDate)
     }
     
     func completedTracker(_ trackerId: UUID, _ trackerRecords: Set<TrackerRecord>) -> Bool {
@@ -706,6 +720,7 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
     func updateCollectionView() {
         categories = trackerCategoryStore.categories
         collectionView.reloadData()
+        changeScenario()
     }
     
     func getPinnedTracker(_ tracker: Tracker) -> Bool {

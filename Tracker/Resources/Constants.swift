@@ -10,6 +10,7 @@ struct Constants {
     static let cellIdentifier = "cell"
     static let categoryCellIdentifier = "categoryCell"
     static let weekDayCellIdentifier = "weekDayCell"
+    static let filteringCellIdentifier = "filteringCell"
     
     static let cellCollectionView = "cellCollectionView"
 

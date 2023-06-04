@@ -522,7 +522,7 @@ final class AddNewTrackerViewController: UIViewController {
             for: Date()
         )
         let selectedDate = calendar.startOfDay(
-            for: updateDelegate?.updateButtonStateFromDate() ?? Date()
+            for: updateDelegate?.updateStateFromDate() ?? Date()
         )
 
         if selectedDate > currentDate {

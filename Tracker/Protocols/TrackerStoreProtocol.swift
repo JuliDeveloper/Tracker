@@ -16,4 +16,5 @@ protocol TrackerStoreProtocol {
     func getRecords(from tracker: Tracker) -> Set<TrackerRecord>
     func getRecords(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
     func loadInitialData(date: String)
+    func setDelegate(_ vc: ListTrackersViewController)
 }
