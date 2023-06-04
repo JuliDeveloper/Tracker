@@ -158,9 +158,9 @@ final class ListTrackersViewController: UIViewController {
         smallLineCellSpacing: nil
     )
     
-    private lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
-    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore()
-    private let trackerRecordStore: TrackerRecordsStoreProtocol = TrackerRecordsStore()
+    private let trackerStore: TrackerStoreProtocol
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol
+    private let trackerRecordStore: TrackerRecordsStoreProtocol
     
     private var categories: [TrackerCategory] = []
     private var currentDate: Date {
@@ -168,6 +168,16 @@ final class ListTrackersViewController: UIViewController {
     }
        
     //MARK: - Lifecycle
+    init(trackerStore: TrackerStoreProtocol = TrackerStore()) {
+        self.trackerStore = trackerStore
+        self.trackerCategoryStore = TrackerCategoryStore()
+        self.trackerRecordStore = TrackerRecordsStore()
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         categories = trackerCategoryStore.categories
