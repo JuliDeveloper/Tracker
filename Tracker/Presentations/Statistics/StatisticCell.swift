@@ -43,24 +43,35 @@ final class StatisticCell: UITableViewCell {
         return label
     }()
     
-    private var gradientLayer = CAGradientLayer()
+    private var gradientBorder: CAGradientLayer {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = gradientBorderView.bounds
+        gradientLayer.colors = [
+            UIColor.ypColorSection1.cgColor,
+            UIColor.ypColorSection9.cgColor,
+            UIColor.ypColorSection3.cgColor
+        ]
+
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+
+        return gradientLayer
+    }
     
     //MARK: - Lifecycle
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        gradientLayer.removeFromSuperlayer()
+        gradientBorder.removeFromSuperlayer()
 
         DispatchQueue.main.async {
-            self.gradientLayer = self.createGradientBorder()
-            self.gradientBorderView.layer.insertSublayer(self.gradientLayer, at: 0)
+            self.gradientBorderView.layer.insertSublayer(self.gradientBorder, at: 0)
         }
     }
     
     //MARK: - Helpers
     func configureCell( _ title: String, _ subtitle: String) {
         backgroundColor = .clear
-        selectionStyle = .none
                         
         addElements()
         setupConstraints()
@@ -119,20 +130,5 @@ final class StatisticCell: UITableViewCell {
                 equalTo: mainView.bottomAnchor, constant: -11
             ),
         ])
-    }
-    
-    private func createGradientBorder() -> CAGradientLayer {
-        let red = UIColor(red: 0/255, green: 123/255, blue: 250/255, alpha: 1)
-        let green = UIColor(red: 70/255, green: 230/255, blue: 157/255, alpha: 1)
-        let blue = UIColor(red: 253/255, green: 76/255, blue: 73/255, alpha: 1)
-
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = gradientBorderView.bounds
-        gradientLayer.colors = [blue.cgColor, green.cgColor, red.cgColor]
-
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-
-        return gradientLayer
     }
 }
