@@ -147,10 +147,6 @@ final class TrackerStore: NSObject {
 
 //MARK: - TrackerStoreProtocol
 extension TrackerStore: TrackerStoreProtocol {
-    var countTrackers: Int {
-        fetchedResultsController.fetchedObjects?.count ?? 0
-    }
-    
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0
     }
@@ -282,9 +278,17 @@ extension TrackerStore: TrackerStoreProtocol {
     
     func trackerFiltering(from currentDate: String?, or searchText: String?) {
         if currentDate != nil {
-            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDate ?? "")
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(
+                format: "%K CONTAINS[n] %@",
+                #keyPath(TrackerCoreData.schedule),
+                currentDate ?? ""
+            )
         } else {
-            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.title), searchText ?? "")
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(
+                format: "%K CONTAINS[n] %@",
+                #keyPath(TrackerCoreData.title),
+                searchText ?? ""
+            )
         }
         
         try? fetchedResultsController.performFetch()
@@ -299,6 +303,44 @@ extension TrackerStore: TrackerStoreProtocol {
             return recordsCoreData
         } catch {
             throw error
+        }
+    }
+    
+    func filterCompletedTrackers(for ids: [UUID]) {
+        let predicates = ids.map { NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.trackerId), $0 as CVarArg) }
+        let compoundPredicate = NSCompoundPredicate(
+            orPredicateWithSubpredicates: predicates
+        )
+        fetchedResultsController.fetchRequest.predicate = compoundPredicate
+        
+        try? fetchedResultsController.performFetch()
+    }
+    
+    func filterUncompletedTrackers(for ids: [UUID]) {
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(
+            format: "NOT (trackerId IN %@)", ids
+        )
+        
+        try? fetchedResultsController.performFetch()
+    }
+    
+    func getCompletedTrackers(forDate date: Date) -> [TrackerRecord] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.date), date as CVarArg)
+        request.returnsObjectsAsFaults = false
+        
+        var records: [TrackerRecord] = []
+        
+        do {
+            let trackerRecordCoreData = try context.fetch(request)
+            for record in trackerRecordCoreData {
+                if let currentRecord = try? getRecord(from: record) {
+                    records.append(currentRecord)
+                }
+            }
+            return records
+        } catch {
+            return []
         }
     }
     

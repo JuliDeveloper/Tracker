@@ -690,10 +690,6 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         return datePicker.date
     }
     
-    func tappedDatePicker() {
-        datePickerValueChanged()
-    }
-    
     func resetDatePicker(_ date: Date) {
         datePicker.setDate(date, animated: true)
         datePickerValueChanged()
@@ -736,6 +732,22 @@ extension ListTrackersViewController: ListTrackersViewControllerDelegate {
         cell.updateTrackerState(isCompleted: isCompleted)
         
         collectionView.reloadItems(at: [indexPath])
+    }
+    
+    func filteringCompletedTrackers() {
+        let records = trackerStore.getCompletedTrackers(forDate: self.currentDate)
+        let ids = records.map { $0.trackerId }
+        
+        trackerStore.filterCompletedTrackers(for: ids)
+        updateCollectionView()
+    }
+    
+    func filteringUncompletedTrackers() {
+        let records = trackerStore.getCompletedTrackers(forDate: self.currentDate)
+        let ids = records.map { $0.trackerId }
+        
+        trackerStore.filterUncompletedTrackers(for: ids)
+        updateCollectionView()
     }
     
     func updateCollectionView() {

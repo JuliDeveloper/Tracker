@@ -4,7 +4,6 @@ final class TrackerFilteringViewController: UIViewController {
     //MARK: - Properties
     private let tableView = UITableView()
     
-    private let userDefaults: StorageManager
     private let trackerStore: TrackerStoreProtocol
     
     private var titlesCell: [String] = []
@@ -13,9 +12,8 @@ final class TrackerFilteringViewController: UIViewController {
     weak var delegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
-    init(trackerStore: TrackerStoreProtocol = TrackerStore(), userDefaults: StorageManager = StorageManager.shared) {
+    init(trackerStore: TrackerStoreProtocol = TrackerStore()) {
         self.trackerStore = trackerStore
-        self.userDefaults = userDefaults
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -30,7 +28,6 @@ final class TrackerFilteringViewController: UIViewController {
         setTitles()
         configureTableView()
         setupConstraints()
-        
     }
     
     //MARK: - Helpers
@@ -123,47 +120,27 @@ final class TrackerFilteringViewController: UIViewController {
     
     private func filterAllTrackersFromSelectedDate() {
         guard let datePickerDate = delegate?.updateStateFromDate() else { return }
-        let currentDate = Date()
-        
-        delegate?.resetDatePicker(currentDate)
-        
-        let calendar = Calendar.current
-        let datePickerWeekDay = calendar.component(.weekday, from: datePickerDate)
-        let currentWeekDay = calendar.component(.weekday, from: currentDate)
-        
-        if datePickerWeekDay == currentWeekDay {
-            trackerStore.trackerFiltering(from: String(currentWeekDay), or: nil)
-        }
+        delegate?.resetDatePicker(datePickerDate)
     }
     
     private func filterTrackersForToday() {
         let currentDate = Date()
         delegate?.resetDatePicker(currentDate)
-        
-        guard let datePickerDate = delegate?.updateStateFromDate() else { return }
-        
-        let calendar = Calendar.current
-        let datePickerWeekDay = calendar.component(.weekday, from: datePickerDate)
-        let currentWeekDay = calendar.component(.weekday, from: currentDate)
-        
-        if datePickerWeekDay == currentWeekDay {
-            trackerStore.trackerFiltering(from: String(currentWeekDay), or: nil)
-        }
     }
     
-    private func filterCompletedTrackers() {
-        //: TODO
+    private func filteringCompletedTrackers() {
+        delegate?.filteringCompletedTrackers()
     }
     
     private func filterUncompletedTrackers() {
-        //: TODO
+        delegate?.filteringUncompletedTrackers()
     }
     
     private func selectedFiltering(at row: Int) {
         switch row {
         case 0: filterAllTrackersFromSelectedDate()
         case 1: filterTrackersForToday()
-        case 2: filterCompletedTrackers()
+        case 2: filteringCompletedTrackers()
         case 3: filterUncompletedTrackers()
         default:
             break
@@ -187,30 +164,17 @@ extension TrackerFilteringViewController: UITableViewDataSource, UITableViewDele
         
         configureSeparator(for: cell, at: indexPath)
         configureCellContent(cell, with: title)
-        
-        let selectedFilter = userDefaults.getCurrentFilteringCellFromIndex()
-        selectedIndexPath = IndexPath(row: selectedFilter, section: 0)
-        cell.accessoryType = indexPath.row == selectedFilter ? .checkmark : .none
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
-        if let previousSelectedIndexPath = selectedIndexPath,
-           let previousSelectedCell = tableView.cellForRow(at: previousSelectedIndexPath) {
-            previousSelectedCell.accessoryType = .none
-        }
-        
-        selectedIndexPath = indexPath
-        userDefaults.setIndexPathForFilteringCell(from: selectedIndexPath)
         cell.accessoryType = .checkmark
         
-        selectedFiltering(at: selectedIndexPath?.row ?? 0)
+        selectedFiltering(at: indexPath.row)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.dismiss(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.dismiss(animated: true)
         }
     }
 }

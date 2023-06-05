@@ -1,7 +1,6 @@
 import UIKit
 
 protocol TrackerStoreProtocol {
-    var countTrackers: Int { get }
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
     func headerTitleSection(_ section: Int) -> String?
@@ -14,6 +13,9 @@ protocol TrackerStoreProtocol {
     func deleteTracker(at indexPath: IndexPath) throws
     func trackerFiltering(from currentDate: String?, or searchText: String?)
     func fetchAllRecords() throws -> [TrackerRecordCoreData]
+    func filterCompletedTrackers(for ids: [UUID])
+    func filterUncompletedTrackers(for ids: [UUID])
+    func getCompletedTrackers(forDate date: Date) -> [TrackerRecord]
     func getRecords(from tracker: Tracker) -> Set<TrackerRecord>
     func getRecords(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
     func loadInitialData(date: String)

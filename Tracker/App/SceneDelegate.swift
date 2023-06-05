@@ -40,17 +40,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This may occur due to temporary interruptions (ex. an incoming phone call).
     }
 
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        let lastActiveDate = UserDefaults.standard.object(forKey: "lastActiveDate") as? Date ?? Date()
-        let elapsed = Date().timeIntervalSince(lastActiveDate)
-        if elapsed > 5 * 60 {
-            userDefaults.removeValueForFilteringCell()
-        }
-    }
+    func sceneWillEnterForeground(_ scene: UIScene) {}
 
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        userDefaults.setDateLastActive()
-    }
+    func sceneDidEnterBackground(_ scene: UIScene) {}
 
 
 }
