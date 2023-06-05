@@ -4,14 +4,12 @@ final class AddNewCategoryViewController: UIViewController {
     
     //MARK: - Properties
     private let textField: CustomTextField = {
-        let placeholder = NSLocalizedString("textField.newHabit.placeholder", comment: "")
-        let textField = CustomTextField(text: placeholder)
+        let textField = CustomTextField(text: S.TextField.NewHabit.placeholder)
         return textField
     }()
     
     private let button: CustomButton = {
-        let title = NSLocalizedString("done", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.done)
         return button
     }()
     
@@ -33,13 +31,7 @@ final class AddNewCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        
-        title = NSLocalizedString("navBar.addNewCategory.title", comment: "")
-        
-        navigationController?.navigationBar.titleTextAttributes = [
-            .font: UIFont.ypFontMedium16,
-            .foregroundColor: UIColor.ypBlack
-        ]
+        configureNavBar()
         
         textField.delegate = self
         textField.returnKeyType = .done
@@ -64,6 +56,15 @@ final class AddNewCategoryViewController: UIViewController {
     }
     
     //MARK: - Helpers
+    private func configureNavBar() {
+        title = S.NavBar.AddNewCategory.title
+        
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.ypFontMedium16,
+            .foregroundColor: UIColor.ypBlack
+        ]
+    }
+    
     private func addElements() {
         view.addSubview(textField)
         view.addSubview(button)

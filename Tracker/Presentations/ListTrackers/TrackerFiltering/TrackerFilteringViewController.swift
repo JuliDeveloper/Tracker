@@ -3,10 +3,10 @@ import UIKit
 final class TrackerFilteringViewController: UIViewController {
     //MARK: - Properties
     private let tableView = UITableView()
-    
+    private let titlesCell = Constants.trackerFilterTitlesCells
+
     private let trackerStore: TrackerStoreProtocol
     
-    private var titlesCell: [String] = []
     private var selectedIndexPath: IndexPath? = nil
     
     weak var delegate: ListTrackersViewControllerDelegate?
@@ -25,14 +25,13 @@ final class TrackerFilteringViewController: UIViewController {
         super.viewDidLoad()
         configureNavBar()
         configureView()
-        setTitles()
         configureTableView()
         setupConstraints()
     }
     
     //MARK: - Helpers
     private func configureNavBar() {
-        title = NSLocalizedString("filter.title", comment: "")
+        title = S.Filter.title
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
             .foregroundColor: UIColor.ypBlack
@@ -104,18 +103,6 @@ final class TrackerFilteringViewController: UIViewController {
             bottom: 0,
             right: 16
         )
-    }
-    
-    private func setTitles() {
-        let allTrackers = NSLocalizedString("filter.allTrackers", comment: "")
-        let trackersForToday = NSLocalizedString("filter.trackersForToday", comment: "")
-        let completed = NSLocalizedString("filter.completed", comment: "")
-        let notCompleted = NSLocalizedString("filter.notCompleted", comment: "")
-        
-        titlesCell.append(allTrackers)
-        titlesCell.append(trackersForToday)
-        titlesCell.append(completed)
-        titlesCell.append(notCompleted)
     }
     
     private func filterAllTrackersFromSelectedDate() {

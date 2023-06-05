@@ -4,8 +4,7 @@ final class CreateTrackerViewController: UIViewController {
     
     //MARK: - Properties
     private lazy var habitButton: CustomButton = {
-        let title = NSLocalizedString("button.habit.title", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.Button.Habit.title)
         button.addTarget(
             self,
             action: #selector(addHabits),
@@ -14,8 +13,7 @@ final class CreateTrackerViewController: UIViewController {
         return button
     }()
     private lazy var irregularEventButton: CustomButton = {
-        let title = NSLocalizedString("button.IrregularEvent.title", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.Button.IrregularEvent.title)
         button.addTarget(
             self,
             action: #selector(addIrregularEvent),
@@ -33,13 +31,12 @@ final class CreateTrackerViewController: UIViewController {
         return stack
     }()
     
-    //private var viewModel: AddCategoryViewModel
     weak var updateDelegate: ListTrackersViewControllerDelegate?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("navBar.createTracker.title", comment: "")
+        title = S.NavBar.CreateTracker.title
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
             .foregroundColor: UIColor.ypBlack
@@ -75,28 +72,23 @@ final class CreateTrackerViewController: UIViewController {
         addTrackerVC.titlesCells = array
         addTrackerVC.isIrregular = isIrregular
         
-        let navTitle = isIrregular ? NSLocalizedString("navBar.newIrregularEvent.title", comment: "") : NSLocalizedString("navBar.newHabit.title", comment: "")
+        let navTitle = isIrregular ? S.NavBar.NewIrregularEvent.title : S.NavBar.NewHabit.title
         addTrackerVC.title = navTitle
         
         navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
     @objc private func addHabits() {
-        let categoryTitle = NSLocalizedString("category.title", comment: "")
-        let scheduleTitle = NSLocalizedString("schedule.title", comment: "")
-        
         showViewController(
-            with: [categoryTitle, scheduleTitle],
+            with: Constants.isHabitTitlesCells,
             isIrregular: false,
             isEditTracker: false
         )
     }
     
-    @objc private func addIrregularEvent() {
-        let categoryTitle = NSLocalizedString("category.title", comment: "")
-        
+    @objc private func addIrregularEvent() {        
         showViewController(
-            with: [categoryTitle],
+            with: Constants.isIrregularTitlesCells,
             isIrregular: true,
             isEditTracker: false
         )

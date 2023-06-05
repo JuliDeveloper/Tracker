@@ -4,9 +4,8 @@ final class AddCategoryViewController: UIViewController {
     
     //MARK: - Properties
     private let defaultStack: DefaultStackView = {
-        let title = NSLocalizedString("stackView.addCategory.title", comment: "")
         let stack = DefaultStackView(
-            title: title, image: "star"
+            title: S.StackView.AddCategory.title, image: "star"
         )
         return stack
     }()
@@ -14,8 +13,7 @@ final class AddCategoryViewController: UIViewController {
     private let tableView = UITableView()
     
     private let button: CustomButton = {
-        let title = NSLocalizedString("button.addNewCategory.title", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.Button.AddNewCategory.title)
         return button
     }()
         
@@ -37,13 +35,7 @@ final class AddCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        
-        title = NSLocalizedString("category.title", comment: "")
-        
-        navigationController?.navigationBar.titleTextAttributes = [
-            .font: UIFont.ypFontMedium16,
-            .foregroundColor: UIColor.ypBlack
-        ]
+        configureNavBar()
         
         viewModel.$categories.bind { [weak self] _ in
             self?.bindViewModel()
@@ -76,6 +68,14 @@ final class AddCategoryViewController: UIViewController {
                 self.tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
             }
         }
+    }
+    
+    private func configureNavBar() {
+        title = S.Category.title
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.ypFontMedium16,
+            .foregroundColor: UIColor.ypBlack
+        ]
     }
     
     private func configureTableView() {
@@ -171,34 +171,19 @@ final class AddCategoryViewController: UIViewController {
     
     
     private func deleteCategory(from indexPath: IndexPath) {
-        let deleteTitle = NSLocalizedString("delete", comment: "")
-        let cancelTitle = NSLocalizedString("cancel", comment: "")
-        let actionSheetMessage = NSLocalizedString(
-            "alert.deleteCategory.message",
-            comment: ""
-        )
-        let alertTitle = NSLocalizedString(
-            "alert.deleteNonEmptyCategory.title",
-            comment: ""
-        )
-        let alertMessage = NSLocalizedString(
-            "alert.deleteNonEmptyCategory.message",
-            comment: ""
-        )
-        
-        let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: S.delete, style: .destructive) { [weak self] _ in
             guard let self else { return }
             guard let currentCategory = viewModel.getCategory(at: indexPath) else { return }
             
             if !currentCategory.trackers.isEmpty {
-                let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { _ in
+                let deleteAction = UIAlertAction(title: S.delete, style: .destructive) { _ in
                     self.viewModel.delete(category: currentCategory)
                 }
-                let cancelAction = UIAlertAction(title: cancelTitle, style: .default)
+                let cancelAction = UIAlertAction(title: S.cancel, style: .default)
                 
                 self.showAlert(
-                    title: alertTitle,
-                    message: alertMessage,
+                    title: S.Alert.DeleteNonEmptyCategory.title,
+                    message: S.Alert.DeleteNonEmptyCategory.message,
                     preferredStyle: .alert,
                     actions: [deleteAction, cancelAction]
                 )
@@ -207,11 +192,11 @@ final class AddCategoryViewController: UIViewController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .default)
+        let cancelAction = UIAlertAction(title: S.cancel, style: .default)
         
         showAlert(
             title: nil,
-            message: actionSheetMessage,
+            message: S.Alert.DeleteCategory.message,
             preferredStyle: .actionSheet,
             actions: [deleteAction, cancelAction]
         )
@@ -281,15 +266,12 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         let currentCategory = viewModel.categories[indexPath.row]
-        
-        let editTitle = NSLocalizedString("edit", comment: "")
-        let deleteTitle = NSLocalizedString("delete", comment: "")
                
         return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
             guard let self else { return UIMenu() }
             return UIMenu(children: [
                 UIAction(
-                    title: editTitle
+                    title: S.edit
                 ) { _ in
                     let addNewCategoryVC = AddNewCategoryViewController(viewModel: self.viewModel)
                     addNewCategoryVC.text = currentCategory.title
@@ -297,7 +279,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
                     self.present(addNewCategoryVC, animated: true)
                 },
                 UIAction(
-                    title: deleteTitle,
+                    title: S.delete,
                     attributes: .destructive
                 ) { _ in
                     self.deleteCategory(from: indexPath)

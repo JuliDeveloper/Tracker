@@ -4,17 +4,14 @@ final class StatisticsViewController: UIViewController {
     
     //MARK: - Properties
     private let defaultStackView: DefaultStackView = {
-        let title = NSLocalizedString(
-            "stackView.notStatistic.title", comment: ""
-        )
         let stack = DefaultStackView(
-            title: title, image: "statisticError"
+            title: S.StackView.NotStatistic.title, image: "statisticError"
         )
         return stack
     }()
     
     private let tableView = UITableView()
-    private var subtitlesCell: [String] = []
+    private var subtitlesCell = Constants.subtitlesStatisticCells
     
     private let trackerStore: TrackerStoreProtocol
     
@@ -36,7 +33,6 @@ final class StatisticsViewController: UIViewController {
         super.viewDidLoad()
         configureNavBar()
         configureView()
-        setTitlesCell()
         configureTableView()
         showScenario()
         setupConstraints()
@@ -52,7 +48,7 @@ final class StatisticsViewController: UIViewController {
     private func configureNavBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        title = NSLocalizedString("statistic.title", comment: "")
+        title = S.Statistic.title
     }
     
     private func configureView() {
@@ -72,26 +68,6 @@ final class StatisticsViewController: UIViewController {
         tableView.isScrollEnabled = false
         tableView.backgroundColor = .clear
         tableView.translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    private func setTitlesCell() {
-        let bestPeriod = NSLocalizedString(
-            "statistic.bestPeriod", comment: ""
-        )
-        let perfectDays = NSLocalizedString(
-            "statistic.perfectDays", comment: ""
-        )
-        let completedTrackers = NSLocalizedString(
-            "statistic.completedTrackers", comment: ""
-        )
-        let averageValue = NSLocalizedString(
-            "statistic.averageValue", comment: ""
-        )
-        
-        subtitlesCell.append(bestPeriod)
-        subtitlesCell.append(perfectDays)
-        subtitlesCell.append(completedTrackers)
-        subtitlesCell.append(averageValue)
     }
     
     private func setupConstraints() {

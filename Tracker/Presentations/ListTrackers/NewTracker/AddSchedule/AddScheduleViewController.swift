@@ -5,8 +5,7 @@ final class AddScheduleViewController: UIViewController {
     //MARK: - Properties
     private let weekDayTableView = UITableView()
     private lazy var doneButton: CustomButton = {
-        let title = NSLocalizedString("done", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.done)
         button.addTarget(
             self,
             action: #selector(saveSchedule),
@@ -28,18 +27,22 @@ final class AddScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        
-        title = NSLocalizedString("schedule.title", comment: "")
-        navigationController?.navigationBar.titleTextAttributes = [
-            .font: UIFont.ypFontMedium16,
-            .foregroundColor: UIColor.ypBlack
-        ]
+        configureNavBar()
         
         addElements()
         configureWeekDayTableView()
         showScenario()
     }
     
+    private func configureNavBar() {
+        title = S.Schedule.title
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.ypFontMedium16,
+            .foregroundColor: UIColor.ypBlack
+        ]
+    }
+    
+    //MARK: - Helpers
     private func configureWeekDayTableView() {
         weekDayTableView.delegate = self
         weekDayTableView.dataSource = self

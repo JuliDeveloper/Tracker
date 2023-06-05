@@ -5,20 +5,17 @@ final class TabBarController: UITabBarController {
     //MARK: - Lifecycle
     override func loadView() {
         super.loadView()
-        
-        let listTitle = NSLocalizedString("trackers.title", comment: "")
-        let statisticTitle = NSLocalizedString("statistic.title", comment: "")
 
         let listTrackers = ListTrackersViewController()
         listTrackers.tabBarItem = UITabBarItem(
-            title: listTitle,
+            title: S.Trackers.title,
             image: UIImage(named: "record.circle.fill"),
             selectedImage: nil
         )
         
         let statistic = UINavigationController(rootViewController: StatisticsViewController())
         statistic.tabBarItem = UITabBarItem(
-            title: statisticTitle,
+            title: S.Statistic.title,
             image: UIImage(named: "hare.fill"),
             selectedImage: nil
         )

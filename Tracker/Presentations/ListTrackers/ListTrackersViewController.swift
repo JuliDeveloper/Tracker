@@ -18,9 +18,8 @@ final class ListTrackersViewController: UIViewController {
     }()
     
     private let titleHeader: UILabel = {
-        let title = NSLocalizedString("trackers.title", comment: "")
         let label = UILabel()
-        label.text = title
+        label.text = S.Trackers.title
         label.textColor = .ypBlack
         label.font = UIFont.ypFontBold34
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -80,12 +79,8 @@ final class ListTrackersViewController: UIViewController {
             NSAttributedString.Key.foregroundColor: UIColor.ypGray
         ]
         
-        let placeholderTitle = NSLocalizedString(
-            "textField.search.placeholder",
-            comment: ""
-        )
         let attributedPlaceholder = NSAttributedString(
-            string: placeholderTitle,
+            string: S.TextField.Search.placeholder,
             attributes: attributes
         )
         textField.attributedPlaceholder = attributedPlaceholder
@@ -100,8 +95,7 @@ final class ListTrackersViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        let title = NSLocalizedString("cancel", comment: "")
-        button.setTitle(title, for: .normal)
+        button.setTitle(S.cancel, for: .normal)
         button.addTarget(
             self,
             action: #selector(cancelSearch),
@@ -114,12 +108,8 @@ final class ListTrackersViewController: UIViewController {
     }()
     
     private var defaultStackView: DefaultStackView = {
-        let title = NSLocalizedString(
-            "stackView.startTracking.title",
-            comment: ""
-        )
         let stack =  DefaultStackView(
-            title: title, image: "star"
+            title: S.StackView.StartTracking.title, image: "star"
         )
         return stack
     }()
@@ -129,9 +119,8 @@ final class ListTrackersViewController: UIViewController {
     )
     
     private lazy var filterButton: UIButton = {
-        let title = NSLocalizedString("filter.title", comment: "")
         let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
+        button.setTitle(S.Filter.title, for: .normal)
         button.backgroundColor = .ypBlue
         button.titleLabel?.font = UIFont.ypFontMedium17
         button.tintColor = .ypDefaultWhite
@@ -377,16 +366,11 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func changeScenario() {
-        let newTitle = NSLocalizedString(
-            "stackView.notFoundTrackers.title",
-            comment: ""
-        )
-        
         if trackerStore.numberOfSections == 0 {
             collectionView.isHidden = true
             filterButton.isHidden = true
             defaultStackView.setValue(
-                textLabel: newTitle,
+                textLabel: S.StackView.NotFoundTrackers.title,
                 imageTitle: "errorSearch"
             )
             defaultStackView.isHidden = false
@@ -449,29 +433,24 @@ final class ListTrackersViewController: UIViewController {
         
         let currentCategory = self.categories[indexPath.section]
         let isCompletedTracker = getCompletedTracker(currentTracker, from: indexPath)
-        
-        let categoryTitle = NSLocalizedString("category.title", comment: "")
-        let scheduleTitle = NSLocalizedString("schedule.title", comment: "")
-        let editHabitTitle = NSLocalizedString("navBar.editHabit.title", comment: "")
-        let editIrregularEventTitle = NSLocalizedString("navBar.editIrregularEvent.title", comment: "")
 
         if currentTracker.schedule == WeekDay.allCases {
             showViewController(
-                with: [categoryTitle],
+                with: [S.Category.title],
                 isIrregular: true,
                 currentTracker,
                 currentCategory,
-                navBarTitle: editIrregularEventTitle,
+                navBarTitle: S.NavBar.EditIrregularEvent.title,
                 isEditTracker: true,
                 isCompletedTracker: isCompletedTracker
             )
         } else {
             showViewController(
-                with: [categoryTitle, scheduleTitle],
+                with: [S.Category.title, S.Schedule.title],
                 isIrregular: false,
                 currentTracker,
                 currentCategory,
-                navBarTitle: editHabitTitle,
+                navBarTitle: S.NavBar.EditHabit.title,
                 isEditTracker: true,
                 isCompletedTracker: isCompletedTracker
             )
@@ -502,11 +481,7 @@ final class ListTrackersViewController: UIViewController {
     }
     
     private func deleteTracker(from indexPath: IndexPath) {
-        let deleteTitle = NSLocalizedString("delete", comment: "")
-        let cancelTitle = NSLocalizedString("cancel", comment: "")
-        let alertTitle = NSLocalizedString("alert.deleteTracker.title", comment: "")
-        
-        let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: S.delete, style: .destructive) { [weak self] _ in
             guard let self else { return }
             
             do {
@@ -515,10 +490,10 @@ final class ListTrackersViewController: UIViewController {
                 print(error.localizedDescription)
             }
         }
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .default)
+        let cancelAction = UIAlertAction(title: S.cancel, style: .default)
         
         showAlert(
-            title: alertTitle,
+            title: S.Alert.DeleteTracker.title,
             message: nil,
             preferredStyle: .actionSheet,
             actions: [deleteAction, cancelAction]
@@ -789,22 +764,17 @@ extension ListTrackersViewController: TrackerCellDelegate {
             return nil
         }
         
-        let pinTitle = NSLocalizedString("pin", comment: "")
-        let unpinTitle = NSLocalizedString("unpin", comment: "")
-        let editTitle = NSLocalizedString("edit", comment: "")
-        let deleteTitle = NSLocalizedString("delete", comment: "")
-        
-        let pinAction = UIAction(title: pinTitle) { [weak self] _ in
+        let pinAction = UIAction(title: S.pin) { [weak self] _ in
             guard let self else { return }
             self.pinTracker(from: indexPath)
         }
         
-        let unpinAction = UIAction(title: unpinTitle) { [weak self]  _ in
+        let unpinAction = UIAction(title: S.unpin) { [weak self]  _ in
             guard let self else { return }
             self.unpinTracker(from: indexPath)
         }
         
-        let editAction = UIAction(title: editTitle) { [weak self] _ in
+        let editAction = UIAction(title: S.edit) { [weak self] _ in
             guard let self else { return }
             
             analyticsService.report(event: "click", params: [
@@ -815,7 +785,7 @@ extension ListTrackersViewController: TrackerCellDelegate {
             self.editTracker(from: indexPath)
         }
         
-        let deleteAction = UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
+        let deleteAction = UIAction(title: S.delete, attributes: .destructive) { [weak self] _ in
             guard let self else { return }
             
             analyticsService.report(event: "click", params: [

@@ -16,8 +16,7 @@ final class AddNewTrackerViewController: UIViewController {
     }()
     
     private lazy var cancelButton: CustomButton = {
-        let title = NSLocalizedString("cancel", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.cancel)
         button.backgroundColor = .ypWhite
         button.setTitleColor(.ypRed, for: .normal)
         button.clipsToBounds = true
@@ -28,8 +27,7 @@ final class AddNewTrackerViewController: UIViewController {
     }()
     
     private lazy var createButton: CustomButton = {
-        let title = NSLocalizedString("create", comment: "")
-        let button = CustomButton(title: title)
+        let button = CustomButton(title: S.create)
         button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypGray
         button.isEnabled = false
@@ -47,17 +45,15 @@ final class AddNewTrackerViewController: UIViewController {
     }()
     
     private let trackerTitleTextField: CustomTextField = {
-        let placeholder = NSLocalizedString("textField.newHabit.placeholder", comment: "")
         let textField = CustomTextField(
-            text: placeholder
+            text: S.TextField.NewHabit.placeholder
         )
         return textField
     }()
     
     private let warningLabel: UILabel = {
         let label = UILabel()
-        let text = NSLocalizedString("warningMessage.title", comment: "")
-        label.text = text
+        label.text = S.WarningMessage.title
         label.font = UIFont.ypFontMedium17
         label.textColor = .ypRed
         label.textAlignment = .center
@@ -501,8 +497,7 @@ final class AddNewTrackerViewController: UIViewController {
     
     private func updateCreateButton() {
         if tracker != nil {
-            let title = NSLocalizedString("save", comment: "")
-            createButton.setTitle(title, for: .normal)
+            createButton.setTitle(S.save, for: .normal)
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
         } else {
@@ -635,9 +630,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
         cell.backgroundColor = .ypBackground
         cell.selectionStyle = .none
         cell.accessoryType = .disclosureIndicator
-        
-        let everyDayTitle = NSLocalizedString("everyDay", comment: "")
-        
+                
         if #available(iOS 14.0, *) {
             var content = cell.defaultContentConfiguration()
             
@@ -647,7 +640,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
                 content.secondaryText = categorySubtitle
             } else {
                 if setSchedule.count == 7 {
-                    content.secondaryText = everyDayTitle
+                    content.secondaryText = S.everyDay
                 } else {
                     content.secondaryText = getSchedule(from: setSchedule)
                 }
@@ -666,7 +659,7 @@ extension AddNewTrackerViewController: UITableViewDelegate, UITableViewDataSourc
                 cell.detailTextLabel?.text = categorySubtitle
             } else {
                 if setSchedule == WeekDay.allCases {
-                    cell.detailTextLabel?.text = everyDayTitle
+                    cell.detailTextLabel?.text = S.everyDay
                 } else {
                     cell.detailTextLabel?.text = getSchedule(from: setSchedule)
                 }
@@ -723,9 +716,9 @@ extension AddNewTrackerViewController: UICollectionViewDataSource, UICollectionV
         var title = ""
         switch indexPath.section {
         case 0:
-            title = NSLocalizedString("emoji.title", comment: "")
+            title = S.Emoji.title
         case 1:
-            title = NSLocalizedString("color.title", comment: "")
+            title = S.Color.title
         default:
             break
         }

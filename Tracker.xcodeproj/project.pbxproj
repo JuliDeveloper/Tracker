@@ -63,6 +63,7 @@
 		25CC29042A2CDB67000E459B /* TrackerFilteringViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CC29032A2CDB67000E459B /* TrackerFilteringViewController.swift */; };
 		25CC29062A2D1CE4000E459B /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CC29052A2D1CE4000E459B /* AnalyticsService.swift */; };
 		25CC29082A2D2D04000E459B /* StatisticCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CC29072A2D2D04000E459B /* StatisticCell.swift */; };
+		25CC290C2A2E723A000E459B /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CC290B2A2E723A000E459B /* Localization.swift */; };
 		25F97EBF29E84FDF005D82C0 /* AddNewTrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */; };
 		7032787366EF184A2A6D8718 /* Pods_TrackerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86A6E9B543D9AEF64B8DAFDB /* Pods_TrackerTests.framework */; };
 /* End PBXBuildFile section */
@@ -141,6 +142,7 @@
 		25CC29032A2CDB67000E459B /* TrackerFilteringViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerFilteringViewController.swift; sourceTree = "<group>"; };
 		25CC29052A2D1CE4000E459B /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		25CC29072A2D2D04000E459B /* StatisticCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticCell.swift; sourceTree = "<group>"; };
+		25CC290B2A2E723A000E459B /* Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		25F97EBE29E84FDF005D82C0 /* AddNewTrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTrackerCell.swift; sourceTree = "<group>"; };
 		86A6E9B543D9AEF64B8DAFDB /* Pods_TrackerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrackerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF8CB1000512CEB06DA53FC5 /* Pods-Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.release.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.release.xcconfig"; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				255B096929D4472C00A599E3 /* Constants.swift */,
 				255B096F29D59F1500A599E3 /* GeometricParams.swift */,
 				25411F9129FA7B4B00B69950 /* UIColorMarshalling.swift */,
+				25CC290B2A2E723A000E459B /* Localization.swift */,
 				255B094529D1E00F00A599E3 /* Assets.xcassets */,
 				2521AEC02A1FE144004B50D7 /* Localizable.strings */,
 				2521AEC52A20DAC7004B50D7 /* Localizable.stringsdict */,
@@ -619,6 +622,7 @@
 				256E017029D9F9BF00E2A413 /* TrackerCategory.swift in Sources */,
 				256E018129DF635E00E2A413 /* ListTrackersViewControllerDelegate.swift in Sources */,
 				25411FD02A124A8800B69950 /* OnboardingSinglePageController.swift in Sources */,
+				25CC290C2A2E723A000E459B /* Localization.swift in Sources */,
 				25411F9A29FC169A00B69950 /* TrackerStoreDelegate.swift in Sources */,
 				25411F9C2A0128D100B69950 /* TrackerRecordStore.swift in Sources */,
 				256E015C29D7557600E2A413 /* AddCategoryViewController.swift in Sources */,
