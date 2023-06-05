@@ -7,6 +7,7 @@ target 'Tracker' do
 
   # Pods for Tracker
 	pod 'YandexMobileMetrica/Dynamic', '4.5.0'
+	pod 'SwiftGen', '~> 6.0'
 
   target 'TrackerTests' do
     inherit! :search_paths
