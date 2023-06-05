@@ -26,11 +26,11 @@ final class StatisticsViewController: UIViewController {
         return tableView
     }()
     
-    private var subtitlesCell = Constants.subtitlesStatisticCells
-    
     private let trackerStore: TrackerStoreProtocol
     
-    private lazy var records: [TrackerRecordCoreData] = []
+    private var subtitlesCell = Constants.subtitlesStatisticCells
+    private var trackers: [TrackerCoreData] = []
+    private var records: [TrackerRecordCoreData] = []
     
     //MARK: - Lifecycle
     init() {
@@ -52,6 +52,7 @@ final class StatisticsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         do {
+            trackers = try trackerStore.fetchAllTrackers()
             records = try trackerStore.fetchAllRecords()
         } catch {
             print(error.localizedDescription)
@@ -130,7 +131,7 @@ extension StatisticsViewController {
     }
     
     private func showScenario() {
-        if records.count == 0 {
+        if trackers.count == 0 {
             defaultStackView.isHidden = false
             tableView.isHidden = true
         } else {

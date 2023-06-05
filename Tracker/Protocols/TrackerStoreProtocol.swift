@@ -12,6 +12,7 @@ protocol TrackerStoreProtocol {
     func unpinTracker(_ tracker: Tracker) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func trackerFiltering(from currentDate: String?, or searchText: String?)
+    func fetchAllTrackers() throws -> [TrackerCoreData]
     func fetchAllRecords() throws -> [TrackerRecordCoreData]
     func filterCompletedTrackers(for ids: [UUID])
     func filterUncompletedTrackers(for ids: [UUID])
