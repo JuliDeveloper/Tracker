@@ -51,7 +51,7 @@ private class TrackerStoreTest: TrackerStoreProtocol {
     
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws {}
     
-    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ newCategory: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, countDays: Int) throws {}
+    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ newCategory: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, _ countDays: Int) throws {}
     
     func isPinned(_ tracker: Tracker) -> Bool {
         false
@@ -74,6 +74,24 @@ private class TrackerStoreTest: TrackerStoreProtocol {
     }
     
     func loadInitialData(date: String) {}
+    
+    func fetchAllTrackers() throws -> [TrackerCoreData] {
+        [TrackerCoreData]()
+    }
+    
+    func fetchAllRecords() throws -> [TrackerRecordCoreData] {
+        [TrackerRecordCoreData]()
+    }
+    
+    func filterCompletedTrackers(for ids: [UUID]) {}
+    
+    func filterUncompletedTrackers(for ids: [UUID]) {}
+    
+    func getCompletedTrackers(forDate date: Date) -> [TrackerRecord] {
+        [TrackerRecord]()
+    }
+    
+    func setDelegate(_ vc: ListTrackersViewController) {}
     
     var delegate: TrackerStoreDelegate?
 }
