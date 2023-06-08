@@ -3,15 +3,21 @@ import UIKit
 final class AddCategoryViewController: UIViewController {
     
     //MARK: - Properties
-    private let defaultStack = DefaultStackView(
-        title: "Привычки и события можно объединить по смыслу", image: "star"
-    )
+    private let defaultStack: DefaultStackView = {
+        let stack = DefaultStackView(
+            title: S.StackView.AddCategory.title, image: "star"
+        )
+        return stack
+    }()
     
     private let tableView = UITableView()
-    private let button = CustomButton(title: "Добавить категорию")
+    
+    private let button: CustomButton = {
+        let button = CustomButton(title: S.Button.AddNewCategory.title)
+        return button
+    }()
         
     private var titleCategory = ""
-    
     private var viewModel: AddCategoryViewModel
     
     weak var delegate: UpdateSubtitleDelegate?
@@ -29,13 +35,7 @@ final class AddCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        
-        title = "Категория"
-        
-        navigationController?.navigationBar.titleTextAttributes = [
-            .font: UIFont.ypFontMedium16,
-            .foregroundColor: UIColor.ypBlack
-        ]
+        configureNavBar()
         
         viewModel.$categories.bind { [weak self] _ in
             self?.bindViewModel()
@@ -61,16 +61,28 @@ final class AddCategoryViewController: UIViewController {
     //MARK: - Helpers
     private func bindViewModel() {
         viewModel.onDidUpdate = { [weak self] update in
-            self?.tableView.performBatchUpdates {
-                self?.tableView.insertRows(at: update.insertedIndexes, with: .automatic)
-                self?.tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
+            guard let self else { return }
+            self.showScenario()
+            self.tableView.performBatchUpdates {
+                self.tableView.insertRows(at: update.insertedIndexes, with: .automatic)
+                self.tableView.deleteRows(at: update.deletedIndexPaths, with: .automatic)
             }
         }
+    }
+    
+    private func configureNavBar() {
+        title = S.Category.title
+        navigationController?.navigationBar.titleTextAttributes = [
+            .font: UIFont.ypFontMedium16,
+            .foregroundColor: UIColor.ypBlack
+        ]
     }
     
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+        
+        tableView.backgroundColor = .clear
         
         tableView.register(
             CategoryCell.self,
@@ -159,19 +171,19 @@ final class AddCategoryViewController: UIViewController {
     
     
     private func deleteCategory(from indexPath: IndexPath) {
-        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: S.delete, style: .destructive) { [weak self] _ in
             guard let self else { return }
             guard let currentCategory = viewModel.getCategory(at: indexPath) else { return }
             
             if !currentCategory.trackers.isEmpty {
-                let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { _ in
+                let deleteAction = UIAlertAction(title: S.delete, style: .destructive) { _ in
                     self.viewModel.delete(category: currentCategory)
                 }
-                let cancelAction = UIAlertAction(title: "Отменить", style: .default)
+                let cancelAction = UIAlertAction(title: S.cancel, style: .default)
                 
                 self.showAlert(
-                    title: "В этой категории есть незавершенные трекеры",
-                    message: "Если вы удалите категорию, все трекеры тоже исчезнут",
+                    title: S.Alert.DeleteNonEmptyCategory.title,
+                    message: S.Alert.DeleteNonEmptyCategory.message,
                     preferredStyle: .alert,
                     actions: [deleteAction, cancelAction]
                 )
@@ -180,11 +192,11 @@ final class AddCategoryViewController: UIViewController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Отменить", style: .default)
+        let cancelAction = UIAlertAction(title: S.cancel, style: .default)
         
         showAlert(
             title: nil,
-            message: "Уверены что хотите удалить категорию?",
+            message: S.Alert.DeleteCategory.message,
             preferredStyle: .actionSheet,
             actions: [deleteAction, cancelAction]
         )
@@ -213,7 +225,7 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
         let title = viewModel.categories[indexPath.row].title
         
         let lastIndex = viewModel.categories.count - 1
-        guard let selectedIndexPath = viewModel.selectedIndexPath else { return UITableViewCell() }
+        let selectedIndexPath = viewModel.selectedIndexPath ?? IndexPath()
       
         cell.configure(
             title,
@@ -221,6 +233,12 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
             lastIndex,
             selectedIndexPath
         )
+        
+        if selectedIndexPath == indexPath {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
         
         return cell
     }
@@ -253,27 +271,20 @@ extension AddCategoryViewController: UITableViewDelegate, UITableViewDataSource 
             guard let self else { return UIMenu() }
             return UIMenu(children: [
                 UIAction(
-                    title: "Редактировать"
+                    title: S.edit
                 ) { _ in
                     let addNewCategoryVC = AddNewCategoryViewController(viewModel: self.viewModel)
                     addNewCategoryVC.text = currentCategory.title
                     addNewCategoryVC.category = currentCategory
-                    addNewCategoryVC.delegate = self
                     self.present(addNewCategoryVC, animated: true)
                 },
                 UIAction(
-                    title: "Удалить",
+                    title: S.delete,
                     attributes: .destructive
                 ) { _ in
                     self.deleteCategory(from: indexPath)
                 }
             ])
         })
-    }
-}
-
-extension AddCategoryViewController: AddCategoryViewControllerDelegate {
-    func updateTableView() {
-        tableView.reloadData()
     }
 }

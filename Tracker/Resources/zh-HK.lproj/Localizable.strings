@@ -1,0 +1,75 @@
+"onboarding.firstTitle" = "只跟踪你想要的";
+"onboarding.secondTitle" = "即使不是升水和瑜伽";
+"onboarding.button.title" = "这些都是技术！";
+
+"trackers.title" = "追踪者";
+"statistic.title" = "统计数字";
+
+"textField.search.placeholder" = "搜索";
+"textField.newHabit.placeholder" = "输入跟踪器的名称";
+
+"stackView.startTracking.title" = "我们将跟踪什么？";
+"stackView.addCategory.title" = "习惯和事件可以在意义上结合起来";
+"stackView.notFoundTrackers.title" = "什么也没找到";
+"stackView.notStatistic.title" = "还没有什么可以分析的";
+
+"filter.title" = "过滤器";
+"filter.allTrackers" = "所有追踪者";
+"filter.trackersForToday" = "今日追踪者";
+"filter.completed" = "已完成";
+"filter.notCompleted" = "未完成";
+
+"navBar.createTracker.title" = "创建跟踪器";
+"navBar.newHabit.title" = "新习惯";
+"navBar.newIrregularEvent.title" = "新的不规则事件";
+"navBar.editHabit.title" = "编辑习惯";
+"navBar.editIrregularEvent.title" = "编辑不规则事件";
+"navBar.addNewCategory.title" = "新类别";
+"navBar.addNewCategory.title" = "输入类别名称";
+
+"button.habit.title" = "习惯";
+"button.IrregularEvent.title" = "不规则事件";
+"button.addNewCategory.title" = "添加类别";
+
+"warningMessage.title" = "38个字符的限制";
+
+"alert.deleteTracker.title" = "您确定要删除跟踪器吗？";
+"alert.deleteCategory.message" = "您确定要删除类别吗？";
+"alert.deleteNonEmptyCategory.title" = "此类别中有未完成的跟踪器";
+"alert.deleteNonEmptyCategory.message" = "如果您删除一个类别，所有跟踪器也将消失。";
+
+"category.title" = "类别：";
+"schedule.title" = "时间表";
+"emoji.title" = "表情符号";
+"color.title" = "颜色";
+
+"statistic.bestPeriod" = "最佳时期";
+"statistic.perfectDays" = "完美的日子";
+"statistic.completedTrackers" = "追踪者已完成";
+"statistic.averageValue" = "平均值";
+
+"cancel" = "取消";
+"create" = "要创建";
+"done" = "完成了";
+"edit" = "编辑";
+"delete" = "移走";
+"pin" = "要修复";
+"unpin" = "取消固定";
+"save" = "节省";
+
+"monday" = "星期一";
+"tuesday" = "星期二";
+"wednesday" = "星期三";
+"thursday" = "星期四";
+"friday" = "星期五";
+"saturday" = "星期六";
+"sunday" = "星期日";
+"everyDay" = "每天";
+
+"mon" = "周一";
+"tue" = "周二";
+"wed" = "周三";
+"thu" = "周四";
+"fri" = "周五";
+"sat" = "周六";
+"sun" = "周日";

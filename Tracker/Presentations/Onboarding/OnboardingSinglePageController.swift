@@ -6,11 +6,11 @@ final class OnboardingSinglePageController: UIPageViewController {
     private lazy var pages: [UIViewController] = {
         let bluePage = CustomViewController(
             imageTitle: "pageBlue",
-            textLabel: "Отслеживайте только то, что хотите"
+            textLabel: S.Onboarding.firstTitle
         )
         let redPage = CustomViewController(
             imageTitle: "pageRed",
-            textLabel: "Даже если это не литры воды и йога"
+            textLabel: S.Onboarding.secondTitle
         )
         
         return [bluePage, redPage]
@@ -26,7 +26,9 @@ final class OnboardingSinglePageController: UIPageViewController {
     }()
     
     private lazy var openListTrackerButton: UIButton = {
-        let button = CustomButton(title: "Вот это технологии!")
+        let button = CustomButton(title: S.Onboarding.Button.title)
+        button.backgroundColor = .ypDefaultBlack
+        button.setTitleColor(.ypDefaultWhite, for: .normal)
         button.addTarget(
             self,
             action: #selector(openTrackers),

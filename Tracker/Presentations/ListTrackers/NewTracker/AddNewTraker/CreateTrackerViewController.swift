@@ -4,7 +4,7 @@ final class CreateTrackerViewController: UIViewController {
     
     //MARK: - Properties
     private lazy var habitButton: CustomButton = {
-        let button = CustomButton(title: "Привычка")
+        let button = CustomButton(title: S.Button.Habit.title)
         button.addTarget(
             self,
             action: #selector(addHabits),
@@ -13,7 +13,7 @@ final class CreateTrackerViewController: UIViewController {
         return button
     }()
     private lazy var irregularEventButton: CustomButton = {
-        let button = CustomButton(title: "Нерегулярное событие")
+        let button = CustomButton(title: S.Button.IrregularEvent.title)
         button.addTarget(
             self,
             action: #selector(addIrregularEvent),
@@ -36,7 +36,7 @@ final class CreateTrackerViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Создание трекера"
+        title = S.NavBar.CreateTracker.title
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.ypFontMedium16,
             .foregroundColor: UIColor.ypBlack
@@ -66,19 +66,31 @@ final class CreateTrackerViewController: UIViewController {
         ])
     }
     
-    private func showViewController(with array: [String], isIrregular: Bool) {
+    private func showViewController(with array: [String], isIrregular: Bool, isEditTracker: Bool) {
         let addTrackerVC = AddNewTrackerViewController()
         addTrackerVC.updateDelegate = updateDelegate
         addTrackerVC.titlesCells = array
         addTrackerVC.isIrregular = isIrregular
+        
+        let navTitle = isIrregular ? S.NavBar.NewIrregularEvent.title : S.NavBar.NewHabit.title
+        addTrackerVC.title = navTitle
+        
         navigationController?.pushViewController(addTrackerVC, animated: true)
     }
     
     @objc private func addHabits() {
-        showViewController(with: ["Категория", "Расписание"], isIrregular: false)
+        showViewController(
+            with: Constants.isHabitTitlesCells,
+            isIrregular: false,
+            isEditTracker: false
+        )
     }
     
-    @objc private func addIrregularEvent() {
-        showViewController(with: ["Категория"], isIrregular: true)
+    @objc private func addIrregularEvent() {        
+        showViewController(
+            with: Constants.isIrregularTitlesCells,
+            isIrregular: true,
+            isEditTracker: false
+        )
     }
 }

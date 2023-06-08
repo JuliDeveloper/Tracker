@@ -48,17 +48,23 @@ final class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var plusButton: UIButton = {
-        let button = UIButton(type: .system)
-        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
-        let image = UIImage(systemName: "plus", withConfiguration: pointSize)
-        button.tintColor = .ypWhite
-        button.setImage(image, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 34 / 2
+    private lazy var plusButton: CustomCounterButton = {
+        let button = CustomCounterButton(imageTitle: "plus")
         button.addTarget(self, action: #selector(addDay), for: .touchUpInside)
         return button
     }()
+    
+    private let pinImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pin.fill")
+        imageView.tintColor = .ypDefaultWhite
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 8).isActive = true
+        return imageView
+    }()
+    
+    private let analyticsService = AnalyticsService()
     
     private var currentDate: Date? = nil
     private var isCompletedTrackerToday = Bool()
@@ -72,6 +78,7 @@ final class TrackerCell: UICollectionViewCell {
     )
     
     weak var delegate: ListTrackersViewControllerDelegate?
+    weak var interactionDelegate: TrackerCellDelegate?
     
     //MARK: - Helpers
     func configure(for cell: TrackerCell, tracker: Tracker, _ trackerRecords: Set<TrackerRecord>, isCompleted: Bool) {
@@ -92,7 +99,11 @@ final class TrackerCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         
         checkDate()
+        checkPin(for: tracker)
         updateTrackerState(isCompleted: isCompletedTrackerToday)
+        
+        let contextMenuInteraction = UIContextMenuInteraction(delegate: self)
+        mainView.addInteraction(contextMenuInteraction)
     }
     
     func updateTrackerState(isCompleted: Bool) {
@@ -109,6 +120,7 @@ final class TrackerCell: UICollectionViewCell {
         
         mainView.addSubview(emojiLabel)
         mainView.addSubview(taskTitleLabel)
+        mainView.addSubview(pinImage)
         
         stackView.addArrangedSubview(counterDayLabel)
         stackView.addArrangedSubview(plusButton)
@@ -152,6 +164,13 @@ final class TrackerCell: UICollectionViewCell {
                 constant: -12
             ),
             
+            pinImage.topAnchor.constraint(
+                equalTo: mainView.topAnchor, constant: 18
+            ),
+            pinImage.trailingAnchor.constraint(
+                equalTo: mainView.trailingAnchor, constant: -12
+            ),
+            
             plusButton.widthAnchor.constraint(equalToConstant: 34),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             
@@ -170,21 +189,16 @@ final class TrackerCell: UICollectionViewCell {
         ])
     }
     
-    private func pluralizeDays(_ count: Int) -> String {
-        let remainder10 = count % 10
-        let remainder100 = count % 100
-
-        if remainder10 == 1 && remainder100 != 11 {
-            return "\(count) день"
-        } else if remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 10 || remainder100 >= 20) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
+    private func pluralizeDays(_ countOfDays: Int) -> String {
+        let daysString = String.localizedStringWithFormat(
+            NSLocalizedString("amountOfDay", comment: ""), countOfDays
+        )
+        
+        return daysString
     }
     
     private func checkDate() {
-        let selectedDate = delegate?.updateButtonStateFromDate() ?? Date()
+        let selectedDate = delegate?.updateStateFromDate() ?? Date()
 
         if selectedDate > currentDate ?? Date() {
             setupButton(isCompleted: isCompletedTrackerToday)
@@ -192,6 +206,16 @@ final class TrackerCell: UICollectionViewCell {
         } else if selectedDate <= currentDate ?? Date() {
             setupButton(isCompleted: isCompletedTrackerToday)
             plusButton.isEnabled = true
+        }
+    }
+    
+    private func checkPin(for tracker: Tracker) {
+        let isPinned = delegate?.getPinnedTracker(tracker) ?? false
+        
+        if isPinned {
+            pinImage.layer.opacity = 1
+        } else {
+            pinImage.layer.opacity = 0
         }
     }
     
@@ -216,8 +240,20 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     @objc private func addDay() {
+        analyticsService.report(event: "click", params: [
+            "screen": "Main",
+            "item": "track"
+        ])
+        
         isCompletedTrackerToday.toggle()
         setupButton(isCompleted: isCompletedTrackerToday)
         delegate?.updateCompletedTrackers(cell: self, tracker)
+    }
+}
+
+//MARK: - UIContextMenuInteractionDelegate
+extension TrackerCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        interactionDelegate?.contextMenuNeeded(forCell: self)
     }
 }

@@ -16,6 +16,7 @@ struct TrackerStoreUpdate {
     let insertedIndexes: [IndexPath]
     var deletedIndexPaths: [IndexPath]
     var updateIndexPaths: [IndexPath]
+    let movedIndexPaths: [(from: IndexPath, to: IndexPath)]
 }
 
 final class TrackerStore: NSObject {
@@ -31,6 +32,7 @@ final class TrackerStore: NSObject {
     private var insertedIndexPaths: [IndexPath] = []
     private var deletedIndexPaths: [IndexPath] = []
     private var updateIndexPaths: [IndexPath] = []
+    private var movedIndexPaths = [(from: IndexPath, to: IndexPath)]()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
@@ -49,6 +51,8 @@ final class TrackerStore: NSObject {
         try? fetchedResultsController.performFetch()
         return fetchedResultsController
     }()
+    
+    private let userDefaults = StorageManager.shared
     
     weak var delegate: TrackerStoreDelegate?
         
@@ -77,8 +81,11 @@ final class TrackerStore: NSObject {
     private func updatedIndexes() {
         insertedIndexPaths = []
         insertedSections = IndexSet()
+        deletedIndexPaths = []
+        deletedSections = IndexSet()
         updateIndexPaths = []
         updateSections = IndexSet()
+        movedIndexPaths = []
     }
     
     private func getRecord(from recordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
@@ -91,8 +98,7 @@ final class TrackerStore: NSObject {
         return TrackerRecord(trackerId: trackerId, date: date)
     }
     
-    //MARK: - Methods
-    func getTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
+    private func getTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.trackerId else {
             throw TrackerStoreError.decodingErrorInvalidId
         }
@@ -129,14 +135,18 @@ final class TrackerStore: NSObject {
             countRecords: countRecords
         )
     }
+    
+    private func getTrackerCoreData(from tracker: Tracker) throws -> TrackerCoreData {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "trackerId == %@", tracker.id as CVarArg)
+
+        let trackers = try context.fetch(fetchRequest)
+        return trackers.first ?? TrackerCoreData()
+    }
 }
 
 //MARK: - TrackerStoreProtocol
 extension TrackerStore: TrackerStoreProtocol {
-    var countTrackers: Int {
-        fetchedResultsController.fetchedObjects?.count ?? 0
-    }
-    
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0
     }
@@ -162,7 +172,7 @@ extension TrackerStore: TrackerStoreProtocol {
     }
     
     func addNewTracker(from tracker: Tracker, and category: TrackerCategory) throws {
-        let categoryCoreData = try trackerCategoryStore.categoryCoreData(with: category.categoryId)
+        let categoryCoreData = try trackerCategoryStore.getCategoryFromCoreData(with: category.categoryId)
         
         let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.trackerId = tracker.id
@@ -176,6 +186,90 @@ extension TrackerStore: TrackerStoreProtocol {
         try context.save()
     }
     
+    func editTracker(_ tracker: Tracker, _ newTitle: String?, _ category: TrackerCategory?, _ newSchedule: [WeekDay]?, _ newEmoji: String?, _ newColor: UIColor?, _ countDays: Int) throws {
+        
+        guard let category else { return }
+        
+        let trackerCoreData = try getTrackerCoreData(from: tracker)
+        trackerCoreData.title = newTitle
+        trackerCoreData.schedule = WeekDay.weekdaysToString(weekdays: newSchedule)
+        trackerCoreData.emoji = newEmoji
+        trackerCoreData.colorHex = uiColorMarshalling.toHexString(color: newColor ?? UIColor())
+        
+        let oldCategory = trackerCoreData.category
+        let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: category)
+        
+        if oldCategory != newCategory {
+            oldCategory?.removeFromTrackers(trackerCoreData)
+            newCategory.addToTrackers(trackerCoreData)
+            
+            trackerCoreData.category = newCategory
+            
+            if oldCategory?.title == "Закрепленные" && oldCategory?.trackers?.count == 0 {
+                let pinnedCategory = try trackerCategoryStore.getTrackerCategory(from: oldCategory ?? TrackerCategoryCoreData())
+                try trackerCategoryStore.deleteCategory(category: pinnedCategory)
+            }
+        }
+        
+        if trackerCoreData.records?.count != countDays {
+            let records = getRecords(from: tracker)
+            trackerCoreData.records = NSSet(set: records)
+        }
+        
+        try context.save()
+    }
+    
+    func isPinned(_ tracker: Tracker) -> Bool {
+        if let pinnedCategory = trackerCategoryStore.categories.first(where: { $0.title == "Закрепленные" }) {
+            return pinnedCategory.trackers.contains(where: { $0.id == tracker.id })
+        }
+        return false
+    }
+
+    func pinTracker(_ tracker: Tracker) throws {
+        let trackerCoreData = try getTrackerCoreData(from: tracker)
+        let pinnedCategory = try trackerCategoryStore.createPinnedCategory()
+
+        let oldCategory = trackerCoreData.category
+        let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: pinnedCategory)
+
+        if oldCategory?.categoryId != newCategory.categoryId {
+            userDefaults.setOldCategory(for: tracker, oldCategory)
+            oldCategory?.removeFromTrackers(trackerCoreData)
+            newCategory.addToTrackers(trackerCoreData)
+            trackerCoreData.category = newCategory
+        }
+        
+        try context.save()
+    }
+    
+    func unpinTracker(_ tracker: Tracker) throws {
+        let trackerCoreData = try getTrackerCoreData(from: tracker)
+        
+        if let originalCategoryIdString = userDefaults.getCategoryIdString(for: tracker),
+           let originalCategoryId = UUID(uuidString: originalCategoryIdString) {
+            
+            let originalCategoryCoreData = try trackerCategoryStore.getCategoryFromCoreData(with: originalCategoryId)
+            let originalCategory = try trackerCategoryStore.getTrackerCategory(from: originalCategoryCoreData)
+            
+            let oldCategory = trackerCoreData.category
+            let newCategory = try trackerCategoryStore.getTrackerCategoryCoreData(from: originalCategory)
+                        
+            if oldCategory?.categoryId != newCategory.categoryId {
+                oldCategory?.removeFromTrackers(trackerCoreData)
+                newCategory.addToTrackers(trackerCoreData)
+                trackerCoreData.category = newCategory
+                
+                if oldCategory?.trackers?.count == 0 {
+                    let pinCategory = try trackerCategoryStore.getTrackerCategory(from: oldCategory ?? TrackerCategoryCoreData())
+                    try trackerCategoryStore.deleteCategory(category: pinCategory)
+                }
+            }
+        }
+        
+        try context.save()
+    }
+    
     func deleteTracker(at indexPath: IndexPath) throws {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         context.delete(trackerCoreData)
@@ -184,12 +278,82 @@ extension TrackerStore: TrackerStoreProtocol {
     
     func trackerFiltering(from currentDate: String?, or searchText: String?) {
         if currentDate != nil {
-            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), currentDate ?? "")
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(
+                format: "%K CONTAINS[n] %@",
+                #keyPath(TrackerCoreData.schedule),
+                currentDate ?? ""
+            )
         } else {
-            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.title), searchText ?? "")
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(
+                format: "%K CONTAINS[n] %@",
+                #keyPath(TrackerCoreData.title),
+                searchText ?? ""
+            )
         }
         
         try? fetchedResultsController.performFetch()
+    }
+    
+    func fetchAllTrackers() throws -> [TrackerCoreData] {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let trackersCoreData = try context.fetch(request)
+            return trackersCoreData
+        } catch {
+            throw error
+        }
+    }
+    
+    func fetchAllRecords() throws -> [TrackerRecordCoreData] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let recordsCoreData = try context.fetch(request)
+            return recordsCoreData
+        } catch {
+            throw error
+        }
+    }
+    
+    func filterCompletedTrackers(for ids: [UUID]) {
+        let predicates = ids.map { NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.trackerId), $0 as CVarArg) }
+        let compoundPredicate = NSCompoundPredicate(
+            orPredicateWithSubpredicates: predicates
+        )
+        fetchedResultsController.fetchRequest.predicate = compoundPredicate
+        
+        try? fetchedResultsController.performFetch()
+    }
+    
+    func filterUncompletedTrackers(for ids: [UUID]) {
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(
+            format: "NOT (trackerId IN %@)", ids
+        )
+        
+        try? fetchedResultsController.performFetch()
+    }
+    
+    func getCompletedTrackers(forDate date: Date) -> [TrackerRecord] {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.date), date as CVarArg)
+        request.returnsObjectsAsFaults = false
+        
+        var records: [TrackerRecord] = []
+        
+        do {
+            let trackerRecordCoreData = try context.fetch(request)
+            for record in trackerRecordCoreData {
+                if let currentRecord = try? getRecord(from: record) {
+                    records.append(currentRecord)
+                }
+            }
+            return records
+        } catch {
+            return []
+        }
     }
     
     func getRecords(for indexPath: IndexPath) -> Set<TrackerRecord> {
@@ -205,14 +369,35 @@ extension TrackerStore: TrackerStoreProtocol {
         }
     }
     
+    func getRecords(from tracker: Tracker) -> Set<TrackerRecord> {
+        guard let trackerCoreData = try? getTrackerCoreData(from: tracker) else { return Set<TrackerRecord>() }
+        
+        guard let trackerRecordsCoreData = trackerCoreData.records as? Set<TrackerRecordCoreData> else { return Set<TrackerRecord>() }
+        
+        do {
+            let trackerRecords = try trackerRecordsCoreData.map { try getRecord(from: $0) }
+            return Set(trackerRecords)
+        } catch {
+            return Set<TrackerRecord>()
+        }
+    }
+    
     func loadInitialData(date: String) {
         fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.schedule), date)
         try? fetchedResultsController.performFetch()
+    }
+    
+    func setDelegate(_ vc: ListTrackersViewController) {
+        delegate = vc
     }
 }
 
 //MARK: - NSFetchedResultsControllerDelegate
 extension TrackerStore: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        updatedIndexes()
+    }
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
             TrackerStoreUpdate(
@@ -221,7 +406,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
                 updateSections: updateSections,
                 insertedIndexes: insertedIndexPaths,
                 deletedIndexPaths: deletedIndexPaths,
-                updateIndexPaths: updateIndexPaths
+                updateIndexPaths: updateIndexPaths,
+                movedIndexPaths: movedIndexPaths
             )
         )
         updatedIndexes()
@@ -233,8 +419,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             insertedSections.insert(sectionIndex)
         case .delete:
             deletedSections.insert(sectionIndex)
-//        case .update:
-//            updateSections.update(with: sectionIndex)
+        case .update:
+            updateSections.update(with: sectionIndex)
         default:
             break
         }
@@ -253,6 +439,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .update:
             if let indexPath = indexPath {
                 updateIndexPaths.append(indexPath)
+            }
+        case .move:
+            if let indexPath = indexPath, let newIndexPath = newIndexPath {
+                movedIndexPaths.append((from: indexPath, to: newIndexPath))
             }
         default:
             break
